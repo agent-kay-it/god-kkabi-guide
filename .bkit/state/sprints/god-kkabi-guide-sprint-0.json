@@ -1,0 +1,87 @@
+{
+  "sprintId": "god-kkabi-guide-sprint-0",
+  "name": "Sprint 0 — V3 가상 리포트 3종 R.A.T. 검증",
+  "version": "v1.0",
+  "trustLevel": 3,
+  "trustLevelLabel": "L3 Balanced (Sprint 0 진입 시점, 본 Sprint 종료 후 L4 전환)",
+  "phase": "archived",
+  "phaseHistory": [
+    {"phase": "plan", "startedAt": "2026-05-14T00:00:00.000Z", "completedAt": "2026-05-14T00:30:00.000Z"},
+    {"phase": "do", "startedAt": "2026-05-14T00:30:00.000Z", "completedAt": "2026-05-14T08:00:00.000Z"},
+    {"phase": "check", "startedAt": "2026-05-14T08:00:00.000Z", "completedAt": "2026-05-14T08:30:00.000Z"},
+    {"phase": "archive", "startedAt": "2026-05-14T08:30:00.000Z", "completedAt": "2026-05-14T09:00:00.000Z"}
+  ],
+  "result": "FULL_PASS",
+  "deliverables": [
+    "docs/sprint/01-sprint-0/sprint-0-virtual-reports/report-1-meta-insight.md (239 lines)",
+    "docs/sprint/01-sprint-0/sprint-0-virtual-reports/report-2-churn-signal-saas.md (244 lines)",
+    "docs/sprint/01-sprint-0/sprint-0-virtual-reports/report-3-next-title-research.md (263 lines)",
+    "docs/sprint/01-sprint-0/sprint-0-virtual-reports/schema-validation.md (340+ lines, v1.1)"
+  ],
+  "ratAssumption": {
+    "id": "D5",
+    "statement": "MVP의 데이터 스키마가 V3 B2B 패키지(분기 리포트 / 이탈 시그널 SaaS / 후속작 리서치)까지 추가 마이그레이션 없이 수용 가능",
+    "initialEvaluation": "v1.0 CONDITIONAL PASS (53% PASS, 27% Conditional, 20% FAIL)",
+    "finalEvaluation": "v1.1 FULL PASS (100% PASS after 보강 A/B/C/D applied)"
+  },
+  "operatorDecision": {
+    "selectedOption": "옵션 A — 모든 보강 수용",
+    "decidedAt": "2026-05-14",
+    "reason": "V3 인수 가격 가설 ₩300M-1.5B 유지 + 추후 데이터 마이그레이션 비용 회피 + R.A.T. 가치 극대화 + V3 외부 데이터 비용 V3 한도 $100/월 내 운영 가능"
+  },
+  "schemaBoosts": {
+    "A_MVP_builds_tags": {
+      "file": "docs/sprint/02-sprint-mvp/design.md",
+      "linesBefore": 914,
+      "linesAfter": 1005,
+      "delta": "+91",
+      "mappedChart": "R1-C5 (⚠️ → ✅)"
+    },
+    "B_V1_boss_ratings": {
+      "files": ["docs/sprint/03-sprint-v1/design.md", "docs/sprint/03-sprint-v1/plan.md"],
+      "deltas": ["+91", "+6 (T-BR-001~004 +20h)"],
+      "mappedChart": "R2-C3 (❌ → ✅)"
+    },
+    "C_V2_payment_funnel_NER": {
+      "files": ["docs/sprint/04-sprint-v2/design.md", "docs/sprint/04-sprint-v2/plan.md"],
+      "deltas": ["+225", "+20 (T-PAY-001~003 + T-NER-001~003 +56h)"],
+      "mappedCharts": ["R2-C4 (⚠️ → ✅)", "R3-C1 (⚠️ → ✅)"],
+      "costImpact": "OpenAI fine-tuning 일회성 ₩300K-500K + 월 ₩50K-200K"
+    },
+    "D_V3_external_data": {
+      "files": ["docs/sprint/05-sprint-v3/design.md", "docs/sprint/05-sprint-v3/plan.md"],
+      "deltas": ["+205 (§8 외부 데이터 통합)", "+18 (T-EXT-001~008 +46h)"],
+      "mappedCharts": ["R3-C3 (❌ → ✅)", "R3-C4 (❌ → ✅)"],
+      "newCollection": "external_signals",
+      "etlCloudFunctions": ["saramin-fetch", "jobkorea-fetch", "news-fetch", "linkedin-ingest", "sensortower-parse"],
+      "costImpact": "월 ~₩10K Cloud Functions + LinkedIn $55/월 (기존) + Sensor Tower 분기 $5-15K (Report 3 수익 충당)"
+    }
+  },
+  "chartMatrix": {
+    "Report 1": {"passed": 5, "conditional": 0, "failed": 0},
+    "Report 2": {"passed": 5, "conditional": 0, "failed": 0},
+    "Report 3": {"passed": 5, "conditional": 0, "failed": 0},
+    "Total": "15/15 (100%)"
+  },
+  "qualityGates": {
+    "S0-AC-01": "✅ 가상 리포트 3종 Markdown 완성",
+    "S0-AC-02": "✅ 각 리포트 5 차트 데이터 필드 명세 완료",
+    "S0-AC-03": "✅ Firestore 컬렉션 매핑표 100% 매핑",
+    "S0-AC-04": "✅ 운영자 옵션 A 채택 (수동 게이트 PASS)",
+    "S0-AC-05": "✅ 소요 시간 1일 이내",
+    "S0-AC-06": "✅ 인프라 비용 ₩0"
+  },
+  "handoffToNextSprint": {
+    "nextSprintId": "god-kkabi-guide-sprint-mvp",
+    "inputDocuments": [
+      "docs/sprint/02-sprint-mvp/prd.md (357 lines)",
+      "docs/sprint/02-sprint-mvp/plan.md (409 lines)",
+      "docs/sprint/02-sprint-mvp/design.md (1005 lines, 보강 A 반영)",
+      "docs/sprint/02-sprint-mvp/README.md (90 lines)"
+    ],
+    "trustLevelTransition": "L3 → L4 (운영자 명시 요청, control.json 갱신 완료)",
+    "chromeAutomation": "활성 (Phase 3 do.B/C/D + Phase 4 check + Phase 6 qa)"
+  },
+  "archivedAt": "2026-05-14T09:00:00.000Z",
+  "archivedBy": "kay@agentkay.it"
+}

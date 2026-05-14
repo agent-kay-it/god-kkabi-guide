@@ -1,0 +1,41 @@
+{
+  "version": "2.1.13",
+  "trustLevel": 4,
+  "trustLevelLabel": "L4 Aggressive",
+  "sprintAutorunScope": "full",
+  "stopAfter": "archived",
+  "updatedAt": "2026-05-14T00:00:00.000Z",
+  "updatedBy": "kay@agentkay.it",
+  "previousLevel": 3,
+  "changeRationale": "운영자 명시 요청 (2026-05-14) — Sprint MVP 진입 직전 Chrome 시각 검증을 안전장치로 채택하고 완전 자동 모드로 전환. Sprint Phase 전환, Vercel production 배포, npm 패키지 설치, Firestore 보안 규칙 자동 적용. 잔여 수동 게이트는 유료 결제·계정 인증·법적 의사결정·사업 모델 피벗 4종 한정.",
+  "chromeAutomation": {
+    "enabled": true,
+    "mcpServer": "claude-in-chrome",
+    "verificationPhases": [
+      "Phase 3 do.B 컴포넌트 시각 검증",
+      "Phase 3 do.C 페이지 모바일 viewport 검증",
+      "Phase 3 do.D SEO 콘솔 검증",
+      "Phase 4 check Lighthouse + DevTools",
+      "Phase 6 qa E2E 3 시나리오 + GIF 기록"
+    ]
+  },
+  "autoPauseTriggers": {
+    "QUALITY_GATE_FAIL": "enabled",
+    "ITERATION_EXHAUSTED": "enabled (max 3 iterations)",
+    "BUDGET_EXCEEDED": "enabled (MVP $5/월 한도)",
+    "PHASE_TIMEOUT": "enabled (Phase 한 개당 예상 시간 2배 초과)"
+  },
+  "operatorNotificationTriggers": [
+    "production_first_deploy",
+    "domain_dns_connection",
+    "firestore_security_rules_update",
+    "kpi_measurement_30d_90d",
+    "auto_pause_trigger_fired"
+  ],
+  "manualGatesRemaining": [
+    "유료 결제 (도메인 / Firebase Blaze / Vercel Pro / 외부 API)",
+    "계정 인증 (GitHub OAuth / Vercel / Firebase 콘솔 로그인)",
+    "법적 의사결정 (V3 인수/라이선스 계약 — MVP에서는 해당 없음)",
+    "사업 모델 폐기/피벗 (M4.5/M6 — MVP normal flow에서는 해당 없음)"
+  ]
+}
