@@ -193,9 +193,40 @@ tene env list
 
 - [x] tene 3개 환경 생성 + 7 시크릿 × 3 환경 = 21개 등록 완료
 - [x] `.gitignore` 정밀 보강 완료
-- [ ] GitHub repo `god-kkabi-guide` 생성 + `main` + `staging` 브랜치 분리
-- [ ] Vercel 프로젝트 `god-kkabi-guide` 연결 + GitHub 연동 + 환경 매핑
-- [ ] Vercel 환경변수 7종 × 3 환경 = 21개 등록 (Production / Preview / Development)
-- [ ] Firebase 프로젝트 god-kkabi-guide 권한 확인 (kay@agentkay.it 계정)
-- [ ] Sprint MVP design.md에 Firebase Analytics 통합 반영
-- [ ] `/sprint start god-kkabi-guide-sprint-mvp` 실행
+- [x] GitHub repo `agent-kay-it/god-kkabi-guide` 생성 + `main` + `staging` 브랜치 분리 + branch protection
+- [x] Vercel 프로젝트 `agent-kay-project/god-kkabi-guide` 연결 (`projectId: prj_4g0diSvSe4atumw7y0tsNyl2edAG`)
+- [x] Vercel 환경변수 **14/21 등록** (Production 7 + Development 7) — Preview 7개는 운영자 결정 C(skip, Production fallback)
+- [x] Firebase 프로젝트 god-kkabi-guide 권한 확인 (kay@agentkay.it 계정)
+- [x] Sprint MVP design.md에 Firebase Analytics 통합 반영 (§10.2 갱신)
+- [ ] `/sprint start god-kkabi-guide-sprint-mvp` 실행 — **운영자 직접 호출 (다음 단계)**
+
+## 9. 운영자 결정 반영 (2026-05-14 추가)
+
+### 9.1 Preview env 처리 — 옵션 C 채택
+
+- **결정**: Vercel Preview env 7개 등록 보류. 기본 fallback 동작 활용.
+- **근거**:
+  - MVP 단계에서 staging/prod 모두 같은 Firebase 프로젝트 `god-kkabi-guide` 사용 → Preview env가 비어 있어도 Production env로 자동 fallback
+  - vercel CLI v52는 NEXT_PUBLIC_* × Preview 조합에 추가 보안 confirmation 요구 (자동 우회 실패)
+  - V1+ 시점에 Firebase staging 분리 결정 시 Preview env를 별도 값으로 등록
+- **결과**: staging 브랜치 push → Vercel preview 배포 → Production env 값 (god-kkabi-guide Firebase) 사용. 영향 없음.
+
+### 9.2 Vercel ↔ GitHub 자동 연동 — 나중에 (수동 배포)
+
+- **결정**: GitHub App 설치 보류. 수동 `vercel deploy` 명령 사용.
+- **근거**:
+  - agent-kay-it GitHub 계정에 Vercel App 권한 부여 필요 (운영자 직접 OAuth)
+  - Sprint MVP Phase 3 do.D에서 첫 production 배포 시점에 다시 결정
+- **수동 배포 명령**:
+  ```bash
+  vercel deploy           # Preview 배포 (현재 브랜치)
+  vercel deploy --prod    # Production 배포
+  ```
+
+### 9.3 V1+ 인프라 추가 등록 항목 (Sprint V1 진입 시)
+
+- Vercel Preview env 7개 (Firebase staging 프로젝트 분리 시)
+- GitHub Vercel App 설치 (push 자동 배포)
+- Firebase Admin SDK 서비스 계정 JSON × 3 env (Auth 모더레이션)
+- AdSense 클라이언트 ID (V1 광고)
+- Vercel CLI 토큰 (CI/CD)
