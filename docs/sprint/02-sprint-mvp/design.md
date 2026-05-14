@@ -660,7 +660,9 @@ interface PainTopicDoc {
 
 ---
 
-## 6. GA4 12개 이벤트 명세
+## 6. GA4 12개 이벤트 명세 (Firebase Analytics SDK 통합)
+
+> [Sprint 0 보강 D2 — 2026-05-14] Firebase 프로젝트 `god-kkabi-guide` 통합 활성. 단일 measurementId `G-PBS54YVK5F`로 Firebase Analytics SDK ↔ GA4 property 자동 연결. 발화 방식은 §10.2 참조 (`firebase/analytics` `logEvent` API). 별도 gtag.js 스크립트 또는 GA4 property 등록 불필요.
 
 | 이벤트 | MVP 활성 | 발화 시점 | 파라미터 | Firestore 백업 |
 |--------|------|----------|---------|------------|
@@ -860,11 +862,12 @@ tene set NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET <value>
 tene set NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID <value>
 tene set NEXT_PUBLIC_FIREBASE_APP_ID <value>
 
-# Firebase Admin SDK (V1+ 활성, MVP는 stub만)
-tene set FIREBASE_SERVICE_ACCOUNT_JSON '<json>'
+# Firebase Analytics (Firebase 프로젝트 통합 — 별도 GA4 property 셋업 불필요)
+# 단일 measurementId가 Firebase Web App + GA4 property를 자동 연결
+tene set NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID G-PBS54YVK5F
 
-# GA4
-tene set NEXT_PUBLIC_GA4_MEASUREMENT_ID G-XXXXXXXXXX
+# Firebase Admin SDK (V1+ 활성, MVP는 stub만)
+# tene set FIREBASE_SERVICE_ACCOUNT_JSON --stdin < ./serviceAccountKey.json
 
 # Vercel (자동 주입, 선택)
 # tene set VERCEL_TOKEN <token>
@@ -872,6 +875,8 @@ tene set NEXT_PUBLIC_GA4_MEASUREMENT_ID G-XXXXXXXXXX
 # V1+ AdSense (MVP 미사용)
 # V2+ Stripe (MVP 미사용)
 ```
+
+> **Sprint 0 보강 D2 반영 (2026-05-14)**: 운영자 Firebase 프로젝트 `god-kkabi-guide` (Spark Plan) 생성 시 Analytics 자동 활성화. measurementId `G-PBS54YVK5F`가 Firebase Web App + GA4 property를 자동 연결하므로, **별도 GA4 property 생성 / Measurement ID 별도 등록 불필요**. 시크릿 등록 결과: `tene env list` → local/staging/prod 3개 환경 × 7개 NEXT_PUBLIC_FIREBASE_* 키 = 21개 모두 암호화 완료.
 
 ---
 
@@ -887,23 +892,172 @@ tene set NEXT_PUBLIC_GA4_MEASUREMENT_ID G-XXXXXXXXXX
 | 직업 진단 | Client (인터랙티브 폼) | useState (현재 문항 + 답변 배열) |
 | 검객 메타 빌드 | Static (Server Component) | ❌ 상태 없음 |
 
-### 10.2 GA4 이벤트 발화 패턴
+### 10.2 Firebase Analytics 이벤트 발화 패턴 (Sprint 0 보강 D2 — 2026-05-14)
+
+> [출처: 운영자 결정 (2026-05-14) — Firebase 프로젝트 god-kkabi-guide의 Analytics 통합 활성. 단일 measurementId `G-PBS54YVK5F`가 Firebase Web App ↔ GA4 property를 자동 연결하므로 별도 gtag.js 스크립트 또는 GA4 property 등록 불필요.]
+
+#### 10.2.1 `lib/firebase/client.ts` — Firebase App 초기화
 
 ```typescript
-// lib/analytics/events.ts
-'use client';
-declare global { interface Window { gtag: (...args: any[]) => void; } }
+// lib/firebase/client.ts
+import { initializeApp, getApp, getApps, type FirebaseApp } from 'firebase/app';
 
-export function trackEvent(name: string, params?: Record<string, any>) {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', name, params || {});
-  }
-  // Firestore 백업 (3개 핵심 이벤트만)
-  if (['coupon_copy', 'class_diagnose_complete', 'meta_build_view'].includes(name)) {
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
+};
+
+export function getFirebaseApp(): FirebaseApp {
+  return getApps().length ? getApp() : initializeApp(firebaseConfig);
+}
+```
+
+#### 10.2.2 `lib/firebase/analytics.ts` — Analytics 초기화 (SSR 가드)
+
+Next.js 16 App Router는 서버 사이드 렌더링이 기본이므로 Firebase Analytics는 클라이언트 전용으로 격리한다. `isSupported()` 가드 + dynamic import 패턴 필수.
+
+```typescript
+// lib/firebase/analytics.ts
+'use client';
+import {
+  getAnalytics,
+  isSupported,
+  logEvent as fbLogEvent,
+  setUserProperties,
+  type Analytics,
+} from 'firebase/analytics';
+import { getFirebaseApp } from './client';
+
+let analyticsInstance: Analytics | null = null;
+let initPromise: Promise<Analytics | null> | null = null;
+
+/** SSR 환경 + Safari Private mode + IE 등을 모두 가드 */
+export async function getAnalyticsClient(): Promise<Analytics | null> {
+  if (typeof window === 'undefined') return null;          // SSR
+  if (analyticsInstance) return analyticsInstance;
+  if (initPromise) return initPromise;
+
+  initPromise = (async () => {
+    const supported = await isSupported();
+    if (!supported) return null;                            // 비지원 브라우저
+    analyticsInstance = getAnalytics(getFirebaseApp());
+    return analyticsInstance;
+  })();
+  return initPromise;
+}
+
+/** 표준 발화 래퍼 — 모든 페이지/컴포넌트에서 이 함수만 사용 */
+export async function logEvent(
+  name: GA4EventName,
+  params?: Record<string, string | number | boolean | null>
+): Promise<void> {
+  const analytics = await getAnalyticsClient();
+  if (analytics) fbLogEvent(analytics, name, params ?? {});
+
+  // Firestore 백업 (3개 핵심 이벤트만 — Sprint 0 schema-validation 매핑)
+  if (CORE_BACKUP_EVENTS.has(name)) {
     void backupToFirestore(name, params);
   }
 }
+
+/** 12 이벤트 enum — Master Plan §2 Features F1.6 일치 */
+export type GA4EventName =
+  | 'page_view'                       // ✅ MVP — 자동 (Firebase Analytics 기본)
+  | 'coupon_copy'                     // ✅ MVP — 쿠폰 클릭 복사 + Firestore 백업
+  | 'class_diagnose_complete'         // ✅ MVP — 직업 진단 종료 + Firestore 백업
+  | 'meta_build_view'                 // ✅ MVP — 검객 빌드 페이지 dwell ≥ 5s + Firestore 백업
+  | 'jinryeong_card_click'            // ✅ MVP — 진령 카드 클릭
+  | 'tier_view'                       // ✅ MVP — 티어 리스트 스크롤 노출
+  | 'external_link_click'             // ✅ MVP — 출처 외부 링크 click
+  | 'scroll_depth_75'                 // ✅ MVP — 75% 스크롤 도달
+  | 'dwell_60'                        // ✅ MVP — 60초 이상 체류
+  | 'build_create'                    // ⏳ V1 stub
+  | 'build_like'                      // ⏳ V1 stub
+  | 'signup';                         // ⏳ V1 stub
+
+const CORE_BACKUP_EVENTS = new Set<GA4EventName>([
+  'coupon_copy', 'class_diagnose_complete', 'meta_build_view',
+]);
+
+/** 동의 설정 — PIPA 대응 */
+export async function setAnalyticsConsent(consent: { analytics: boolean }): Promise<void> {
+  const analytics = await getAnalyticsClient();
+  if (!analytics) return;
+  setUserProperties(analytics, {
+    consent_analytics: consent.analytics ? 'granted' : 'denied',
+  });
+}
 ```
+
+#### 10.2.3 컴포넌트 사용 예시
+
+```typescript
+// components/CouponCode.tsx (line 236 onCopy 핸들러)
+'use client';
+import { logEvent } from '@/lib/firebase/analytics';
+
+export function CouponCode({ code, expiresAt }: CouponCodeProps) {
+  const onCopy = async () => {
+    await navigator.clipboard.writeText(code);
+    await logEvent('coupon_copy', { code, days_to_expire: daysUntil(expiresAt) });
+    // ... UI 피드백
+  };
+  // ...
+}
+```
+
+#### 10.2.4 SSR 안전 page_view 자동 발화 (`app/layout.tsx`)
+
+Firebase Analytics의 `getAnalytics()`는 호출 시점에 자동 `page_view` 이벤트를 발화한다. App Router에서는 다음 패턴으로 클라이언트 측만 격리.
+
+```typescript
+// app/layout.tsx (Server Component)
+import { AnalyticsBootstrap } from '@/components/AnalyticsBootstrap';
+// ...
+return (
+  <html lang="ko">
+    <body>
+      <AnalyticsBootstrap />   {/* Client-only, isSupported 가드 */}
+      {children}
+    </body>
+  </html>
+);
+
+// components/AnalyticsBootstrap.tsx (Client Component, side-effect only)
+'use client';
+import { useEffect } from 'react';
+import { getAnalyticsClient } from '@/lib/firebase/analytics';
+export function AnalyticsBootstrap() {
+  useEffect(() => { void getAnalyticsClient(); }, []);
+  return null;
+}
+```
+
+#### 10.2.5 DebugView 검증 흐름 (M4 Phase 4 check)
+
+| 단계 | 검증 도구 | 통과 조건 |
+|------|---------|---------|
+| local 개발 | Chrome DevTools → Network → `google-analytics.com/g/collect` 요청 확인 | 9 이벤트 발화 시 9건 ≥1 POST |
+| Firebase 콘솔 | Analytics > DebugView (로그인 후 운영자 디바이스 페어링) | 9 이벤트 실시간 표시 |
+| BigQuery export | Firebase Analytics → BigQuery 일간 export (Phase 6 qa Layer 6) | `events_intraday_*` 테이블 생성 |
+| GA4 property 자동 연결 | https://analytics.google.com → god-kkabi-guide property | 자동 생성됨 (Firebase 통합) |
+
+#### 10.2.6 Firebase Analytics vs 직접 gtag.js — 본 프로젝트 선정 이유
+
+| 항목 | 직접 gtag.js | **Firebase Analytics SDK** ⭐ |
+|------|------------|---------------------------|
+| 설정 복잡도 | 별도 GA4 property 생성 + Measurement ID 등록 | Firebase 프로젝트 1개로 통합 |
+| Firestore 백업 통합 | 별도 코드 | 같은 Firebase App 인스턴스 공유 |
+| SSR 가드 | 수동 (window.gtag 체크) | `isSupported()` 표준 API |
+| 번들 크기 | gtag.js ~50KB | firebase/analytics ~30KB (tree-shaking) |
+| BigQuery export | GA4 property → BigQuery 별도 연동 | Firebase 프로젝트 → BigQuery 자동 |
+| 동의 관리 (PIPA) | gtag('consent', ...) 별도 | `setUserProperties` + Firebase Auth 통합 |
+| 선정 | ❌ | ✅ Firebase Analytics SDK |
 
 ### 10.3 Firestore read 캐싱
 

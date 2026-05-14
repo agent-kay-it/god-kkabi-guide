@@ -57,7 +57,7 @@ Phase 8: archive    (0.5주) → .bkit/state 기록 + 회고 + V1 인풋 전달
 - [ ] 컴포넌트 인벤토리 14종 명세 완성
 - [ ] SEO 키워드 50개 카테고리화 완료
 - [ ] 도메인 + GitHub + Vercel + Firebase 4개 인프라 계정/리소스 생성 확인
-- [ ] tene 시크릿 11개 (NEXT_PUBLIC_FIREBASE_* 6개 + GA4 1개 + 추가 4개) 설정 확인
+- [x] tene 시크릿 7개 (NEXT_PUBLIC_FIREBASE_* API_KEY/AUTH_DOMAIN/PROJECT_ID/STORAGE_BUCKET/MESSAGING_SENDER_ID/APP_ID/MEASUREMENT_ID) × 3 환경(local/staging/prod) = 21개 모두 암호화 완료 (2026-05-14). 별도 GA4 property 셋업 불필요 — Firebase Analytics 통합 (design.md §10.2)
 
 ---
 
@@ -112,7 +112,7 @@ Phase 8: archive    (0.5주) → .bkit/state 기록 + 회고 + V1 인풋 전달
 | MVP.P3.T-022 | `app/layout.tsx` (다크 모드 + Noto Sans KR + 메타데이터 기본) | AI | 2 | T-021 | layout.tsx |
 | MVP.P3.T-023 | `globals.css` 디자인 토큰 22개 → Tailwind v4 `@theme` 매핑 | AI | 3 | T-014 | globals.css |
 | MVP.P3.T-024 | Firebase 클라이언트 SDK 초기화 (`lib/firebase/client.ts`) | AI | 2 | T-021 | client.ts |
-| MVP.P3.T-025 | GA4 측정 ID 환경변수 연결 (`lib/analytics/ga4.ts`) | AI | 1 | T-024 | ga4.ts |
+| MVP.P3.T-025 | Firebase Analytics 초기화 (`lib/firebase/analytics.ts` — `getAnalyticsClient` + `logEvent` + `isSupported` SSR 가드 + 12 이벤트 enum) + `<AnalyticsBootstrap>` 클라이언트 컴포넌트 + layout.tsx 통합 ([Sprint 0 보강 D2 — design.md §10.2]) | AI | 2 | T-024 | lib/firebase/analytics.ts + components/AnalyticsBootstrap.tsx |
 | MVP.P3.T-026 | ESLint Strict + Prettier 설정 (M8 게이트) | AI | 1 | T-021 | `.eslintrc` |
 | MVP.P3.T-027 | Vercel preview 배포 1차 (빈 페이지) | 운영자 | 0.5 | T-021 | Vercel preview URL |
 
@@ -163,14 +163,14 @@ Phase 8: archive    (0.5주) → .bkit/state 기록 + 회고 + V1 인풋 전달
 | MVP.P3.T-058 | `app/sitemap.ts` + `app/robots.ts` 동적 생성 | AI | 2 | T-057 | sitemap.xml/robots.txt |
 | MVP.P3.T-059 | JSON-LD 구조화 데이터 (Article, FAQPage, BreadcrumbList) | AI | 3 | T-057 | components/JsonLd.tsx |
 | MVP.P3.T-060 | Firestore `coupons` 컬렉션 초기 데이터 시드 (운영자 입력 10건) | 운영자 | 2 | T-053 | Firestore 데이터 |
-| MVP.P3.T-061 | GA4 9개 이벤트 발화 코드 (page_view, coupon_copy, class_diagnose_complete, jinryeong_card_click, tier_view, meta_build_view, external_link_click, scroll_depth_75, dwell_60) | AI | 5 | T-025 | lib/analytics/events.ts |
-| MVP.P3.T-062 | GA4 DebugView로 9개 이벤트 발화 검증 | 운영자+AI | 2 | T-061 | DebugView 스크린샷 |
+| MVP.P3.T-061 | Firebase Analytics `logEvent` 호출 — 9개 이벤트 (`page_view` 자동, `coupon_copy`, `class_diagnose_complete`, `jinryeong_card_click`, `tier_view`, `meta_build_view`, `external_link_click`, `scroll_depth_75`, `dwell_60`) 컴포넌트 통합 + Firestore 백업 3종 ([Sprint 0 보강 D2 — design.md §10.2.1~3]) | AI | 5 | T-025 | logEvent 호출부 9개 위치 |
+| MVP.P3.T-062 | Firebase 콘솔 Analytics > DebugView 9개 이벤트 발화 실시간 검증 + Chrome DevTools Network 탭 `g/collect` 9건 확인 ([design.md §10.2.5 검증 흐름]) | 운영자+AI | 2 | T-061 | DebugView 스크린샷 + Network HAR |
 | MVP.P3.T-063 | 이미지 최적화 (Next/Image + Google Play CDN proxy) | AI | 2 | T-040 | next.config.js images |
 | MVP.P3.T-064 | 폰트 sub-setting (Noto Sans KR 한글 + 영문 필수 문자만) | AI | 2 | T-022 | font 최적화 |
 | MVP.P3.T-065 | 도메인 구매 (1순위 가용 시 `gokkaebi-guide.com`) | 운영자 | 1 | T-007 | 도메인 결제 |
 | MVP.P3.T-066 | Vercel 도메인 연결 + DNS 설정 | 운영자 | 1 | T-065 | DNS PASS |
 | MVP.P3.T-067 | Vercel production 배포 + sitemap.xml Google Search Console 제출 | 운영자 | 1 | T-058, T-066 | production URL + GSC 등록 |
-| MVP.P3.T-068 | Google Analytics 4 propertyID 연결 + tene 시크릿 확인 | 운영자 | 0.5 | T-025 | GA4 데이터 흐름 |
+| MVP.P3.T-068 | Firebase Analytics 자동 GA4 property 연결 검증 (analytics.google.com → god-kkabi-guide property 자동 생성 확인) + `tene list --env prod` 7개 키 검증 ([Sprint 0 보강 D2]) | 운영자 | 0.5 | T-025 | GA4 property 자동 연결 확인 |
 
 ### 4.3 Phase 3 종료 게이트
 
