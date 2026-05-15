@@ -4,7 +4,7 @@
   "version": "v1.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p6_qa",
+  "phase": "p7_report",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-16T05:30:00.000Z", "status": "completed", "artifacts": [
       "Sprint v2 archive tag: v2.0.0-mvp-v2-archived",
@@ -53,6 +53,14 @@
       "phase-5-act/REPORT.md (변경 상세 + 7-Layer 4/7→7/7 + Quality Gates 8/12→11/12 + Match Rate ≥93% 예상)",
       "pnpm typecheck 통과 (1회 회귀 fix: exactOptionalPropertyTypes strict union role 매칭)",
       "pnpm build 통과: 23 routes 동일"
+    ]},
+    {"phase": "p6_qa", "startedAt": "2026-05-15T20:30:00.000Z", "completedAt": "2026-05-15T21:00:00.000Z", "status": "completed", "artifacts": [
+      "phase-6-qa/REPORT.md — Match Rate 94.5% (P4 84.2% → P5 94.5%, +10.3pp) + 7-Layer 7/7 + GA4 12 활성 발화 + E2E 7/7",
+      "gap-detector 재실행 실측: Structural 98 / Functional 95 / API 95 / Intent 94 / Behavioral 95 / UX 93",
+      "GA4 인벤토리 재검증: 26 정의 / 12 활성 발화 (V1 신규 6 + STUB 2 ACTIVE: login + wiki_card_click)",
+      "7-Layer dataFlowIntegrity: F1 Post Create / F2 Comment / F3 Reaction / F4 Report / F5 Penalty / F6 AdSense / F7 Wiki Click — 모두 Pass",
+      "E2E 7 시나리오 정적: S1 Auth / S2 Post Create+View+Edit / S3 Comment Depth-2 / S4 Reaction Idempotent / S5 Report+Penalty / S6 Moderation / S7 AdSense",
+      "Quality Gates 12/13 Pass (M6 Lighthouse만 운영자 게이트 사전 production CDN 측정)"
     ]}
   ],
   "startedAt": "2026-05-16T05:30:00.000Z",
