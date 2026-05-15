@@ -181,6 +181,16 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Sprint V2 P3.D — pain_topics + pain_mentions: admin only
+    match /pain_topics/{topicId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /pain_mentions/{mentionId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
     // Sprint V2 P3.C — coupons: 검증된 것만 공개 read / 등록 사용자 create (pending) / admin verify
     match /coupons/{couponId} {
       allow read: if resource.data.status == 'verified' || isAdmin();
