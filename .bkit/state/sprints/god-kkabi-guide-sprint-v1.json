@@ -4,7 +4,7 @@
   "version": "v1.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p4_check",
+  "phase": "p5_act",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-16T05:30:00.000Z", "status": "completed", "artifacts": [
       "Sprint v2 archive tag: v2.0.0-mvp-v2-archived",
@@ -33,6 +33,14 @@
       "phase-2-design/adsense-strategy.md (Sticky+Infeed 배치 + PIPA 5번째 + dev/admin 가드 + ads.txt + CSP)",
       "phase-2-design/pretendard-subset.md (KS X 1001 + pyftsubset + 운영자 게이트 + 검증 스크립트)",
       "phase-2-design/pretendard-subset-unicodes.txt (글리프 범위 파일)"
+    ]},
+    {"phase": "p4_check", "startedAt": "2026-05-15T18:55:00.000Z", "completedAt": "2026-05-15T19:30:00.000Z", "status": "completed", "artifacts": [
+      "phase-4-check/GAP-ANALYSIS.md (Match Rate 84.2% — Critical 3 + Major 3 + Minor 5)",
+      "phase-4-check/CODE-ANALYSIS.md (5축 평균 86 + CA-C1 storage rules Critical)",
+      "phase-4-check/REPORT.md (Lighthouse 운영자 게이트 + WCAG ARIA 19/semantic 27 + 7-Layer 4/7 Pass + Quality Gates 8/12)",
+      "Critical 4건 식별: CA-C1 (storage rules), GAP-C1 (JWT advertisingConsent), GAP-C2 (AdSlotInfeed 미마운트), GAP-C3 (WikiCardTracker 미사용)",
+      "Major 3건 식별: GAP-M1 (댓글 liked 하드코딩), GAP-M2 (pending_edit 본인 미표시), CA-M2 (CSP img-src 확인)",
+      "P5 Act 통합 우선순위 표 + 검증 게이트 + Sprint V2 carry-over 4건"
     ]}
   ],
   "startedAt": "2026-05-16T05:30:00.000Z",
