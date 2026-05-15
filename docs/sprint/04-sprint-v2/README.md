@@ -1,8 +1,13 @@
 # Sprint V2 — 인사이트 + 구독 (빌드 시뮬레이터 + NLP + 프리미엄)
 
+> **상태**: ✅ **ARCHIVED** (2026-05-15)
+> Match Rate **93.5%** / 7-Layer **8/8 + 1 infra** / Quality Gates **13/15** / Critical **0** / Major **0**
+> 종합 보고서: `docs/sprint/04-sprint-v2/phase-7-report/REPORT.md`
+> tag: `v2.0.0-v2-archived`
+>
 > **Sprint ID**: `god-kkabi-guide-sprint-v2`
-> 기간: M10-M15 (24주, 약 168일, 2027-02-08 ~ 2027-08-08)
-> 작성일: 2026-05-14 · 운영자: kay@agentkay.it (1인 개인 프로젝트)
+> 기간: M10-M15 (24주, 약 168일, 2027-02-08 ~ 2027-08-08) — L4 자동 모드로 단일 세션 압축 실행
+> 작성일: 2026-05-14 · 종료일: 2026-05-15 · 운영자: kay@agentkay.it (1인 개인 프로젝트)
 > 상위 문서: `docs/sprint/00-master-plan.md` §3.4, §5.3
 > 입력: Sprint V1 M9 졸업 (DAU 2K+ / 빌드 1K+) + `docs/01-pm/04-prd.md` §7.4
 
