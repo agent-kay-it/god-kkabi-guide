@@ -1,24 +1,46 @@
 /**
  * sitemap.xml 자동 생성.
- * 출처: docs/sprint/02-sprint-mvp/design.md §2.4 (15개 페이지 우선순위 표)
+ * 출처: docs/sprint/02-sprint-mvp/design.md §2.4
+ *       docs/sprint/02-sprint-mvp/phase-1-plan/seo-keyword-50.md
  *
- * MVP 진입 시점에는 Phase 3 do.C에서 페이지가 추가되는 대로 본 목록을 확장.
- * Phase 3 do.A 스캐폴딩 단계에서는 home 1개만 등록.
+ * Phase 3 do.C-1 + do.C-2 완료 시점: 13 페이지 등록.
+ * do.C-3에서 supplementary 4 페이지 추가 예정.
  */
 import type { MetadataRoute } from 'next';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://god-kkabi-guide.vercel.app';
 
+interface SitemapEntry {
+  path: string;
+  priority: number;
+  changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
+}
+
+const ENTRIES: readonly SitemapEntry[] = [
+  // Beachhead + 홈
+  { path: '/', priority: 1.0, changeFrequency: 'weekly' },
+  { path: '/coupon', priority: 0.95, changeFrequency: 'weekly' },
+  { path: '/builds/meta-swordsman', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/class-quiz', priority: 0.85, changeFrequency: 'monthly' },
+
+  // Content (P3.C-2)
+  { path: '/class', priority: 0.8, changeFrequency: 'monthly' },
+  { path: '/class/warrior', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/class/swordsman', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/class/medium', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/jinryeong', priority: 0.9, changeFrequency: 'weekly' },
+  { path: '/skill-equip', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/dungeon', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/payment', priority: 0.7, changeFrequency: 'monthly' },
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-
-  return [
-    {
-      url: SITE_URL,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 1.0,
-    },
-  ];
+  return ENTRIES.map((entry) => ({
+    url: `${SITE_URL}${entry.path}`,
+    lastModified,
+    changeFrequency: entry.changeFrequency,
+    priority: entry.priority,
+  }));
 }
