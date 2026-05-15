@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/aggregate-jinryeong",
       "schedule": "0 15 * * 0"
+    },
+    {
+      "path": "/api/cron/aggregate-pvp",
+      "schedule": "5 15 * * 0"
     }
   ]
 }

@@ -165,6 +165,64 @@
         { "fieldPath": "postId", "order": "ASCENDING" },
         { "fieldPath": "timestamp", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "coupons",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "reportedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "jinryeong_stats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "weekISO", "order": "DESCENDING" },
+        { "fieldPath": "rank", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "jinryeong_stats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "className", "order": "ASCENDING" },
+        { "fieldPath": "weekISO", "order": "DESCENDING" },
+        { "fieldPath": "rank", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pvp_stats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "weekISO", "order": "DESCENDING" },
+        { "fieldPath": "rank", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pvp_stats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "className", "order": "ASCENDING" },
+        { "fieldPath": "weekISO", "order": "DESCENDING" },
+        { "fieldPath": "rank", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "simulator_runs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "timestamp", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "category", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

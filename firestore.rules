@@ -162,6 +162,40 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
+    // Sprint V2 P3.B — simulator_runs: 누구나 write (익명 허용) / admin read (개인정보 제외)
+    match /simulator_runs/{runId} {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.jinryeongIds.size() == 3;
+      allow update, delete: if false;
+    }
+
+    // Sprint V2 P3.B — jinryeong_stats: 모든 사용자 read / Server Action(cron)만 write
+    match /jinryeong_stats/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Sprint V2 P3.C — pvp_stats: 동일 패턴
+    match /pvp_stats/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Sprint V2 P3.C — coupons: 검증된 것만 공개 read / 등록 사용자 create (pending) / admin verify
+    match /coupons/{couponId} {
+      allow read: if resource.data.status == 'verified' || isAdmin();
+      allow create: if isRegisteredUnbanned()
+        && request.resource.data.status == 'pending'
+        && request.resource.data.submittedBy == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if false;
+      // votes subcollection
+      match /votes/{uid} {
+        allow read: if isAdmin();
+        allow write: if isRegisteredUnbanned() && uid == request.auth.uid;
+      }
+    }
+
     // 기본 거부
     match /{document=**} {
       allow read, write: if false;
