@@ -1,0 +1,56 @@
+{
+  "_meta": {
+    "locale": "ja",
+    "version": "v2.0",
+    "lastUpdated": "2026-05-15",
+    "completeness": 0.1,
+    "operatorGate": "전문가 번역 또는 LLM 번역 검수 필요 — Sprint V2 운영자 게이트"
+  },
+  "common": {
+    "siteName": "ガッケビ育て — 非公式ファンガイド",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "back": "戻る",
+    "next": "次へ",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "retry": "再試行",
+    "submit": "送信",
+    "confirm": "確認"
+  },
+  "nav": {
+    "home": "ホーム",
+    "class": "ジョブ",
+    "jinryeong": "神霊",
+    "skill": "スキル",
+    "equipment": "装備",
+    "content": "コンテンツ",
+    "munpa": "門派",
+    "tips": "ヒント",
+    "post": "コミュニティ",
+    "coupon": "クーポン",
+    "simulator": "シミュレーター",
+    "insights": "インサイト",
+    "premium": "プレミアム",
+    "myBookmarks": "ブックマーク",
+    "myPosts": "投稿",
+    "mySubscription": "サブスクリプション",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "register": "登録"
+  },
+  "footer": {
+    "unofficial": "本サイトは非公式ファンサイトです。ゲームに関する全ての権利は原著作者に帰属します。",
+    "operator": "運営者連絡: kay@agentkay.it"
+  },
+  "premium": {
+    "title": "プレミアムサブスクリプション",
+    "subtitle": "月額 ¥499 相当 — 広告なしの体験",
+    "subscribe": "サブスクライブ",
+    "manage": "サブスクリプション管理",
+    "active": "アクティブ",
+    "canceled": "キャンセル済み"
+  }
+}

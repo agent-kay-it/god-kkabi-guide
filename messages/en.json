@@ -1,0 +1,56 @@
+{
+  "_meta": {
+    "locale": "en",
+    "version": "v2.0",
+    "lastUpdated": "2026-05-15",
+    "completeness": 0.1,
+    "operatorGate": "Professional translation or LLM-assisted review required — Sprint V2 operator gate"
+  },
+  "common": {
+    "siteName": "God Kkabi Guide — Unofficial Fan Guide",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "submit": "Submit",
+    "confirm": "Confirm"
+  },
+  "nav": {
+    "home": "Home",
+    "class": "Classes",
+    "jinryeong": "Spirits",
+    "skill": "Skills",
+    "equipment": "Equipment",
+    "content": "Content",
+    "munpa": "Sects",
+    "tips": "Tips",
+    "post": "Community",
+    "coupon": "Coupons",
+    "simulator": "Simulator",
+    "insights": "Insights",
+    "premium": "Premium",
+    "myBookmarks": "My Bookmarks",
+    "myPosts": "My Posts",
+    "mySubscription": "My Subscription",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register"
+  },
+  "footer": {
+    "unofficial": "This is an unofficial fan site. All rights related to the game belong to the original creators.",
+    "operator": "Contact: kay@agentkay.it"
+  },
+  "premium": {
+    "title": "Premium Subscription",
+    "subtitle": "~$3.50/month — Ad-free experience",
+    "subscribe": "Subscribe",
+    "manage": "Manage Subscription",
+    "active": "Active",
+    "canceled": "Canceled"
+  }
+}
