@@ -1,19 +1,19 @@
 /**
  * <PayTier> — 과금 티어 카드 (무/소/중과금 3 variant).
- * 출처: docs/sprint/02-sprint-mvp/design.md §3.10
+ * 출처: docs/sprint/03-sprint-mvp-v2/design.md §3.0 — v2: free=jade / light=bronze / medium=bronze glow
  */
 import { Check } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const tierVariants = cva(
-  'flex h-full flex-col gap-3 rounded-card border bg-bg-card p-5 transition-card hover:bg-bg-card-hover',
+  'glass flex h-full flex-col gap-3 rounded-[var(--radius-card)] border p-5 transition-card hover:bg-ink-card-strong',
   {
     variants: {
       tier: {
-        free: 'border-border-soft',
-        light: 'border-accent-cyan',
-        medium: 'border-accent-gold shadow-glow',
+        free: 'border-jade/30',
+        light: 'border-bronze/40',
+        medium: 'border-bronze shadow-glow-bronze',
       },
     },
     defaultVariants: { tier: 'free' },
@@ -43,16 +43,16 @@ export function PayTier({
       aria-label={`${label} 과금 티어`}
     >
       <header>
-        <h3 className="text-lg font-bold text-accent-gold">{label}</h3>
-        <p className="mt-1 text-xs text-text-muted">{recommendedFor}</p>
+        <h3 className="text-lg font-bold text-bronze-soft">{label}</h3>
+        <p className="mt-1 text-xs text-text-mute">{recommendedFor}</p>
       </header>
 
       <ul className="flex-1 space-y-2">
         {strategy.map((s) => (
-          <li key={s} className="flex items-start gap-2 text-sm text-text-primary">
+          <li key={s} className="flex items-start gap-2 text-sm text-text">
             <Check
               aria-hidden="true"
-              className="mt-0.5 h-4 w-4 shrink-0 text-accent-gold"
+              className="mt-0.5 h-4 w-4 shrink-0 text-bronze"
             />
             <span>{s}</span>
           </li>

@@ -1,58 +1,72 @@
 @import 'tailwindcss';
 
 /**
- * 갓깨비 키우기 가이드 디자인 시스템
- * 출처: docs/sprint/02-sprint-mvp/phase-2-design/design-tokens.json (22 tokens)
- *       docs/sprint/02-sprint-mvp/design.md §4.1
- *       source/original-guide.html :root (lines 8-25)
+ * 갓깨비 키우기 가이드 디자인 시스템 v2
+ * 출처: docs/sprint/03-sprint-mvp-v2/phase-2-design/design-tokens-v2.json
+ *       docs/sprint/03-sprint-mvp-v2/design.md §3.0–§3.4
  *
- * Tailwind v4 @theme 디렉티브로 디자인 토큰을 Tailwind 유틸리티로 자동 노출.
- * - --color-* → bg-{name}, text-{name}, border-{name}, ring-{name}
- * - --radius-* → rounded-{name}
- * - --shadow-* → shadow-{name}
- * - --font-* → font-{name}
- *
- * shadcn/ui CSS variables 충돌 해소: prefix `--color-` 네임스페이스 분리.
+ * 디자인 철학: Editorial × Glassmorphism × 4-색 액센트 시스템 (bronze/jade/vermilion/indigo)
+ * - source/godkkabi-guide :root 정밀 매핑 (lines 8-32)
+ * - shadcn/ui new-york 베이스 + cva variants 확장
+ * - WCAG AA 검증 완료 (text.default 14.71:1, bronze.default 7.21:1)
  */
 
 @theme {
-  /* ─── 배경 (4) ─── */
-  --color-bg-primary: #0a0612;
-  --color-bg-secondary: #14092a;
-  --color-bg-card: #1c1235;
-  --color-bg-card-hover: #261845;
+  /* ─── Ink (배경 레이어) ─── */
+  --color-ink-base: #07070b;
+  --color-ink-elev: #0e0e15;
+  --color-ink-card: rgba(22, 22, 32, 0.55);
+  --color-ink-card-strong: rgba(28, 28, 40, 0.78);
+  --color-ink-line: rgba(255, 255, 255, 0.06);
+  --color-ink-line-strong: rgba(255, 255, 255, 0.12);
 
-  /* ─── 액센트 (6) ─── */
-  --color-accent-gold: #e8b860;
-  --color-accent-gold-light: #f6d27b;
-  --color-accent-red: #c93b4a;
-  --color-accent-purple: #8b5cf6;
-  --color-accent-cyan: #38d9d9;
-  --color-accent-green: #5dd66c;
+  /* ─── Bronze (메인 액센트 / swordsman / Tier 1 / CTA / Link) ─── */
+  --color-bronze: #c89968;
+  --color-bronze-soft: #e8c79a;
+  --color-bronze-deep: #8a6841;
 
-  /* ─── 텍스트 (3) ─── */
-  --color-text-primary: #f0e6d8;
-  --color-text-secondary: #b9aec0;
-  --color-text-muted: #8a7b94;
+  /* ─── Jade (보조 / pve / success / 영구 콘텐츠) ─── */
+  --color-jade: #7eb6a8;
+  --color-jade-soft: #a8d4c8;
 
-  /* ─── 보더 (2) ─── */
-  --color-border-gold: rgba(232, 184, 96, 0.35);
-  --color-border-soft: rgba(255, 255, 255, 0.08);
+  /* ─── Vermilion (warrior / Tier 0 / danger / pvp / 한정 이벤트) ─── */
+  --color-vermilion: #c87870;
+  --color-vermilion-soft: #e5a7a1;
 
-  /* ─── 그림자 (1) ─── */
-  --shadow-glow: 0 0 24px rgba(232, 184, 96, 0.15);
+  /* ─── Indigo (mage / Tier 2 / info / 협업 콘텐츠) ─── */
+  --color-indigo: #8b8bc5;
 
-  /* ─── 폰트 (1, MVP 단일 — V1+ display 추가) ─── */
-  --font-sans:
-    var(--font-noto-sans-kr), 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  /* ─── Text ─── */
+  --color-text: #ece7dd;
+  --color-text-soft: #b8b1a4;
+  --color-text-mute: #6e6a64;
 
-  /* ─── 라운드 (4) ─── */
+  /* ─── Radius ─── */
+  --radius-sm: 6px;
   --radius-card: 14px;
-  --radius-card-large: 16px;
-  --radius-pill: 20px;
-  --radius-app-icon: 28px;
+  --radius-card-lg: 16px;
+  --radius-pill: 999px;
 
-  /* ─── 브레이크포인트 (커스텀: xs만 추가, sm~2xl은 Tailwind 기본 유지 + sm 오버라이드) ─── */
+  /* ─── Shadow ─── */
+  --shadow-glow-bronze: 0 0 64px rgba(200, 153, 104, 0.18);
+  --shadow-glow-jade: 0 0 48px rgba(126, 182, 168, 0.14);
+  --shadow-glass-elev: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  /* ─── Animation ─── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+
+  /* ─── Font ─── */
+  --font-sans:
+    var(--font-pretendard), 'Pretendard Variable', Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', sans-serif;
+  --font-mono:
+    var(--font-mono), 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  /* ─── Breakpoints ─── */
   --breakpoint-xs: 320px;
   --breakpoint-sm: 375px;
   --breakpoint-md: 414px;
@@ -62,39 +76,41 @@
 }
 
 /**
- * shadcn/ui 호환 토큰 — 일부 shadcn 컴포넌트는 :root CSS variables 가정.
- * 본 프로젝트 토큰으로 오버라이드하여 디자인 일관성 유지.
+ * shadcn/ui new-york 호환 슬롯 — design-tokens-v2.json $shadcnMapping 절 그대로 매핑.
+ * shadcn 컴포넌트가 `var(--primary)` 등을 참조할 때 v2 토큰을 사용하도록 :root 오버라이드.
  */
 :root {
-  --background: var(--color-bg-primary);
-  --foreground: var(--color-text-primary);
-  --card: var(--color-bg-card);
-  --card-foreground: var(--color-text-primary);
-  --popover: var(--color-bg-card);
-  --popover-foreground: var(--color-text-primary);
-  --primary: var(--color-accent-gold);
-  --primary-foreground: var(--color-bg-primary);
-  --secondary: var(--color-bg-secondary);
-  --secondary-foreground: var(--color-text-primary);
-  --muted: var(--color-bg-secondary);
-  --muted-foreground: var(--color-text-muted);
-  --accent: var(--color-accent-gold-light);
-  --accent-foreground: var(--color-bg-primary);
-  --destructive: var(--color-accent-red);
-  --destructive-foreground: var(--color-text-primary);
-  --border: var(--color-border-soft);
-  --input: var(--color-border-soft);
-  --ring: var(--color-accent-gold);
-  --radius: 0.75rem;
+  --background: var(--color-ink-base);
+  --foreground: var(--color-text);
+  --card: var(--color-ink-card);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-ink-card-strong);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-bronze);
+  --primary-foreground: var(--color-ink-base);
+  --secondary: var(--color-ink-elev);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-ink-elev);
+  --muted-foreground: var(--color-text-mute);
+  --accent: var(--color-bronze-soft);
+  --accent-foreground: var(--color-ink-base);
+  --destructive: var(--color-vermilion);
+  --destructive-foreground: var(--color-text);
+  --success: var(--color-jade);
+  --info: var(--color-indigo);
+  --border: var(--color-ink-line);
+  --input: var(--color-ink-line-strong);
+  --ring: var(--color-bronze);
+  --radius: 14px;
 }
 
 /**
- * 글로벌 base styles — 오컬트 다크 분위기.
- * body 배경 그라데이션 (퍼플 + 골드 radial overlay + 다크 linear).
+ * 글로벌 base — Editorial × Glassmorphism 다크 분위기.
+ * 3-layer radial gradient overlay (bronze + jade + indigo).
  */
 @layer base {
   * {
-    border-color: var(--color-border-soft);
+    border-color: var(--color-ink-line);
   }
 
   html {
@@ -106,91 +122,124 @@
   body {
     min-height: 100dvh;
     background:
-      radial-gradient(circle at 10% 10%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
-      radial-gradient(circle at 90% 80%, rgba(232, 184, 96, 0.08) 0%, transparent 45%),
-      linear-gradient(180deg, #0a0612 0%, #100822 100%);
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(200, 153, 104, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(126, 182, 168, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 30% at 50% 50%, rgba(139, 139, 197, 0.04) 0%, transparent 50%),
+      var(--color-ink-base);
     background-attachment: fixed;
-    color: var(--color-text-primary);
+    color: var(--color-text);
     font-family: var(--font-sans);
-    font-feature-settings: 'kern', 'liga';
+    font-feature-settings: 'kern', 'liga', 'ss03';
+    letter-spacing: -0.005em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* 헤딩 — 골드 그라데이션은 h1.title 클래스로만 적용 (Hero 컴포넌트) */
+  /* Editorial 헤딩 — tight letter-spacing + bronze 색상 */
   h1,
   h2,
   h3 {
-    color: var(--color-accent-gold);
-    letter-spacing: -0.01em;
+    color: var(--color-text);
+    letter-spacing: -0.018em;
+    font-weight: 700;
   }
 
-  /* 외부 링크 underline 색상 강조 */
+  h1 {
+    letter-spacing: -0.024em;
+    font-weight: 800;
+  }
+
+  /* 링크 — bronze + underline offset */
   a {
-    color: var(--color-accent-gold);
-    text-underline-offset: 2px;
+    color: var(--color-bronze);
+    text-underline-offset: 4px;
+    transition: color var(--duration-fast) var(--ease-out);
   }
 
   a:hover {
-    color: var(--color-accent-gold-light);
+    color: var(--color-bronze-soft);
   }
 
-  /* 포커스 outline — 접근성 (WCAG AA) */
+  /* 접근성 포커스 ring */
   :focus-visible {
-    outline: 2px solid var(--color-accent-gold);
+    outline: 2px solid var(--color-bronze);
     outline-offset: 2px;
+    border-radius: 4px;
   }
 
-  /* 스크롤바 (Webkit 다크 분위기 통일) */
+  /* 스크롤바 (Webkit) */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--color-bg-primary);
+    background: var(--color-ink-base);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--color-border-gold);
+    background: rgba(200, 153, 104, 0.3);
     border-radius: 5px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-accent-gold);
+    background: var(--color-bronze);
   }
 
-  /* 선택 영역 */
   ::selection {
-    background: rgba(232, 184, 96, 0.3);
-    color: var(--color-text-primary);
+    background: rgba(200, 153, 104, 0.3);
+    color: var(--color-text);
   }
 }
 
 /**
- * 재사용 유틸 — 디자인 시스템 표준 표면 효과.
+ * 재사용 유틸 — 디자인 시스템 표준 표면.
  */
 @layer utilities {
+  /* Editorial Hero 그라데이션 텍스트 */
   .title-gradient {
-    background: linear-gradient(135deg, #f6d27b, #e8b860, #c79a3f);
+    background: linear-gradient(135deg, #e8c79a, #c89968, #8a6841);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
   }
 
-  .glow-card {
-    box-shadow: var(--shadow-glow);
+  /* Glass card 표면 (반복 적용 패턴) */
+  .glass {
+    background: var(--color-ink-card);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid var(--color-ink-line);
+  }
+
+  .glass-strong {
+    background: var(--color-ink-card-strong);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--color-ink-line-strong);
+  }
+
+  /* Glow 효과 (Hero / CTA) */
+  .glow-bronze {
+    box-shadow: var(--shadow-glow-bronze);
+  }
+
+  .glow-jade {
+    box-shadow: var(--shadow-glow-jade);
   }
 
   .transition-card {
-    transition: all 0.3s ease;
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      background-color var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-out);
   }
 
   .transition-badge {
-    transition: all 0.2s ease;
+    transition: all var(--duration-fast) var(--ease-out);
   }
 
-  /* 운영자 prefers-reduced-motion 존중 */
+  /* 운영자 prefers-reduced-motion 존중 (WCAG 2.3.3) */
   @media (prefers-reduced-motion: reduce) {
     .transition-card,
     .transition-badge,

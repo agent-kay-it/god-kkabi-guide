@@ -36,7 +36,7 @@ export function AnimatedGradientText({
       className={cn('inline-block bg-clip-text text-transparent', className)}
       style={{
         backgroundImage:
-          'linear-gradient(135deg, var(--color-accent-gold-light), var(--color-accent-gold), #c79a3f, var(--color-accent-gold), var(--color-accent-gold-light))',
+          'linear-gradient(135deg, var(--color-bronze-soft), var(--color-bronze), var(--color-bronze-deep), var(--color-bronze), var(--color-bronze-soft))',
         backgroundSize: '200% auto',
         animation: `gradient-flow ${speed}s linear infinite`,
       }}

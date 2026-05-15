@@ -33,8 +33,8 @@ export function ScreenshotStrip({
       aria-label="갓깨비 키우기 게임 스크린샷"
     >
       {sourceLabel ? (
-        <p className="text-xs text-text-muted">
-          <span className="rounded-pill bg-bg-secondary px-2 py-0.5">{sourceLabel}</span>
+        <p className="text-xs text-text-mute">
+          <span className="rounded-full bg-ink-elev px-2 py-0.5">{sourceLabel}</span>
         </p>
       ) : null}
       <div
@@ -44,7 +44,7 @@ export function ScreenshotStrip({
         {images.map((img, i) => (
           <div
             key={`${img.src}-${i}`}
-            className="relative shrink-0 overflow-hidden rounded-card border border-border-soft"
+            className="relative shrink-0 overflow-hidden rounded-[var(--radius-card)] border border-ink-line"
             style={{
               width: 'min(80vw, 280px)',
               aspectRatio: '9 / 16',

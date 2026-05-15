@@ -1,20 +1,14 @@
 /**
- * 도메인 컴포넌트 barrel — 갓깨비 키우기 가이드.
- * v2 P3.A 진행 중 — 토큰 교체 재사용 8개 + P3.B에서 재작성 6개.
+ * 도메인 컴포넌트 barrel — 갓깨비 키우기 가이드 v2.
+ * 출처: docs/sprint/03-sprint-mvp-v2/phase-2-design/component-inventory-v2.md §3
  *
- * 재사용 (토큰 교체 예정): TOC, Alert, EventCard, PayTier, TipCard,
- *   PriorityFlow, BuildTagBadge, ScreenshotStrip, Footer
- *
- * 재작성 예정 (P3.B):
- *   - Hero (banner-korean-carry 배경)
- *   - ClassCard (StatsGrid + accent stripe)
- *   - JinryeongCard (catalog 모티프)
- *   - TierList (JinryeongCard 의존)
- *   - CouponCode (신고 버튼 추가)
- *   - ComboCard (SynergyBlock으로 흡수)
+ * v1 → v2:
+ *  - 재사용 (토큰 swap): TOC / PriorityFlow / PayTier / ScreenshotStrip / Footer
+ *  - 재작성 (P3.A 단계 토큰만, P3.C에서 Firestore 어댑터화): EventCard / TipCard
+ *  - 폐기: DomainAlert (→ ui/alert), BuildTagBadge (→ ui/badge + lib/wiki/build-tag.ts)
+ *  - 신규 (P3.B/C 추가 예정): HeroMeta / StatCell / Note / TierStripe / ClassCard / JinryeongCard / EquipmentCard / SkillCard
  */
 export { TOC, type TOCProps, type TOCItem } from './toc';
-export { Alert as DomainAlert, type AlertProps, type AlertVariant } from './alert';
 export {
   PriorityFlow,
   type PriorityFlowProps,
@@ -29,4 +23,3 @@ export {
   type ScreenshotItem,
 } from './screenshot-strip';
 export { Footer, type FooterProps, type FooterSource } from './footer';
-export { BuildTagBadge, type BuildTagBadgeProps } from './build-tag-badge';
