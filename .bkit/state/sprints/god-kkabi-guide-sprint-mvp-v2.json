@@ -1,0 +1,70 @@
+{
+  "sprintId": "god-kkabi-guide-sprint-mvp-v2",
+  "name": "Sprint MVP v2 — 갓깨비 키우기 커뮤니티 위키 (Auth + 채팅 + UGC + 북마크)",
+  "version": "v2.0",
+  "trustLevel": 4,
+  "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
+  "phase": "p0",
+  "phaseHistory": [
+    {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "in_progress"}
+  ],
+  "startedAt": "2026-05-15T15:30:00.000Z",
+  "startedBy": "kay@agentkay.it",
+  "predecessor": "god-kkabi-guide-sprint-mvp (archived)",
+  "expectedDuration": "6-8 weeks (M3 졸업: 2026-07-01 ~ 2026-07-15)",
+  "graduationCriteria": {
+    "dau": 100,
+    "lighthouseMobile": 85,
+    "registeredUsers": 30,
+    "chatMessages": 200,
+    "avgBookmarks": 3,
+    "wikiEntities": 80,
+    "retention30d": 0.30
+  },
+  "qualityGatesActive": ["M0", "M1", "M2", "M3", "M4", "M5", "M7", "M8", "M9", "M10"],
+  "operatorDecisions": {
+    "G1_authProvider": "Google + Kakao (NextAuth.js v5 + Firebase Adapter + Kakao Custom Token bridge)",
+    "G2_chatBackend": "Hybrid — Realtime DB (chat_messages) + Firestore (나머지)",
+    "G3_imageModeration": "사용자 신고 3회 자동 숨김 + 운영자 유지/삭제/리셋 + korean-bad-words 마스킹 + PIPA 동의",
+    "G3_imagePolicy": "1MB / JPG/PNG/WebP / browser-image-compression 자동 압축",
+    "G4_domain": "TBD (P3.D 결정 게이트)",
+    "G5_blazePlan": "M3 시점 DAU 200+ 도달 시 재평가"
+  },
+  "chromeAutomation": {
+    "enabled": true,
+    "phases": ["P3.A 등록 폼", "P3.B wiki 시각 검증", "P3.D 채팅 동작 검증", "P4 Lighthouse", "P6 E2E 5 시나리오"]
+  },
+  "inputs": {
+    "sourceReference": "source/godkkabi-guide/index.html (2495 lines) + images/ (11 webp)",
+    "masterPlan": "docs/sprint/03-sprint-mvp-v2/MASTER-PLAN.md (318 lines)",
+    "scopeChange": "docs/sprint/03-sprint-mvp-v2/SCOPE-CHANGE.md (219 lines)",
+    "prd": "docs/sprint/03-sprint-mvp-v2/prd.md (451 lines)",
+    "design": "docs/sprint/03-sprint-mvp-v2/design.md (1284 lines)",
+    "plan": "docs/sprint/03-sprint-mvp-v2/plan.md (296 lines)",
+    "v1Archive": "archive/v1-static-guide 브랜치 + v1.0.0-mvp-archived 태그"
+  },
+  "carriedOverAssets": {
+    "infrastructure": ["package.json", "tsconfig", "eslint.config", "prettier", "postcss", "next.config", "vercel.json"],
+    "libs": ["lib/firebase/{client,firestore,analytics,index}.ts", "lib/utils.ts"],
+    "components": {
+      "ui_shadcn": 6,
+      "motion_magicui": 3,
+      "domain_reusable": ["TOC", "Alert", "EventCard", "PayTier", "TipCard", "PriorityFlow", "BuildTagBadge", "ScreenshotStrip", "Footer"],
+      "feature_reusable": ["ClassQuiz (확장)", "PageEngagementTracker", "ExternalLink"]
+    },
+    "types": ["ga4 9 events (8 더 확장 예정)"],
+    "config": "components.json + app/layout.tsx + app/sitemap.ts + app/robots.ts"
+  },
+  "deletedAssets": {
+    "pages_v1": 16,
+    "domain_components_v1": ["Hero", "ClassCard", "JinryeongCard", "TierList", "CouponCode", "ComboCard"],
+    "feature_components_v1": ["MetaBuildDwellTracker"],
+    "firestore_adapters_v1": ["lib/firestore/coupons.ts"]
+  },
+  "designSystemReference": {
+    "tokens": "ink-base #07070b + bronze #c89968 + jade #7eb6a8 + vermilion #c87870 + indigo #8b8bc5",
+    "fonts": "Pretendard Variable + JetBrains Mono",
+    "philosophy": "glassmorphism (rgba layers + backdrop-filter) + editorial 타이포 (letter-spacing tight) + 4-색 액센트 시스템",
+    "components": "shadcn/ui new-york 베이스 + bronze/jade/vermilion/indigo 토큰 오버라이드"
+  }
+}
