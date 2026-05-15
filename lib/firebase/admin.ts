@@ -29,6 +29,7 @@ import {
   type ServiceAccount,
 } from 'firebase-admin/app';
 import { getAuth, type Auth } from 'firebase-admin/auth';
+import { getDatabase, type Database } from 'firebase-admin/database';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 
 interface ParsedServiceAccount {
@@ -80,10 +81,16 @@ function ensureAdminApp(): App {
   }
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
   const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  const databaseURL =
+    process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL ??
+    (projectId
+      ? `https://${projectId}-default-rtdb.asia-southeast1.firebasedatabase.app`
+      : undefined);
   return initializeApp({
     credential: cert(parseServiceAccount()),
     ...(projectId ? { projectId } : {}),
     ...(storageBucket ? { storageBucket } : {}),
+    ...(databaseURL ? { databaseURL } : {}),
   });
 }
 
@@ -95,6 +102,15 @@ export function getAdminAuth(): Auth {
 /** Firebase Admin Firestore 인스턴스 (Server Action 트랜잭션). 환경변수 누락 시 throw. */
 export function getAdminFirestore(): Firestore {
   return getFirestore(ensureAdminApp());
+}
+
+/** Firebase Admin Realtime Database (채팅 메시지 hidden 마킹 등 Server 측 변경).
+ *
+ * databaseURL은 initializeApp의 옵션 또는 appConfig에 의해 결정.
+ * 환경변수 NEXT_PUBLIC_FIREBASE_DATABASE_URL 미설정 시 기본 URL 자동 생성.
+ */
+export function getAdminDatabase(): Database {
+  return getDatabase(ensureAdminApp());
 }
 
 /**

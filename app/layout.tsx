@@ -13,6 +13,7 @@ import { JetBrains_Mono } from 'next/font/google';
 import { AnalyticsBootstrap } from '@/components/analytics-bootstrap';
 import { PageEngagementTracker } from '@/components/feature/page-engagement-tracker';
 import { TopBar } from '@/components/feature/top-bar';
+import { ChatWidget } from '@/components/feature/chat-widget';
 import { auth, signOut } from '@/lib/auth/auth';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -119,6 +120,21 @@ export default async function RootLayout({
         },
       }
     : null;
+  const chatSession =
+    session?.user?.id && session.user.nickname && session.user.registered
+      ? {
+          uid: session.user.id,
+          nickname: session.user.nickname,
+          ...(session.user.classId
+            ? { classId: session.user.classId as 'warrior' | 'swordsman' | 'medium' }
+            : {}),
+          ...(session.user.role && session.user.role !== 'banned'
+            ? { role: session.user.role as 'admin' | 'user' }
+            : {}),
+          ...(session.user.serverId ? { serverId: session.user.serverId } : {}),
+          ...(session.user.munpa ? { munpa: session.user.munpa } : {}),
+        }
+      : null;
   async function signOutAction(): Promise<void> {
     'use server';
     await signOut({ redirectTo: '/' });
@@ -141,6 +157,7 @@ export default async function RootLayout({
           <PageEngagementTracker />
           <TopBar session={userMenuSession} signOutAction={signOutAction} />
           <div className="pt-14">{children}</div>
+          {chatSession ? <ChatWidget session={chatSession} /> : null}
           <Toaster />
         </TooltipProvider>
       </body>

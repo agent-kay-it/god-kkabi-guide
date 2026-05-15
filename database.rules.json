@@ -1,0 +1,28 @@
+{
+  "rules": {
+    "chat": {
+      "messages": {
+        "$channelId": {
+          ".indexOn": ["createdAt"],
+          ".read": "auth != null && auth.token.role != 'banned'",
+          "$messageId": {
+            ".write": "auth != null && auth.token.role != 'banned' && ((!data.exists() && newData.child('authorUid').val() == auth.uid && newData.child('content').isString() && newData.child('content').val().length <= 500 && newData.child('createdAt').val() == now) || (auth.token.role == 'admin'))",
+            ".validate": "newData.hasChildren(['channelId', 'authorUid', 'authorNickname', 'content', 'createdAt'])",
+            "channelId": { ".validate": "newData.val() == $channelId" },
+            "authorUid": { ".validate": "newData.val() == auth.uid || auth.token.role == 'admin'" },
+            "authorNickname": { ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 12" },
+            "authorClassId": { ".validate": "newData.val() == 'warrior' || newData.val() == 'swordsman' || newData.val() == 'medium'" },
+            "authorRole": { ".validate": "newData.val() == 'admin' || newData.val() == 'user'" },
+            "content": { ".validate": "newData.isString() && newData.val().length <= 500" },
+            "imageUrl": { ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^https:\\/\\/firebasestorage\\.googleapis\\.com\\//) )" },
+            "createdAt": { ".validate": "newData.isNumber()" },
+            "hidden": { ".validate": "newData.isBoolean()" },
+            "keptByOperator": { ".validate": "auth.token.role == 'admin' && newData.isBoolean()" },
+            "deletedByOperator": { ".validate": "auth.token.role == 'admin' && newData.isBoolean()" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
+    }
+  }
+}

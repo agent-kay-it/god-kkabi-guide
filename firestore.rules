@@ -1,0 +1,88 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ───────── helpers
+    function isAuth() { return request.auth != null; }
+    function isAdmin() { return isAuth() && request.auth.token.role == 'admin'; }
+    function isBanned() { return isAuth() && request.auth.token.role == 'banned'; }
+
+    // ───────── users — 본인 + admin만
+    match /users/{userId} {
+      allow read: if isAdmin() || (isAuth() && request.auth.uid == userId);
+      allow create: if isAuth()
+        && request.auth.uid == userId
+        && request.resource.data.role == 'user'
+        && request.resource.data.banned == false
+        && request.resource.data.consent.age14plus == true;
+      allow update: if isAdmin();
+      allow update: if isAuth()
+        && request.auth.uid == userId
+        && request.resource.data.gameUid == resource.data.gameUid
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.banned == resource.data.banned;
+      allow delete: if false;
+    }
+
+    // ───────── servers / munpas / chat_channels — 모두 read true
+    match /servers/{serverId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /munpas/{munpaId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /chat_channels/{channelId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // ───────── chat_reports — 본인 create / admin read+update / delete 금지
+    match /chat_reports/{reportId} {
+      allow read: if isAdmin();
+      allow create: if isAuth()
+        && !isBanned()
+        && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.reporterUid != request.resource.data.reportedUid;
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+    match /chat_report_counts/{messageId} {
+      allow read: if isAdmin();
+      allow write: if false; // Server Action (Admin SDK)만 변경
+    }
+
+    // ───────── bookmarks/{userId}/items/{bookmarkId}
+    match /bookmarks/{userId}/items/{bookmarkId} {
+      allow read: if isAuth() && request.auth.uid == userId;
+      allow write: if false; // Server Action (Admin SDK)만 변경
+    }
+
+    // ───────── wiki_* — public read / admin write
+    match /wiki_classes/{id}        { allow read: if true; allow write: if isAdmin(); }
+    match /wiki_jinryeong/{id}      { allow read: if true; allow write: if isAdmin(); }
+    match /wiki_skills/{id}         { allow read: if true; allow write: if isAdmin(); }
+    match /wiki_equipment/{id}      { allow read: if true; allow write: if isAdmin(); }
+    match /wiki_contents/{id}       { allow read: if true; allow write: if isAdmin(); }
+
+    // ───────── tips
+    match /tips/{tipId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ───────── moderation_logs — admin만
+    match /moderation_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if false; // Server Action만 작성 (Admin SDK 우회)
+      allow update, delete: if false;
+    }
+
+    // 기본 거부
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

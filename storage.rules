@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // 채팅 이미지 — 인증 사용자만 본인 폴더에 업로드, 1MB 제한, MIME 화이트리스트
+    match /chat/{channelId}/{userId}/{filename} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.auth.token.role != 'banned'
+        && request.resource.size <= 1 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if request.auth != null
+        && (request.auth.uid == userId || request.auth.token.role == 'admin');
+    }
+
+    // 기본 거부
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
