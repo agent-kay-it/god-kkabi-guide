@@ -13,6 +13,7 @@ import {
   HeroMeta,
   HeroMetaBadge,
 } from '@/components/domain';
+import { BookmarkButton } from '@/components/feature/bookmark-button';
 
 export const metadata: Metadata = {
   title: '장비 가이드 — 제련 시스템 + 강화 + 우선순위',
@@ -122,7 +123,19 @@ function EquipmentSection({
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {equipment.map((e) => (
-          <EquipmentCard key={e.id} data={e} canBookmark={canBookmark} />
+          <EquipmentCard
+            key={e.id}
+            data={e}
+            bookmarkSlot={
+              <BookmarkButton
+                targetType="equipment"
+                targetId={e.id}
+                title={e.name}
+                href={`/equipment#${e.id}`}
+                canBookmark={canBookmark}
+              />
+            }
+          />
         ))}
       </div>
     </section>

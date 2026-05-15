@@ -12,8 +12,28 @@ import {
   HeroMeta,
   HeroMetaBadge,
 } from '@/components/domain';
+import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CONTENT_KIND_LABEL } from '@/types/wiki';
+import type { WikiContentDoc } from '@/types/wiki';
+
+function ContentBookmarkSlot({
+  data,
+  canBookmark,
+}: {
+  data: Omit<WikiContentDoc, 'updatedAt'>;
+  canBookmark: boolean;
+}): React.JSX.Element {
+  return (
+    <BookmarkButton
+      targetType="content"
+      targetId={data.id}
+      title={data.name}
+      href={`/content#${data.id}`}
+      canBookmark={canBookmark}
+    />
+  );
+}
 
 export const metadata: Metadata = {
   title: '콘텐츠 가이드 — 던전 · PvP · 이벤트 · 메커니즘',
@@ -69,7 +89,7 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-4 md:grid-cols-2">
             {byKind.dungeon.map((c) => (
-              <ContentCard key={c.id} data={c} canBookmark={canBookmark} />
+              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
             ))}
           </div>
         </TabsContent>
@@ -81,7 +101,7 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-4">
             {byKind.pvp.map((c) => (
-              <ContentCard key={c.id} data={c} canBookmark={canBookmark} />
+              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
             ))}
           </div>
         </TabsContent>
@@ -92,7 +112,7 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-3 md:grid-cols-2">
             {byKind.event.map((c) => (
-              <ContentCard key={c.id} data={c} canBookmark={canBookmark} />
+              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
             ))}
           </div>
         </TabsContent>
@@ -103,7 +123,7 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-3 md:grid-cols-2">
             {byKind.mechanic.map((c) => (
-              <ContentCard key={c.id} data={c} canBookmark={canBookmark} />
+              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
             ))}
           </div>
         </TabsContent>
@@ -114,7 +134,7 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-3 md:grid-cols-2">
             {byKind.meta.map((c) => (
-              <ContentCard key={c.id} data={c} canBookmark={canBookmark} />
+              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
             ))}
           </div>
         </TabsContent>

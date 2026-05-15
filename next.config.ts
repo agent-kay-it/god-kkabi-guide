@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: 'is1-ssl.mzstatic.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        pathname: '/**',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
@@ -27,7 +32,7 @@ const nextConfig: NextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
-              "img-src 'self' https://play-lh.googleusercontent.com https://is1-ssl.mzstatic.com data: blob:",
+              "img-src 'self' https://play-lh.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com data: blob:",
               "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",

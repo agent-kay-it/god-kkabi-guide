@@ -9,7 +9,6 @@ import { Check, X } from 'lucide-react';
 
 import { GlassCard } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
-import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { StatCell } from './stat-cell';
 import { CLASS_ACCENT, type WikiClassDoc } from '@/types/wiki';
 import { cn } from '@/lib/utils';
@@ -20,18 +19,18 @@ export interface ClassCardProps {
   data: WikiClassData;
   /** 추가 통계 셀 (자동 사냥, 광역기 등) */
   stats?: ReadonlyArray<{ label: string; value: string; rate?: string }>;
-  /** 북마크 가능 여부 (Server에서 결정 후 전달) */
-  canBookmark?: boolean;
-  /** 본 카드가 현재 사용자에게 북마크되어 있는지 */
-  initialBookmarked?: boolean;
+  /**
+   * 북마크 슬롯 — feature 레이어 컴포넌트(BookmarkButton 등)를 부모에서 주입.
+   * Clean Architecture 일방향(ui→motion→domain→feature) 준수를 위해 직접 import 금지.
+   */
+  bookmarkSlot?: React.ReactNode;
   className?: string;
 }
 
 export function ClassCard({
   data,
   stats,
-  canBookmark = false,
-  initialBookmarked = false,
+  bookmarkSlot,
   className,
 }: ClassCardProps): React.JSX.Element {
   const accent = CLASS_ACCENT[data.id];
@@ -63,15 +62,7 @@ export function ClassCard({
             <Badge variant={`tier-${data.tier}` as 'tier-0' | 'tier-1' | 'tier-2' | 'tier-3'}>
               T{data.tier}
             </Badge>
-            <BookmarkButton
-              targetType="class"
-              targetId={data.id}
-              title={`${data.name} (${data.subName})`}
-              href={`/class#${data.id}`}
-              emoji={data.emoji}
-              canBookmark={canBookmark}
-              initialBookmarked={initialBookmarked}
-            />
+            {bookmarkSlot}
           </div>
         </div>
       </div>

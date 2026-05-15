@@ -7,6 +7,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Flag, ShieldAlert } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -105,13 +106,17 @@ export function ChatMessage({
           )}
 
           {data.imageUrl && !isHidden && !isDeleted ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={data.imageUrl}
-              alt="첨부 이미지"
-              className="mt-2 max-h-48 rounded-lg border border-ink-line"
-              loading="lazy"
-            />
+            <div className="relative mt-2 inline-block max-h-48 overflow-hidden rounded-lg border border-ink-line">
+              <Image
+                src={data.imageUrl}
+                alt="첨부 이미지"
+                width={320}
+                height={192}
+                sizes="(max-width: 640px) 70vw, 320px"
+                className="h-auto max-h-48 w-auto object-contain"
+                loading="lazy"
+              />
+            </div>
           ) : null}
         </div>
 

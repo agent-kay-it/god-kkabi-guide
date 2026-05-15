@@ -61,16 +61,24 @@ export async function addBookmark(input: BookmarkInput): Promise<BookmarkActionR
   try {
     const db = getAdminFirestore();
     const itemsRef = db.collection('bookmarks').doc(uid).collection('items');
+    const userRef = db.collection('users').doc(uid);
     const docId = bookmarkId(input.targetType, input.targetId);
 
     await db.runTransaction(async (tx) => {
-      const countSnap = await tx.get(
-        itemsRef.where('userId', '==', uid).select(),
-      );
-      if (countSnap.size >= MAX_BOOKMARKS_PER_USER) {
+      // ── READS (트랜잭션 규칙: 모든 read는 write 이전)
+      // users.bookmarkCount denormalize 카운터 사용 (M4: 200건+ select() 비용 회피).
+      const [userSnap, existingSnap] = await Promise.all([
+        tx.get(userRef),
+        tx.get(itemsRef.doc(docId)),
+      ]);
+      const currentCount =
+        (userSnap.data()?.bookmarkCount as number | undefined) ?? 0;
+      const isNew = !existingSnap.exists;
+      if (isNew && currentCount >= MAX_BOOKMARKS_PER_USER) {
         throw new Error('LIMIT_EXCEEDED');
       }
 
+      // ── WRITES
       tx.set(
         itemsRef.doc(docId),
         {
@@ -85,6 +93,17 @@ export async function addBookmark(input: BookmarkInput): Promise<BookmarkActionR
         },
         { merge: true },
       );
+
+      if (isNew) {
+        tx.set(
+          userRef,
+          {
+            bookmarkCount: FieldValue.increment(1),
+            updatedAt: FieldValue.serverTimestamp(),
+          },
+          { merge: true },
+        );
+      }
     });
 
     revalidatePath('/me/bookmarks');
@@ -112,7 +131,27 @@ export async function removeBookmark(
   try {
     const db = getAdminFirestore();
     const docId = bookmarkId(targetType, targetId);
-    await db.collection('bookmarks').doc(uid).collection('items').doc(docId).delete();
+    const bookmarkRef = db
+      .collection('bookmarks')
+      .doc(uid)
+      .collection('items')
+      .doc(docId);
+    const userRef = db.collection('users').doc(uid);
+
+    await db.runTransaction(async (tx) => {
+      const existing = await tx.get(bookmarkRef);
+      if (!existing.exists) return; // 이미 삭제된 경우 멱등 처리
+      tx.delete(bookmarkRef);
+      tx.set(
+        userRef,
+        {
+          bookmarkCount: FieldValue.increment(-1),
+          updatedAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
+    });
+
     revalidatePath('/me/bookmarks');
     return { ok: true };
   } catch (err) {

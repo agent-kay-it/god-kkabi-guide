@@ -5,6 +5,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ShieldCheck, Trash2, UserX, UserCheck, RefreshCw, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
@@ -139,12 +140,17 @@ export function AdminModerationTable({
                     {r.messageSnapshot}
                   </p>
                   {r.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={r.imageUrl}
-                      alt="신고된 이미지"
-                      className="mt-2 max-h-32 rounded-md border border-ink-line"
-                    />
+                    <div className="relative mt-2 inline-block max-h-32 overflow-hidden rounded-md border border-ink-line">
+                      <Image
+                        src={r.imageUrl}
+                        alt="신고된 이미지"
+                        width={240}
+                        height={128}
+                        sizes="240px"
+                        className="h-auto max-h-32 w-auto object-contain"
+                        loading="lazy"
+                      />
+                    </div>
                   ) : null}
                   {r.extraText ? (
                     <p className="mt-2 rounded-md border border-ink-line bg-ink-elev/55 p-2 text-xs italic text-text-soft">

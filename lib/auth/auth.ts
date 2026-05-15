@@ -37,9 +37,11 @@ function createAdapter(): Adapter | undefined {
   });
 }
 
+const firestoreAdapter = createAdapter();
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
-  ...(createAdapter() ? { adapter: createAdapter()! } : {}),
+  ...(firestoreAdapter ? { adapter: firestoreAdapter } : {}),
   callbacks: {
     ...authConfig.callbacks,
     /**

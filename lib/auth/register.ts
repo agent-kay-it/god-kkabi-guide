@@ -140,10 +140,7 @@ export async function registerUser(
           email: session.user?.email ?? null,
           displayName: session.user?.name ?? null,
           photoURL: session.user?.image ?? null,
-          authProvider:
-            (session as { accessToken?: string }).accessToken
-              ? 'kakao'
-              : 'google',
+          authProvider: session.accessToken ? 'kakao' : 'google',
           serverId: input.serverId,
           gameUid: input.gameUid,
           munpa: input.munpa,
@@ -232,8 +229,8 @@ export async function registerUser(
       }
     });
 
-    // 7) Firebase Auth custom claims
-    await setUserClaims(uid, { role: 'user' });
+    // 7) Firebase Auth custom claims (RTDB rules에서 registered=true claim 평가용)
+    await setUserClaims(uid, { role: 'user', registered: true });
 
     return { ok: true };
   } catch (err) {

@@ -136,7 +136,12 @@ export async function createFirebaseCustomToken(
  */
 export async function setUserClaims(
   uid: string,
-  claims: { readonly role: 'admin' | 'user' | 'banned'; readonly bannedReason?: string },
+  claims: {
+    readonly role: 'admin' | 'user' | 'banned';
+    readonly bannedReason?: string;
+    /** RTDB rules에서 auth.token.registered 평가용 */
+    readonly registered?: boolean;
+  },
 ): Promise<void> {
   const auth = getAdminAuth();
   await auth.setCustomUserClaims(uid, claims);

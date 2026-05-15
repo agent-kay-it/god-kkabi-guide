@@ -30,6 +30,9 @@ import {
 import { getRealtimeDB } from '@/lib/firebase/realtime-db';
 import type { ChatMessage } from '@/types/chat';
 
+/** 빈 채널일 때 isLoading=false로 강제 전환하는 fallback 지연 (ms) */
+const EMPTY_CHANNEL_FALLBACK_MS = 5_000;
+
 interface UseChannelOptions {
   /** 최대 메시지 수 (기본 50) */
   readonly limit?: number;
@@ -102,8 +105,11 @@ export function useChannel(
     onChildChanged(q, handleChanged);
     onChildRemoved(q, handleRemoved);
 
-    // 빈 채널 처리 (5초 후 isLoading=false)
-    const fallback = window.setTimeout(() => setIsLoading(false), 5_000);
+    // 빈 채널 처리 (EMPTY_CHANNEL_FALLBACK_MS 후 isLoading=false)
+    const fallback = window.setTimeout(
+      () => setIsLoading(false),
+      EMPTY_CHANNEL_FALLBACK_MS,
+    );
 
     return () => {
       window.clearTimeout(fallback);

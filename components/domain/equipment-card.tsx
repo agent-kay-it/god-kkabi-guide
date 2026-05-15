@@ -6,7 +6,6 @@ import { AlertTriangle, Check } from 'lucide-react';
 
 import { GlassCard } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
-import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { EQUIPMENT_TOPIC_LABEL, type WikiEquipmentDoc } from '@/types/wiki';
 import { cn } from '@/lib/utils';
 
@@ -38,15 +37,14 @@ const TOPIC_STRIPE: Record<
 
 export interface EquipmentCardProps {
   data: WikiEquipmentData;
-  canBookmark?: boolean;
-  initialBookmarked?: boolean;
+  /** feature 레이어 컴포넌트(BookmarkButton 등) 슬롯 */
+  bookmarkSlot?: React.ReactNode;
   className?: string;
 }
 
 export function EquipmentCard({
   data,
-  canBookmark = false,
-  initialBookmarked = false,
+  bookmarkSlot,
   className,
 }: EquipmentCardProps): React.JSX.Element {
   const variant = TOPIC_VARIANT[data.topic];
@@ -62,14 +60,7 @@ export function EquipmentCard({
           <h3 className="text-base font-bold text-text">{data.name}</h3>
           <p className="mt-1 text-sm text-text-soft">{data.summary}</p>
         </div>
-        <BookmarkButton
-          targetType="equipment"
-          targetId={data.id}
-          title={data.name}
-          href={`/equipment#${data.id}`}
-          canBookmark={canBookmark}
-          initialBookmarked={initialBookmarked}
-        />
+        {bookmarkSlot}
       </header>
 
       {data.description ? (

@@ -44,5 +44,17 @@ declare module 'next-auth/jwt' {
     nickname?: string;
     classId?: string;
     provider?: string;
+    /**
+     * Kakao OAuth access_token — Firebase Custom Token 교환에 사용.
+     * /api/auth/kakao-exchange 라우트가 kapi.kakao.com 호출 시 활용.
+     */
+    accessToken?: string;
+  }
+}
+
+declare module 'next-auth' {
+  interface Session {
+    /** Kakao 로그인 시 accessToken 노출 (Custom Token bridge 용) */
+    accessToken?: string;
   }
 }

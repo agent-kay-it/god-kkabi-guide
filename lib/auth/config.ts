@@ -148,7 +148,7 @@ export const authConfig: NextAuthConfig = {
         // Kakao Custom Token bridge용 access_token 영속화
         // (auth-flow.md §5 — /api/auth/kakao-exchange에서 사용)
         if (account.provider === 'kakao' && account.access_token) {
-          (token as JWT & { accessToken?: string }).accessToken = account.access_token;
+          token.accessToken = account.access_token;
         }
       }
       return token;
@@ -160,11 +160,11 @@ export const authConfig: NextAuthConfig = {
      */
     session(params) {
       const session = params.session as Session;
-      const token = params.token as (JWT & { accessToken?: string }) | undefined;
+      const token = params.token as JWT | undefined;
       if (session.user && token) {
         // Kakao access_token을 session에 노출 (서버 endpoint /api/auth/kakao-exchange에서만 사용)
         if (token.accessToken) {
-          (session as Session & { accessToken?: string }).accessToken = token.accessToken;
+          session.accessToken = token.accessToken;
         }
         session.user.id = token.sub ?? '';
         if (token.role !== undefined) session.user.role = token.role;

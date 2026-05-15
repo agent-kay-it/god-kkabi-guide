@@ -6,7 +6,7 @@
           ".indexOn": ["createdAt"],
           ".read": "auth != null && auth.token.role != 'banned'",
           "$messageId": {
-            ".write": "auth != null && auth.token.role != 'banned' && ((!data.exists() && newData.child('authorUid').val() == auth.uid && newData.child('content').isString() && newData.child('content').val().length <= 500 && newData.child('createdAt').val() == now) || (auth.token.role == 'admin'))",
+            ".write": "auth != null && auth.token.role != 'banned' && ((!data.exists() && auth.token.registered == true && newData.child('authorUid').val() == auth.uid && newData.child('content').isString() && newData.child('content').val().length <= 500 && newData.child('createdAt').val() == now) || (auth.token.role == 'admin'))",
             ".validate": "newData.hasChildren(['channelId', 'authorUid', 'authorNickname', 'content', 'createdAt'])",
             "channelId": { ".validate": "newData.val() == $channelId" },
             "authorUid": { ".validate": "newData.val() == auth.uid || auth.token.role == 'admin'" },

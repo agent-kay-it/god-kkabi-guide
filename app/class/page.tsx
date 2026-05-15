@@ -11,6 +11,7 @@ import { ArrowRight } from 'lucide-react';
 import { listWikiClasses } from '@/lib/wiki/classes-adapter';
 import { auth } from '@/lib/auth/auth';
 import { ClassCard, Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
+import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { Button } from '@/components/ui/button';
 import type { WikiClassDoc } from '@/types/wiki';
 
@@ -73,7 +74,16 @@ export default async function ClassPage(): Promise<React.JSX.Element> {
             key={c.id}
             data={c}
             stats={CLASS_STATS[c.id]}
-            canBookmark={canBookmark}
+            bookmarkSlot={
+              <BookmarkButton
+                targetType="class"
+                targetId={c.id}
+                title={`${c.name} (${c.subName})`}
+                href={`/class#${c.id}`}
+                emoji={c.emoji}
+                canBookmark={canBookmark}
+              />
+            }
           />
         ))}
       </div>

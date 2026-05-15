@@ -18,7 +18,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, type UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
@@ -310,8 +310,7 @@ export function RegisterForm(): React.JSX.Element {
 }
 
 interface ConsentCheckboxProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: ReturnType<typeof useForm<RegisterFormInput>> | any;
+  form: UseFormReturn<RegisterFormInput>;
   name: keyof Pick<
     RegisterFormInput,
     'age14plus' | 'chatPublic' | 'unofficial' | 'operator24h' | 'analytics'

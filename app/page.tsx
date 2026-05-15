@@ -48,7 +48,8 @@ export default async function HomePage(): Promise<React.JSX.Element> {
             fill
             sizes="100vw"
             className="object-cover opacity-30"
-            priority
+            loading="lazy"
+            quality={70}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-ink-base/30 via-ink-base/60 to-ink-base" />
         </div>

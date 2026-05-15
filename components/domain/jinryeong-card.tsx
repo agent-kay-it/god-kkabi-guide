@@ -8,7 +8,6 @@ import { Sparkles } from 'lucide-react';
 
 import { GlassCard } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
-import { BookmarkButton } from '@/components/feature/bookmark-button';
 import {
   FACTION_LABEL,
   ROLE_LABEL,
@@ -35,16 +34,15 @@ export interface JinryeongCardProps {
   data: WikiJinryeongData;
   /** 컴팩트 모드 — 표 행 대체용 (효과 짧게 / strengths 숨김) */
   compact?: boolean;
-  canBookmark?: boolean;
-  initialBookmarked?: boolean;
+  /** feature 레이어 컴포넌트(BookmarkButton 등) 슬롯 */
+  bookmarkSlot?: React.ReactNode;
   className?: string;
 }
 
 export function JinryeongCard({
   data,
   compact = false,
-  canBookmark = false,
-  initialBookmarked = false,
+  bookmarkSlot,
   className,
 }: JinryeongCardProps): React.JSX.Element {
   const accent = TIER_ACCENT[data.tier];
@@ -73,14 +71,7 @@ export function JinryeongCard({
           <Badge variant={`tier-${data.tier}` as 'tier-0' | 'tier-1' | 'tier-2'}>
             T{data.tier}
           </Badge>
-          <BookmarkButton
-            targetType="jinryeong"
-            targetId={data.id}
-            title={data.name}
-            href={`/jinryeong#${data.id}`}
-            canBookmark={canBookmark}
-            initialBookmarked={initialBookmarked}
-          />
+          {bookmarkSlot}
         </div>
       </header>
 

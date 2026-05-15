@@ -13,7 +13,7 @@ import { JetBrains_Mono } from 'next/font/google';
 import { AnalyticsBootstrap } from '@/components/analytics-bootstrap';
 import { PageEngagementTracker } from '@/components/feature/page-engagement-tracker';
 import { TopBar } from '@/components/feature/top-bar';
-import { ChatWidget } from '@/components/feature/chat-widget';
+import { ChatWidgetLoader } from '@/components/feature/chat-widget-loader';
 import { auth, signOut } from '@/lib/auth/auth';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -157,7 +157,7 @@ export default async function RootLayout({
           <PageEngagementTracker />
           <TopBar session={userMenuSession} signOutAction={signOutAction} />
           <div className="pt-14">{children}</div>
-          {chatSession ? <ChatWidget session={chatSession} /> : null}
+          {chatSession ? <ChatWidgetLoader session={chatSession} /> : null}
           <Toaster />
         </TooltipProvider>
       </body>

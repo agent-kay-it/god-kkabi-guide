@@ -6,7 +6,6 @@ import { CheckCircle2 } from 'lucide-react';
 
 import { GlassCard } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
-import { BookmarkButton } from '@/components/feature/bookmark-button';
 import {
   CONTENT_KIND_LABEL,
   SCHEDULE_LABEL,
@@ -30,15 +29,14 @@ const KIND_STRIPE: Record<
 
 export interface ContentCardProps {
   data: WikiContentData;
-  canBookmark?: boolean;
-  initialBookmarked?: boolean;
+  /** feature 레이어 컴포넌트(BookmarkButton 등) 슬롯 */
+  bookmarkSlot?: React.ReactNode;
   className?: string;
 }
 
 export function ContentCard({
   data,
-  canBookmark = false,
-  initialBookmarked = false,
+  bookmarkSlot,
   className,
 }: ContentCardProps): React.JSX.Element {
   const accent = KIND_STRIPE[data.kind];
@@ -64,14 +62,7 @@ export function ContentCard({
           <h3 className="mt-1.5 text-base font-bold text-text">{data.name}</h3>
           <p className="mt-1 text-sm text-text-soft">{data.summary}</p>
         </div>
-        <BookmarkButton
-          targetType="content"
-          targetId={data.id}
-          title={data.name}
-          href={`/content#${data.id}`}
-          canBookmark={canBookmark}
-          initialBookmarked={initialBookmarked}
-        />
+        {bookmarkSlot}
       </header>
 
       {data.description ? (

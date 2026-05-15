@@ -12,6 +12,7 @@ import {
   HeroMeta,
   HeroMetaBadge,
 } from '@/components/domain';
+import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -172,7 +173,19 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {allJinryeong.map((j) => (
-            <JinryeongCard key={j.id} data={j} canBookmark={canBookmark} />
+            <JinryeongCard
+              key={j.id}
+              data={j}
+              bookmarkSlot={
+                <BookmarkButton
+                  targetType="jinryeong"
+                  targetId={j.id}
+                  title={j.name}
+                  href={`/jinryeong#${j.id}`}
+                  canBookmark={canBookmark}
+                />
+              }
+            />
           ))}
         </div>
       </section>
