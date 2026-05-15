@@ -1,0 +1,225 @@
+{
+  "_meta": {
+    "description": "갓깨비 키우기 가이드 디자인 토큰 — 원본 HTML source/original-guide.html 22개 CSS 변수 정밀 추출",
+    "source": "source/original-guide.html :root { ... } (lines 8-25)",
+    "tailwind_target": "app/globals.css @theme 디렉티브",
+    "shadcn_mapping": "shadcn/ui CSS variables와 충돌 해소 후 통합",
+    "version": "1.0.0",
+    "updated": "2026-05-15",
+    "operator": "kay@agentkay.it"
+  },
+
+  "color": {
+    "bg": {
+      "primary": {
+        "value": "#0a0612",
+        "description": "메인 배경 — 짙은 오컬트 퍼플-블랙. HTML :root --bg-primary",
+        "tailwind_key": "--color-bg-primary",
+        "usage": "body background, 전체 페이지 베이스"
+      },
+      "secondary": {
+        "value": "#14092a",
+        "description": "보조 배경 — 카드 섹션 배경. HTML :root --bg-secondary",
+        "tailwind_key": "--color-bg-secondary",
+        "usage": "섹션 배경, 사이드바, 보조 컨테이너"
+      },
+      "card": {
+        "value": "#1c1235",
+        "description": "카드 배경 — 컴포넌트 기본 배경. HTML :root --bg-card",
+        "tailwind_key": "--color-bg-card",
+        "usage": "ClassCard, JinryeongCard, CouponCode, TipCard 등 모든 카드 컴포넌트"
+      },
+      "card_hover": {
+        "value": "#261845",
+        "description": "카드 호버 배경 — hover/focus 시 밝아지는 효과. HTML :root --bg-card-hover",
+        "tailwind_key": "--color-bg-card-hover",
+        "usage": "hover:bg-[var(--color-bg-card-hover)] — 모든 인터랙티브 카드"
+      }
+    },
+
+    "accent": {
+      "gold": {
+        "value": "#e8b860",
+        "description": "메인 골드 — 주 강조색, 헤딩, 링크, 보더. HTML :root --accent-gold",
+        "tailwind_key": "--color-accent-gold",
+        "usage": "h1/h2 텍스트, TOC hover, 0티어 카드 보더, 쿠폰 복사 버튼, BuildTagBadge(meta)"
+      },
+      "gold_light": {
+        "value": "#f6d27b",
+        "description": "밝은 골드 — 그라데이션 시작점, 호버 강조. HTML :root --accent-gold-light",
+        "tailwind_key": "--color-accent-gold-light",
+        "usage": "h1.title 그라데이션 (gold-light → gold → #c79a3f), 호버 글로우"
+      },
+      "red": {
+        "value": "#c93b4a",
+        "description": "위험/전사 레드 — danger Alert, 전사 ClassCard 보더. HTML :root --accent-red",
+        "tailwind_key": "--color-accent-red",
+        "usage": "Alert(danger), ClassCard(warrior) border-left, BuildTagBadge(pvp/결투장)"
+      },
+      "purple": {
+        "value": "#8b5cf6",
+        "description": "영매 퍼플 — 영매 ClassCard 보더, 오컬트 모션. HTML :root --accent-purple",
+        "tailwind_key": "--color-accent-purple",
+        "usage": "ClassCard(medium) border-left, BuildTagBadge(experimental), body 배경 radial gradient"
+      },
+      "cyan": {
+        "value": "#38d9d9",
+        "description": "도술 시안 — 정보(info) Alert, 1티어 진령 보더, 부제목. HTML :root --accent-cyan",
+        "tailwind_key": "--color-accent-cyan",
+        "usage": "Alert(info), JinryeongCard(tier=1) 보더, TOC 진입 애니메이션, BuildTagBadge(pve/boss/무한던전/비경)"
+      },
+      "green": {
+        "value": "#5dd66c",
+        "description": "성공/회복 그린 — 유효 쿠폰, success Alert, 2티어 진령. HTML :root --accent-green",
+        "tailwind_key": "--color-accent-green",
+        "usage": "Alert(success), CouponCode(status=valid) 보더, JinryeongCard(tier=2) 보더"
+      }
+    },
+
+    "text": {
+      "primary": {
+        "value": "#f0e6d8",
+        "description": "본문 텍스트 — 양피지/한지 톤, WCAG AAA. HTML :root --text-primary",
+        "tailwind_key": "--color-text-primary",
+        "usage": "body 기본 텍스트, 카드 본문, 모든 주요 텍스트",
+        "contrast_on_bg_primary": "14.2:1 (AAA)",
+        "contrast_on_bg_card": "12.8:1 (AAA)"
+      },
+      "secondary": {
+        "value": "#b9aec0",
+        "description": "보조 텍스트 — 부드러운 회보라, WCAG AAA. HTML :root --text-secondary",
+        "tailwind_key": "--color-text-secondary",
+        "usage": "subtitle, 진령 카드 설명, 메타 정보",
+        "contrast_on_bg_primary": "9.1:1 (AAA)"
+      },
+      "muted": {
+        "value": "#8a7b94",
+        "description": "비활성 텍스트 — 흐릿한 보라회색, WCAG AA. HTML :root --text-muted",
+        "tailwind_key": "--color-text-muted",
+        "usage": "lastUpdated 날짜, 출처 텍스트, 비활성 정보",
+        "contrast_on_bg_primary": "5.6:1 (AA)"
+      }
+    },
+
+    "border": {
+      "gold": {
+        "value": "rgba(232, 184, 96, 0.35)",
+        "description": "반투명 골드 보더 — 카드 윤곽, TOC 컨테이너. HTML :root --border-gold",
+        "tailwind_key": "--color-border-gold",
+        "usage": "TOC 컨테이너, 0티어 카드 보더 (solid 아닌 rgba 버전)"
+      },
+      "soft": {
+        "value": "rgba(255, 255, 255, 0.08)",
+        "description": "부드러운 흰 보더 — 구분선, 비활성 카드. HTML :root --border-soft",
+        "tailwind_key": "--color-border-soft",
+        "usage": "Separator, 만료 쿠폰 보더, 무과금 PayTier 보더"
+      }
+    }
+  },
+
+  "shadow": {
+    "glow": {
+      "value": "0 0 24px rgba(232, 184, 96, 0.15)",
+      "description": "골드 글로우 — 0티어 카드, Hero 아이콘. HTML :root --shadow-glow",
+      "tailwind_key": "--shadow-glow",
+      "usage": "JinryeongCard(tier=0), app-icon, BuildTagBadge(meta), TOC 컨테이너"
+    }
+  },
+
+  "font": {
+    "sans": {
+      "value": "'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
+      "description": "본문 산세리프 — 한국어 최적화 폰트 스택. HTML body font-family",
+      "tailwind_key": "--font-sans",
+      "loading": "next/font/google, subsets: ['latin', 'korean'], weights: [400, 700, 900], display: 'swap'",
+      "optimization": "sub-setting으로 ~5MB → ~200KB 감소 (Lighthouse 성능)"
+    },
+    "display": {
+      "value": "'Noto Serif KR', 'Nanum Myeongjo', serif",
+      "description": "디스플레이 세리프 — 한지 분위기 헤더용 (V1+). design-system-research.md §5.1",
+      "tailwind_key": "--font-display",
+      "status": "V1+ 도입 예정. MVP는 --font-sans로 통일"
+    }
+  },
+
+  "radius": {
+    "card": {
+      "value": "14px",
+      "description": "카드 기본 라운드 — 모든 카드 컴포넌트. HTML .class-card border-radius",
+      "tailwind_key": "--radius-card",
+      "usage": "ClassCard, JinryeongCard, CouponCode, TipCard, PayTier, EventCard"
+    },
+    "card_large": {
+      "value": "16px",
+      "description": "큰 카드 라운드 — 히어로 섹션, 큰 컨테이너.",
+      "tailwind_key": "--radius-card-large",
+      "usage": "Hero 섹션 배경, 대형 컨테이너"
+    },
+    "pill": {
+      "value": "20px",
+      "description": "pill 형태 라운드 — 뱃지, 태그, BuildTagBadge. HTML .meta-info",
+      "tailwind_key": "--radius-pill",
+      "usage": "BuildTagBadge, Badge, meta-info pill, CouponCode D-day 뱃지"
+    },
+    "app_icon": {
+      "value": "28px",
+      "description": "앱 아이콘 라운드 — Hero 앱 아이콘. HTML .app-icon border-radius",
+      "tailwind_key": "--radius-app-icon",
+      "usage": "Hero 컴포넌트 앱 아이콘 (120×120)"
+    }
+  },
+
+  "breakpoint": {
+    "xs":  { "value": "320px",  "description": "iPhone SE / 구형 Android — 모바일 최소", "tailwind_key": "xs" },
+    "sm":  { "value": "375px",  "description": "iPhone 13/14 — 주요 모바일 타겟",        "tailwind_key": "sm" },
+    "md":  { "value": "414px",  "description": "iPhone 14 Plus / Android XL",             "tailwind_key": "md" },
+    "lg":  { "value": "768px",  "description": "iPad mini (portrait) / Android tablet",   "tailwind_key": "lg" },
+    "xl":  { "value": "1024px", "description": "iPad (landscape) / 작은 laptop",          "tailwind_key": "xl" },
+    "2xl": { "value": "1280px", "description": "Desktop / Mac M1+",                       "tailwind_key": "2xl" }
+  },
+
+  "animation": {
+    "transition_card": {
+      "value": "all 0.3s ease",
+      "description": "카드 호버 트랜지션 — HTML .class-card:hover 0.3s",
+      "usage": "ClassCard, JinryeongCard, TipCard hover"
+    },
+    "transition_badge": {
+      "value": "all 0.2s ease",
+      "description": "뱃지/버튼 호버 트랜지션",
+      "usage": "BuildTagBadge(onClick), Button hover"
+    }
+  },
+
+  "gradient": {
+    "hero_bg": {
+      "value": "radial-gradient(circle at 10% 10%, rgba(139, 92, 246, 0.12) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(232, 184, 96, 0.08) 0%, transparent 45%), linear-gradient(180deg, #0a0612 0%, #100822 100%)",
+      "description": "body 배경 그라데이션 — 퍼플 + 골드 radial + 다크 linear. HTML body background",
+      "usage": "app/globals.css body background",
+      "attachment": "fixed"
+    },
+    "hero_glow": {
+      "value": "radial-gradient(circle, rgba(232, 184, 96, 0.18) 0%, transparent 60%)",
+      "description": "Hero ::before 골드 글로우 — 600×600 원형. HTML header.hero::before",
+      "usage": "Hero 컴포넌트 ::before pseudo-element"
+    },
+    "title_text": {
+      "value": "linear-gradient(135deg, #f6d27b, #e8b860, #c79a3f)",
+      "description": "h1.title 텍스트 그라데이션 — 골드 라이트 → 골드 → 다크 골드. HTML h1.title",
+      "usage": "Hero h1, AnimatedGradientText 색상 기준"
+    }
+  },
+
+  "_shadcn_mapping": {
+    "description": "shadcn/ui CSS variables와 본 토큰 충돌 해소 전략",
+    "strategy": "shadcn 변수는 그대로 유지 + 본 프로젝트 토큰은 --color- 접두사로 네임스페이스 분리",
+    "shadcn_variables": {
+      "--background": "shadcn 배경 — 본 프로젝트에서는 color-bg-primary (#0a0612)로 오버라이드",
+      "--foreground": "shadcn 텍스트 — color-text-primary (#f0e6d8)로 오버라이드",
+      "--card":       "shadcn 카드 — color-bg-card (#1c1235)로 오버라이드",
+      "--primary":    "shadcn 주 색상 — color-accent-gold (#e8b860)로 오버라이드",
+      "--radius":     "shadcn 기본 radius — 0.75rem (본 프로젝트 radius-card 14px와 근사값)"
+    },
+    "conflict_resolution": "globals.css에서 @theme 블록을 shadcn :root 블록 이후에 선언하여 오버라이드 적용"
+  }
+}

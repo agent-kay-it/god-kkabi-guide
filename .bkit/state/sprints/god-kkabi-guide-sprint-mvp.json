@@ -1,0 +1,50 @@
+{
+  "sprintId": "god-kkabi-guide-sprint-mvp",
+  "name": "Sprint MVP — 정적 가이드 사이트 Next.js 16 이식 + Beachhead 침투",
+  "version": "v1.0",
+  "trustLevel": 4,
+  "trustLevelLabel": "L4 Aggressive (자동) + Chrome 시각 검증",
+  "phase": "plan",
+  "phaseHistory": [
+    {"phase": "plan", "startedAt": "2026-05-15T00:00:00.000Z", "status": "in_progress"}
+  ],
+  "startedAt": "2026-05-15T00:00:00.000Z",
+  "startedBy": "kay@agentkay.it",
+  "expectedDuration": "12 weeks (M1-M3)",
+  "graduationCriteria": {
+    "dau": 100,
+    "lighthouseMobile": 90,
+    "serpRanking": "갓깨비 키우기 공략 상위 30위",
+    "couponPageCumulativePV": 500
+  },
+  "abandonTriggers": {
+    "M4.5_dau_under_100": "톤 피벗 또는 콘텐츠 깊이 강화",
+    "M6_dau_under_200": "프로젝트 폐기, 후속작 도메인 재활용"
+  },
+  "qualityGatesActive": ["M1", "M2", "M3", "M4", "M5", "M7", "M8", "M9", "M10"],
+  "autoPauseTriggers": {
+    "QUALITY_GATE_FAIL": "enabled",
+    "ITERATION_EXHAUSTED": "enabled (max 3)",
+    "BUDGET_EXCEEDED": "$5/월 초과 시",
+    "PHASE_TIMEOUT": "Phase 예상 시간 2배 초과 시"
+  },
+  "chromeAutomation": {
+    "enabled": true,
+    "phases": ["P3.B do.B 컴포넌트", "P3.C do.C 페이지 mobile viewport", "P3.D do.D SEO 콘솔", "P4 check Lighthouse", "P6 qa E2E 3 시나리오"]
+  },
+  "inputs": {
+    "sprint0": ".bkit/state/sprints/god-kkabi-guide-sprint-0.json (FULL PASS)",
+    "prd": "docs/sprint/02-sprint-mvp/prd.md",
+    "plan": "docs/sprint/02-sprint-mvp/plan.md",
+    "design": "docs/sprint/02-sprint-mvp/design.md (1005 lines, 보강 A 반영)",
+    "decisions": "docs/01-pm/05-decisions.md (D1-D5 운영자 결정 + L4 갱신)",
+    "infra": "GitHub agent-kay-it/god-kkabi-guide + Vercel agent-kay-project/god-kkabi-guide + Firebase god-kkabi-guide"
+  },
+  "operatorRequirements": [
+    "클린 아키텍처 준수 (features-by-folder, ports & adapters)",
+    "코딩 컨벤션 (TS strict + ESLint Strict + Prettier + commit convention)",
+    "디자인 시스템 준수 (shadcn/ui 베이스 + 게임 분위기 커스텀)",
+    "품질·성능 최우선 (Lighthouse ≥90, M1-M10 게이트)",
+    "토큰·시간 효율 (허투루 작업 금지, 한 번에 정밀 완성)"
+  ]
+}

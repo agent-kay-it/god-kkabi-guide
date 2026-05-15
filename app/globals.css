@@ -1,0 +1,205 @@
+@import 'tailwindcss';
+
+/**
+ * 갓깨비 키우기 가이드 디자인 시스템
+ * 출처: docs/sprint/02-sprint-mvp/phase-2-design/design-tokens.json (22 tokens)
+ *       docs/sprint/02-sprint-mvp/design.md §4.1
+ *       source/original-guide.html :root (lines 8-25)
+ *
+ * Tailwind v4 @theme 디렉티브로 디자인 토큰을 Tailwind 유틸리티로 자동 노출.
+ * - --color-* → bg-{name}, text-{name}, border-{name}, ring-{name}
+ * - --radius-* → rounded-{name}
+ * - --shadow-* → shadow-{name}
+ * - --font-* → font-{name}
+ *
+ * shadcn/ui CSS variables 충돌 해소: prefix `--color-` 네임스페이스 분리.
+ */
+
+@theme {
+  /* ─── 배경 (4) ─── */
+  --color-bg-primary: #0a0612;
+  --color-bg-secondary: #14092a;
+  --color-bg-card: #1c1235;
+  --color-bg-card-hover: #261845;
+
+  /* ─── 액센트 (6) ─── */
+  --color-accent-gold: #e8b860;
+  --color-accent-gold-light: #f6d27b;
+  --color-accent-red: #c93b4a;
+  --color-accent-purple: #8b5cf6;
+  --color-accent-cyan: #38d9d9;
+  --color-accent-green: #5dd66c;
+
+  /* ─── 텍스트 (3) ─── */
+  --color-text-primary: #f0e6d8;
+  --color-text-secondary: #b9aec0;
+  --color-text-muted: #8a7b94;
+
+  /* ─── 보더 (2) ─── */
+  --color-border-gold: rgba(232, 184, 96, 0.35);
+  --color-border-soft: rgba(255, 255, 255, 0.08);
+
+  /* ─── 그림자 (1) ─── */
+  --shadow-glow: 0 0 24px rgba(232, 184, 96, 0.15);
+
+  /* ─── 폰트 (1, MVP 단일 — V1+ display 추가) ─── */
+  --font-sans:
+    var(--font-noto-sans-kr), 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+
+  /* ─── 라운드 (4) ─── */
+  --radius-card: 14px;
+  --radius-card-large: 16px;
+  --radius-pill: 20px;
+  --radius-app-icon: 28px;
+
+  /* ─── 브레이크포인트 (커스텀: xs만 추가, sm~2xl은 Tailwind 기본 유지 + sm 오버라이드) ─── */
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 375px;
+  --breakpoint-md: 414px;
+  --breakpoint-lg: 768px;
+  --breakpoint-xl: 1024px;
+  --breakpoint-2xl: 1280px;
+}
+
+/**
+ * shadcn/ui 호환 토큰 — 일부 shadcn 컴포넌트는 :root CSS variables 가정.
+ * 본 프로젝트 토큰으로 오버라이드하여 디자인 일관성 유지.
+ */
+:root {
+  --background: var(--color-bg-primary);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-bg-card);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-bg-card);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-accent-gold);
+  --primary-foreground: var(--color-bg-primary);
+  --secondary: var(--color-bg-secondary);
+  --secondary-foreground: var(--color-text-primary);
+  --muted: var(--color-bg-secondary);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-accent-gold-light);
+  --accent-foreground: var(--color-bg-primary);
+  --destructive: var(--color-accent-red);
+  --destructive-foreground: var(--color-text-primary);
+  --border: var(--color-border-soft);
+  --input: var(--color-border-soft);
+  --ring: var(--color-accent-gold);
+  --radius: 0.75rem;
+}
+
+/**
+ * 글로벌 base styles — 오컬트 다크 분위기.
+ * body 배경 그라데이션 (퍼플 + 골드 radial overlay + 다크 linear).
+ */
+@layer base {
+  * {
+    border-color: var(--color-border-soft);
+  }
+
+  html {
+    color-scheme: dark;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(232, 184, 96, 0.08) 0%, transparent 45%),
+      linear-gradient(180deg, #0a0612 0%, #100822 100%);
+    background-attachment: fixed;
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-feature-settings: 'kern', 'liga';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 헤딩 — 골드 그라데이션은 h1.title 클래스로만 적용 (Hero 컴포넌트) */
+  h1,
+  h2,
+  h3 {
+    color: var(--color-accent-gold);
+    letter-spacing: -0.01em;
+  }
+
+  /* 외부 링크 underline 색상 강조 */
+  a {
+    color: var(--color-accent-gold);
+    text-underline-offset: 2px;
+  }
+
+  a:hover {
+    color: var(--color-accent-gold-light);
+  }
+
+  /* 포커스 outline — 접근성 (WCAG AA) */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-gold);
+    outline-offset: 2px;
+  }
+
+  /* 스크롤바 (Webkit 다크 분위기 통일) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-primary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-gold);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent-gold);
+  }
+
+  /* 선택 영역 */
+  ::selection {
+    background: rgba(232, 184, 96, 0.3);
+    color: var(--color-text-primary);
+  }
+}
+
+/**
+ * 재사용 유틸 — 디자인 시스템 표준 표면 효과.
+ */
+@layer utilities {
+  .title-gradient {
+    background: linear-gradient(135deg, #f6d27b, #e8b860, #c79a3f);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .glow-card {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .transition-card {
+    transition: all 0.3s ease;
+  }
+
+  .transition-badge {
+    transition: all 0.2s ease;
+  }
+
+  /* 운영자 prefers-reduced-motion 존중 */
+  @media (prefers-reduced-motion: reduce) {
+    .transition-card,
+    .transition-badge,
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}

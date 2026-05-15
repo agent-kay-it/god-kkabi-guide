@@ -1,0 +1,80 @@
+/**
+ * GA4 이벤트 이름 타입 — 12개 정의 (MVP 9개 활성 + V1+ 3개 stub)
+ * 출처: design.md §6 GA4 12개 이벤트 명세
+ * 주의: 이 타입은 lib/firebase/analytics.ts의 logEvent 함수 시그니처와 1:1 일치해야 함
+ */
+
+export type GA4EventName =
+  // ─── MVP 활성 9개 ───
+  | 'page_view'              // 모든 페이지 진입 (Firebase Analytics 자동 발화)
+  | 'coupon_copy'            // 쿠폰 클릭 복사 + Firestore 백업
+  | 'class_diagnose_complete' // 직업 진단 완료 + Firestore 백업
+  | 'meta_build_view'        // 검객 메타 빌드 페이지 dwell ≥5s + Firestore 백업
+  | 'jinryeong_card_click'   // 진령 카드 클릭
+  | 'tier_view'              // 진령 티어 리스트 스크롤 노출
+  | 'external_link_click'    // 출처 외부 링크 클릭
+  | 'scroll_depth_75'        // 75% 스크롤 도달
+  | 'dwell_60'               // 60초 이상 체류
+  // ─── V1+ stub ───
+  | 'build_create'           // 빌드 작성 완료 (V1 UGC 활성화 시)
+  | 'build_like'             // 빌드 좋아요 (V1)
+  | 'signup';                // 회원가입 완료 (V1 Firebase Auth)
+
+/** Firestore 백업 대상 이벤트 3개 (전체 12개 이벤트 중) */
+export const CORE_BACKUP_EVENTS = ['coupon_copy', 'class_diagnose_complete', 'meta_build_view'] as const;
+
+export type CoreBackupEvent = (typeof CORE_BACKUP_EVENTS)[number];
+
+export function isCoreBackupEvent(name: GA4EventName): name is CoreBackupEvent {
+  return (CORE_BACKUP_EVENTS as readonly string[]).includes(name);
+}
+
+/** GA4 이벤트 파라미터 타입 (이벤트별 필드) */
+export interface GA4EventParams {
+  coupon_copy: {
+    code: string;
+    status: 'valid' | 'expired' | 'unknown';
+    days_to_expire?: number;
+  };
+  class_diagnose_complete: {
+    result_class: 'warrior' | 'swordsman' | 'medium';
+    answer_count: number;
+  };
+  meta_build_view: {
+    class: 'warrior' | 'swordsman' | 'medium';
+    build_id: string;
+    dwell_seconds?: number;
+  };
+  jinryeong_card_click: {
+    jinryeong_id: string;
+    jinryeong_name: string;
+    tier: 0 | 1 | 2;
+  };
+  tier_view: Record<string, never>;
+  external_link_click: {
+    url: string;
+    source: string;
+  };
+  scroll_depth_75: {
+    page: string;
+  };
+  dwell_60: {
+    page: string;
+    dwell_seconds: number;
+  };
+  build_create: {
+    build_id: string;
+    class: 'warrior' | 'swordsman' | 'medium';
+  };
+  build_like: {
+    build_id: string;
+  };
+  signup: {
+    method: 'google' | 'kakao';
+  };
+  page_view: {
+    page_title?: string;
+    page_location?: string;
+    page_path?: string;
+  };
+}
