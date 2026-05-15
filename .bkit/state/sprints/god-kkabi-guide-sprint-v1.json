@@ -4,7 +4,10 @@
   "version": "v1.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p7_report",
+  "phase": "archived",
+  "completedAt": "2026-05-15T21:30:00.000Z",
+  "finalMatchRate": 0.945,
+  "finalQualityGatesPass": "12/13 (M6 Lighthouse 운영자 게이트 사전)",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-16T05:30:00.000Z", "status": "completed", "artifacts": [
       "Sprint v2 archive tag: v2.0.0-mvp-v2-archived",
@@ -61,6 +64,17 @@
       "7-Layer dataFlowIntegrity: F1 Post Create / F2 Comment / F3 Reaction / F4 Report / F5 Penalty / F6 AdSense / F7 Wiki Click — 모두 Pass",
       "E2E 7 시나리오 정적: S1 Auth / S2 Post Create+View+Edit / S3 Comment Depth-2 / S4 Reaction Idempotent / S5 Report+Penalty / S6 Moderation / S7 AdSense",
       "Quality Gates 12/13 Pass (M6 Lighthouse만 운영자 게이트 사전 production CDN 측정)"
+    ]},
+    {"phase": "p7_report", "startedAt": "2026-05-15T21:00:00.000Z", "completedAt": "2026-05-15T21:25:00.000Z", "status": "completed", "artifacts": [
+      "phase-7-report/SPRINT-V1-REPORT.md — Sprint V1 종합 완료 보고서 (산출물 + PDCA 회고 + 졸업 KPI 추적 시작 + Sprint V2 carry 6건 + 운영자 액션 4건)",
+      "졸업 KPI 추적 기준선: DAU 0 / Registered 0 / Posts 0 / Comments 0 — 매주 1회 수동 집계 시작",
+      "Sprint V2 직접 carry 6건 (M3, CA-M1, CA-m1~m4) + Sprint V2 신규 범위 4건 (메타 인사이트 + NLP + 프리미엄 + i18n)",
+      "운영자 게이트 4건 명시: Pretendard subset + AdSense 검토 14일 + Kakao 비즈니스 앱 + Lighthouse production CDN"
+    ]},
+    {"phase": "p8_archive", "startedAt": "2026-05-15T21:25:00.000Z", "completedAt": "2026-05-15T21:30:00.000Z", "status": "completed", "artifacts": [
+      "Sprint V1 state phase=archived 전환",
+      "finalMatchRate: 0.945, finalQualityGatesPass: 12/13",
+      "tag v1.0.0-v1-archived 생성 예정"
     ]}
   ],
   "startedAt": "2026-05-16T05:30:00.000Z",
