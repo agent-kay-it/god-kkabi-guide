@@ -4,11 +4,29 @@
   "version": "v2.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p7_report",
+  "phase": "archived",
+  "completedAt": "2026-05-16T05:00:00.000Z",
+  "archivedAt": "2026-05-16T05:00:00.000Z",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "completed"},
     {"phase": "p1_plan", "startedAt": "2026-05-15T16:00:00.000Z", "status": "completed", "artifacts": ["MASTER-PLAN.md", "SCOPE-CHANGE.md", "prd.md", "design.md", "plan.md"]},
     {"phase": "p2_design", "startedAt": "2026-05-15T17:30:00.000Z", "status": "completed", "artifacts": ["phase-2-design/firestore-schema.md", "phase-2-design/auth-flow.md", "phase-2-design/design-tokens-v2.json", "phase-2-design/component-inventory-v2.md"]},
+    {"phase": "p8_archive", "startedAt": "2026-05-16T05:00:00.000Z", "status": "completed", "artifacts": [
+      "Sprint state phase=archived 전환 + archivedAt 타임스탬프",
+      "운영자 게이트 사전 작업 PENDING (사용자 1인 작업): Firebase Console + Vercel env + 첫 deploy",
+      "production deploy 후 자동 재실행 예정: 라이브 E2E 5 시나리오 + Lighthouse Mobile real-world 재측정 + GA4 DebugView 11 이벤트 검증",
+      "staging → main 머지 PR 권장: 코드 측면 준비 완료 (18 routes 빌드 통과 + typecheck 통과 + 4 commits: P4 aa89f26 / P5 a7f2e79 / P6 54e5905 / P7+P8 본 commit)",
+      "다음 sprint: Sprint V1 (사용자 게시물 + 카카오 OAuth 확장 + AdSense + 댓글 + 신고 페널티) — DAU 100+ 도달 후 진입"
+    ]},
+    {"phase": "p7_report", "startedAt": "2026-05-16T04:00:00.000Z", "status": "completed", "artifacts": [
+      "Sprint v2 완료 종합 보고서: docs/sprint/03-sprint-mvp-v2/phase-7-report/SPRINT-REPORT.md",
+      "코드 인벤토리: 25 lib 모듈 + 54 컴포넌트 + 13 페이지 + 18 routes / 102 시드 항목",
+      "Quality Gates 최종: M0/M1/M2/M3/M4/M5/M7/M8/M9-Desktop/M10 PASS + M9-Mobile은 production CDN 재측정 게이트",
+      "M3 졸업 KPI 추적 시작: DAU 100 / Mobile 85 / 등록 30 / 채팅 200 / 북마크 평균 3 / 위키 80 (현재 102 ✅) / 30일 retention 30%",
+      "운영자 게이트 4단계: Firebase Console (RTDB/Storage/Auth/role=admin) + Vercel env 14건 + 도메인 G4 + 첫 production deploy",
+      "V1 인풋 5건: Pretendard subset / GA4 STUB 2 (login + wiki_card_click) / 위키 장비 30+ 확장 / 모더레이션 강화 / 사용자 게시물 시스템",
+      "학습 사항: Lab vs Field metric / Server Action 5종 패턴 / Firebase lazy init / Clean Arch slot prop / exactOptionalPropertyTypes 조건부 spread"
+    ]},
     {"phase": "p6_qa", "startedAt": "2026-05-16T03:00:00.000Z", "status": "completed", "artifacts": [
       "GA4 17 이벤트 인벤토리: types/ga4.ts 정의 12 → 17 확장 (v2 신규 8: login/register_complete/chat_send/chat_image_upload/chat_report/bookmark_add/bookmark_remove/wiki_card_click)",
       "GA4 활성 11개: v1 5 (page_view/class_diagnose_complete/external_link_click/scroll_depth_75/dwell_60) + v2 6 (register_complete/chat_send/chat_image_upload/chat_report/bookmark_add/bookmark_remove)",
