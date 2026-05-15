@@ -16,18 +16,27 @@ export type GA4EventName =
   | 'scroll_depth_75'        // 75% 스크롤 도달
   | 'dwell_60'               // 60초 이상 체류
   // ─── v2 신규 8개 ───
-  | 'login'                  // Google/Kakao 로그인 성공
+  | 'login'                  // Google/Kakao 로그인 성공 (V1에서 STUB → ACTIVE)
   | 'register_complete'      // 등록 폼 완료 (PIPA 4 동의 + 5필드)
   | 'chat_send'              // 채팅 메시지 전송 (마스킹 후)
   | 'chat_image_upload'      // 채팅 이미지 첨부 업로드 (압축 후)
   | 'chat_report'            // 채팅 메시지 신고
   | 'bookmark_add'           // 북마크 추가
   | 'bookmark_remove'        // 북마크 제거
-  | 'wiki_card_click'        // 위키 카드 클릭 (class/skill/equipment/content/munpa)
-  // ─── V1+ stub ───
-  | 'build_create'           // 빌드 작성 완료 (V1 UGC 활성화 시)
-  | 'build_like'             // 빌드 좋아요 (V1)
-  | 'signup';                // (v1 호환 — v2부터 register_complete 사용)
+  | 'wiki_card_click'        // 위키 카드 클릭 (V1에서 STUB → ACTIVE)
+  // ─── V1 신규 6개 (UGC) ───
+  | 'post_create'            // 게시물 작성 완료
+  | 'post_view'              // 게시물 상세 진입 (디바운스)
+  | 'post_like'              // 게시물 좋아요 토글 ON
+  | 'comment_create'         // 댓글 작성 완료
+  | 'comment_like'           // 댓글 좋아요 토글 ON
+  | 'penalty_applied'        // 페널티 자동 적용 (admin view 트래커)
+  // ─── V2+ stub ───
+  | 'build_create'           // (V1 post_create로 통합 — 호환 유지)
+  | 'build_like'             // (V1 post_like로 통합 — 호환 유지)
+  | 'signup'                 // (v1 호환 — v2부터 register_complete)
+  | 'ad_impression'          // AdSense impression (자동 — AdSense ↔ GA4 연동)
+  | 'ad_click';              // AdSense click
 
 /** Firestore 백업 대상 이벤트 3개 (전체 12개 이벤트 중) */
 export const CORE_BACKUP_EVENTS = ['coupon_copy', 'class_diagnose_complete', 'meta_build_view'] as const;
@@ -120,5 +129,40 @@ export interface GA4EventParams {
   wiki_card_click: {
     category: 'class' | 'jinryeong' | 'skill' | 'equipment' | 'content' | 'munpa';
     target_id: string;
+  };
+  // ─── V1 신규 6 ───
+  post_create: {
+    category: 'build' | 'guide' | 'review';
+    tags_count: number;
+    has_image: boolean;
+    body_length: number;
+  };
+  post_view: {
+    post_id: string;
+    category: 'build' | 'guide' | 'review';
+  };
+  post_like: {
+    post_id: string;
+    category: 'build' | 'guide' | 'review';
+  };
+  comment_create: {
+    post_id: string;
+    has_parent: boolean;
+    body_length: number;
+  };
+  comment_like: {
+    comment_id: string;
+    post_id: string;
+  };
+  penalty_applied: {
+    target_uid: string;
+    level: 'warning' | 'ban_7d' | 'ban_permanent';
+    trigger: 'auto_threshold' | 'manual_admin';
+  };
+  ad_impression: {
+    slot: 'sticky' | 'infeed';
+  };
+  ad_click: {
+    slot: 'sticky' | 'infeed';
   };
 }

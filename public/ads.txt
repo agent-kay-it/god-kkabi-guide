@@ -1,0 +1,5 @@
+# Google AdSense ads.txt
+# 출처: docs/sprint/04-sprint-v1/phase-2-design/adsense-strategy.md §4
+# 운영자 게이트 (P3.D): AdSense 가입 후 publisher ID로 교체 (`pub-XXXXXXXXXXXXXXXX`)
+# 미발급 상태에서는 빈 ads.txt도 무방 (정책 검토 후 자동 fill)
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

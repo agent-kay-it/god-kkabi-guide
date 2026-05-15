@@ -18,7 +18,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useForm, type UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
@@ -84,6 +84,7 @@ export function RegisterForm(): React.JSX.Element {
       unofficial: false,
       operator24h: false,
       analytics: true,
+      advertising: false, // Sprint V1: AdSense 선택 동의
     },
   });
 
@@ -256,36 +257,43 @@ export function RegisterForm(): React.JSX.Element {
           </header>
 
           <ConsentCheckbox
-            form={form}
+            control={form.control}
             name="age14plus"
             label="만 14세 이상입니다."
             description="개인정보 보호법에 따라 14세 미만은 보호자 동의가 필요합니다."
           />
           <ConsentCheckbox
-            form={form}
+            control={form.control}
             name="chatPublic"
             label="채팅 메시지는 공개 정보로 처리됩니다."
             description="다른 사용자가 채널에서 확인할 수 있으며, 운영자는 신고 검토를 위해 30일간 보관합니다."
           />
           <ConsentCheckbox
-            form={form}
+            control={form.control}
             name="unofficial"
             label="본 사이트는 비공식 팬 가이드입니다."
             description="갓깨비 키우기 운영사와 무관하며, 권리자 요청 시 24시간 내 수정/삭제됩니다."
           />
           <ConsentCheckbox
-            form={form}
+            control={form.control}
             name="operator24h"
             label="운영자는 24시간 이내에 신고에 응대합니다."
             description="명백한 욕설/스팸은 자동 숨김 후 운영자 검토를 거칩니다."
           />
 
-          <div className="border-t border-ink-line pt-4">
+          <div className="space-y-3 border-t border-ink-line pt-4">
             <ConsentCheckbox
-              form={form}
+              control={form.control}
               name="analytics"
               label="사용 통계 수집에 동의합니다. (선택)"
               description="개선을 위해 익명 이벤트만 수집합니다. 거절해도 모든 기능을 이용할 수 있습니다."
+              optional
+            />
+            <ConsentCheckbox
+              control={form.control}
+              name="advertising"
+              label="맞춤 광고 게시에 동의합니다. (선택)"
+              description="Google AdSense 광고 노출 시 GDPR/PIPA 준수. 거절 시 광고가 표시되지 않습니다."
               optional
             />
           </div>
@@ -315,11 +323,18 @@ export function RegisterForm(): React.JSX.Element {
   );
 }
 
+/**
+ * `useForm<T>()` 반환 객체는 exactOptionalPropertyTypes + 3-generic 추론으로 인해
+ * 명시적 `Control<T>` 시그너처와 일치시키기 어렵다.
+ * 호출부와 동일 타입을 자동 추론하기 위해 `ReturnType` 패턴 사용.
+ */
+type RegisterFormReturn = ReturnType<typeof useForm<RegisterFormInput>>;
+
 interface ConsentCheckboxProps {
-  form: UseFormReturn<RegisterFormInput>;
+  control: RegisterFormReturn['control'];
   name: keyof Pick<
     RegisterFormInput,
-    'age14plus' | 'chatPublic' | 'unofficial' | 'operator24h' | 'analytics'
+    'age14plus' | 'chatPublic' | 'unofficial' | 'operator24h' | 'analytics' | 'advertising'
   >;
   label: string;
   description: string;
@@ -327,7 +342,7 @@ interface ConsentCheckboxProps {
 }
 
 function ConsentCheckbox({
-  form,
+  control,
   name,
   label,
   description,
@@ -335,7 +350,7 @@ function ConsentCheckbox({
 }: ConsentCheckboxProps): React.JSX.Element {
   return (
     <FormField
-      control={form.control}
+      control={control}
       name={name}
       render={({ field }: { field: { value: boolean; onChange: (v: boolean) => void; name: string } }) => (
         <FormItem className="flex items-start gap-3 space-y-0">

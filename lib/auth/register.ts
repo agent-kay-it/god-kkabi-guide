@@ -158,8 +158,11 @@ export async function registerUser(
             unofficial: input.unofficial,
             operator24h: input.operator24h,
             analytics: input.analytics,
+            // Sprint V1: AdSense 선택 동의
+            advertising: input.advertising ?? false,
             consentedAt: now,
           },
+          postCount: 0,
           createdAt: userSnap.exists ? userSnap.data()?.createdAt ?? now : now,
           updatedAt: now,
           lastLoginAt: now,

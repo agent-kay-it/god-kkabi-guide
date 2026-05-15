@@ -31,12 +31,12 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
-              "img-src 'self' https://play-lh.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com data: blob:",
-              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
+              "img-src 'self' https://play-lh.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net data: blob:",
+              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://pagead2.googlesyndication.com",
               "font-src 'self' https://fonts.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "frame-src 'none'",
+              "frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
             ].join('; '),
           },
           {

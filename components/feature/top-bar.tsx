@@ -22,8 +22,9 @@ interface TopBarProps {
   readonly signOutAction: () => Promise<void>;
 }
 
-const NAV_ITEMS: ReadonlyArray<{ href: string; label: string }> = [
-  // P3.C 단계 6 카테고리 모두 활성화. 채팅은 P3.D 추가.
+const NAV_ITEMS: ReadonlyArray<{ href: string; label: string; highlight?: boolean }> = [
+  // Sprint V1: 커뮤니티 신규 + 위키 6 + 팁 = 8 메뉴
+  { href: '/post', label: '커뮤니티', highlight: true },
   { href: '/class', label: '직업' },
   { href: '/jinryeong', label: '진령' },
   { href: '/skill', label: '스킬' },
@@ -66,12 +67,17 @@ export function TopBar({ session, signOutAction }: TopBarProps): React.JSX.Eleme
           <span>깨비지기</span>
         </Link>
 
-        <div className="hidden items-center gap-1 sm:flex">
+        <div className="hidden items-center gap-1 overflow-x-auto sm:flex">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-1.5 text-sm text-text-soft transition-colors hover:bg-ink-elev hover:text-text"
+              className={cn(
+                'shrink-0 rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-ink-elev hover:text-text',
+                item.highlight
+                  ? 'font-medium text-bronze-soft hover:text-bronze'
+                  : 'text-text-soft',
+              )}
             >
               {item.label}
             </Link>

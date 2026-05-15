@@ -41,6 +41,8 @@ export const RegisterFormSchema = z
       .boolean()
       .refine((v) => v === true, '운영자 24시간 응대 동의 필수'),
     analytics: z.boolean(), // 선택 동의
+    // Sprint V1: PIPA 5번째 동의 — AdSense (선택)
+    advertising: z.boolean(),
   })
   .strict();
 

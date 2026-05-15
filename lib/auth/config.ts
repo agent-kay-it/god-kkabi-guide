@@ -174,6 +174,10 @@ export const authConfig: NextAuthConfig = {
         if (token.munpa !== undefined) session.user.munpa = token.munpa;
         if (token.nickname !== undefined) session.user.nickname = token.nickname;
         if (token.classId !== undefined) session.user.classId = token.classId;
+        // Sprint V1: AdSense 동의 (PIPA 5번째)
+        if (token.advertisingConsent !== undefined) {
+          session.user.advertisingConsent = token.advertisingConsent;
+        }
       }
       return session;
     },

@@ -38,3 +38,10 @@ export { SkillCard, type SkillCardProps } from './skill-card';
 export { ContentCard, type ContentCardProps } from './content-card';
 export { EquipmentCard, type EquipmentCardProps } from './equipment-card';
 export { MunpaCard, type MunpaCardProps } from './munpa-card';
+
+// V1 신규 — Sprint V1 P3.C (UGC)
+export { PostCard, type PostCardProps } from './post-card';
+export { PostMeta, type PostMetaProps } from './post-meta';
+export { MarkdownView, type MarkdownViewProps } from './markdown-view';
+export { CommentThread, type CommentThreadProps } from './comment-thread';
+export { PenaltyBadge, type PenaltyBadgeProps } from './penalty-badge';

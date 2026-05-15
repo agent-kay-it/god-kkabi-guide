@@ -4,7 +4,7 @@
   "version": "v1.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p3_do",
+  "phase": "p4_check",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-16T05:30:00.000Z", "status": "completed", "artifacts": [
       "Sprint v2 archive tag: v2.0.0-mvp-v2-archived",
@@ -14,6 +14,17 @@
       "docs/sprint/04-sprint-v1/MASTER-PLAN.md (5 인풋 + 스코프 + Phase 분해 + 운영자 게이트)",
       "docs/sprint/04-sprint-v1/prd.md (사용자 시나리오 3 + 기능 요구사항 F-1~F-7 + KPI 10건 + 리스크 5)",
       "docs/sprint/04-sprint-v1/plan.md (P3.A-E sub-phase + 산출물 명세 + P4-P8)"
+    ]},
+    {"phase": "p3_do", "startedAt": "2026-05-16T08:00:00.000Z", "status": "completed", "artifacts": [
+      "P3.A: types 4파일 (post/comment/reaction/penalty) + GA4 23 이벤트 (V1 신규 6 + STUB 2 ACTIVE) + LoginSuccessTracker + WikiCardTracker + Pretendard subset 운영자 게이트 + verify-font-subset.sh",
+      "P3.B: lib/post (actions+schema+markdown+image-upload) + lib/comment + lib/reaction + lib/penalty + lib/moderation/dictionaries (사전 외부화 + dict-types 분리) + chat report-action에 penalty 트리거",
+      "P3.C: 페이지 5건 (/post 리스트 + /post/[id] 상세 + /post/new 작성 + /me/posts + /admin/penalties + /admin/dictionaries) + 도메인 5 (PostCard/PostMeta/MarkdownView/CommentThread/PenaltyBadge) + feature 8 (PostForm/CommentForm/CommentItem/LikeButton/PostReportDialog/AdminPenaltyTable/AdminDictionaryTable/LoginSuccessTracker/WikiCardTracker) + Textarea ui + TopBar 커뮤니티 메뉴 추가",
+      "P3.D: AdSense (Script+Sticky+Infeed) + PIPA 5번째 advertising 동의 + layout.tsx 4-조건 가드 + ads.txt + CSP 갱신 + 운영자 게이트 문서",
+      "P3.E: 카카오 비즈니스 앱 전환 운영자 게이트 문서 (코드 변경 없음 - v2 bridge 활용)",
+      "Firestore rules 확장: posts/comments/reactions/penalties/dictionaries + isRegisteredUnbanned/isOwner helper",
+      "Firestore indexes 확장: posts 5 + comments collection-group + penalties 2 + post/comment_reports + dictionaries = 11 신규",
+      "빌드 통과: 23 routes (v2 18 + V1 5 신규), typecheck 통과",
+      "Sprint v2 → V1 reverse compatibility: chat 마스킹 v2 client 모듈 유지 + lib/moderation/dict-types 신규 server-only path"
     ]},
     {"phase": "p2_design", "startedAt": "2026-05-16T07:00:00.000Z", "status": "completed", "artifacts": [
       "docs/sprint/04-sprint-v1/design.md (통합 기술 설계 — 아키텍처 + 데이터 모델 + Server Actions + Markdown + AdSense + Pretendard + GA4 + Rules)",

@@ -13,6 +13,18 @@ interface AuthButtonsProps {
   readonly className?: string;
 }
 
+/**
+ * callbackUrl에 GA4 login 이벤트 발화용 search param을 합성한다.
+ * LoginSuccessTracker가 ?login=success&method=... 을 감지하여 logEvent('login') 발화.
+ */
+function withLoginSuccessParam(
+  base: string,
+  method: 'google' | 'kakao',
+): string {
+  const sep = base.includes('?') ? '&' : '?';
+  return `${base}${sep}login=success&method=${method}`;
+}
+
 export function AuthButtons({
   callbackUrl = '/',
   className,
@@ -22,7 +34,9 @@ export function AuthButtons({
       <form
         action={async () => {
           'use server';
-          await signIn('google', { redirectTo: callbackUrl });
+          await signIn('google', {
+            redirectTo: withLoginSuccessParam(callbackUrl, 'google'),
+          });
         }}
       >
         <Button
@@ -39,7 +53,9 @@ export function AuthButtons({
       <form
         action={async () => {
           'use server';
-          await signIn('kakao', { redirectTo: callbackUrl });
+          await signIn('kakao', {
+            redirectTo: withLoginSuccessParam(callbackUrl, 'kakao'),
+          });
         }}
       >
         <Button

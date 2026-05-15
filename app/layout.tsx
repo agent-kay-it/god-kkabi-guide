@@ -10,10 +10,14 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { JetBrains_Mono } from 'next/font/google';
+import { Suspense } from 'react';
 import { AnalyticsBootstrap } from '@/components/analytics-bootstrap';
 import { PageEngagementTracker } from '@/components/feature/page-engagement-tracker';
+import { LoginSuccessTracker } from '@/components/feature/login-success-tracker';
 import { TopBar } from '@/components/feature/top-bar';
 import { ChatWidgetLoader } from '@/components/feature/chat-widget-loader';
+import { AdSenseScript } from '@/components/feature/adsense-script';
+import { AdSlotSticky } from '@/components/feature/ad-slot-sticky';
 import { auth, signOut } from '@/lib/auth/auth';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -139,6 +143,20 @@ export default async function RootLayout({
     'use server';
     await signOut({ redirectTo: '/' });
   }
+
+  // ──────────────── AdSense 가드 (4 조건 AND) ────────────────
+  // 출처: docs/sprint/04-sprint-v1/phase-2-design/adsense-strategy.md §3.1
+  const adsensePublisher = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER;
+  const adsenseSlotSticky = process.env.NEXT_PUBLIC_ADSENSE_SLOT_STICKY;
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isAdminUser = session?.user?.role === 'admin';
+  const advertisingConsent = Boolean(session?.user?.advertisingConsent);
+  const showAds =
+    isProduction &&
+    Boolean(adsensePublisher) &&
+    !isAdminUser &&
+    advertisingConsent;
+
   return (
     <html
       lang="ko"
@@ -155,9 +173,20 @@ export default async function RootLayout({
         <TooltipProvider delayDuration={200}>
           <AnalyticsBootstrap />
           <PageEngagementTracker />
+          <Suspense fallback={null}>
+            <LoginSuccessTracker />
+          </Suspense>
+          {showAds && adsensePublisher ? (
+            <AdSenseScript publisher={adsensePublisher} />
+          ) : null}
           <TopBar session={userMenuSession} signOutAction={signOutAction} />
-          <div className="pt-14">{children}</div>
+          <div className={showAds && adsenseSlotSticky ? 'pt-14 pb-[80px] sm:pb-[120px]' : 'pt-14'}>
+            {children}
+          </div>
           {chatSession ? <ChatWidgetLoader session={chatSession} /> : null}
+          {showAds && adsensePublisher && adsenseSlotSticky ? (
+            <AdSlotSticky publisher={adsensePublisher} slot={adsenseSlotSticky} />
+          ) : null}
           <Toaster />
         </TooltipProvider>
       </body>

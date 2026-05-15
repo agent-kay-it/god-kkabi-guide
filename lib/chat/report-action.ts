@@ -22,6 +22,7 @@ import {
   getAdminFirestore,
   hasAdminCredentials,
 } from '@/lib/firebase/admin';
+import { recordReport } from '@/lib/penalty/actions';
 import type { ChatReportInput, ReportReason } from '@/types/chat';
 
 const AUTO_HIDE_THRESHOLD = 3;
@@ -111,6 +112,13 @@ export async function reportChatMessage(
         console.error('[reportChatMessage] RTDB hidden mark failed', err);
       }
     }
+
+    // Sprint V1: 사용자 누적 신고 페널티 자동화 트리거
+    await recordReport({
+      targetUid: input.reportedUid,
+      source: 'chat',
+      sourceId: input.messageId,
+    });
 
     revalidatePath('/admin');
     return { ok: true, autoHidden };

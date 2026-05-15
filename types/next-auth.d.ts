@@ -19,6 +19,8 @@ declare module 'next-auth' {
       munpa?: string;
       nickname?: string;
       classId?: string;
+      /** Sprint V1: AdSense 동의 (PIPA 5번째) */
+      advertisingConsent?: boolean;
     } & DefaultSession['user'];
   }
 
@@ -30,6 +32,7 @@ declare module 'next-auth' {
     munpa?: string;
     nickname?: string;
     classId?: string;
+    advertisingConsent?: boolean;
   }
 }
 
@@ -49,6 +52,8 @@ declare module 'next-auth/jwt' {
      * /api/auth/kakao-exchange 라우트가 kapi.kakao.com 호출 시 활용.
      */
     accessToken?: string;
+    /** Sprint V1: AdSense 동의 (PIPA 5번째) */
+    advertisingConsent?: boolean;
   }
 }
 
