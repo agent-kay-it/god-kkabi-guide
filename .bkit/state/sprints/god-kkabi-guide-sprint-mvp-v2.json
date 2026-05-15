@@ -4,11 +4,22 @@
   "version": "v2.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p4_check",
+  "phase": "p5_act",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "completed"},
     {"phase": "p1_plan", "startedAt": "2026-05-15T16:00:00.000Z", "status": "completed", "artifacts": ["MASTER-PLAN.md", "SCOPE-CHANGE.md", "prd.md", "design.md", "plan.md"]},
     {"phase": "p2_design", "startedAt": "2026-05-15T17:30:00.000Z", "status": "completed", "artifacts": ["phase-2-design/firestore-schema.md", "phase-2-design/auth-flow.md", "phase-2-design/design-tokens-v2.json", "phase-2-design/component-inventory-v2.md"]},
+    {"phase": "p4_check", "startedAt": "2026-05-16T01:00:00.000Z", "status": "completed", "artifacts": [
+      "Gap Analysis: 96% match rate (7 영역 평균) — Auth 95 / Firestore 100 / RTDB 100 / 북마크 100 / 모더레이션 100 / 위키 95 / 디자인토큰 100 / 컴포넌트 95",
+      "Code Analysis: 87/100 (목표 85 PASS) — Critical 1 (domain→feature 역방향) + Major 4 (rules registered claim / createAdapter / register-form any / bookmark count) + Minor 5",
+      "Lighthouse Mobile 3페이지 (홈/class/jinryeong): Performance 75 ⚠️ FAIL / Accessibility 96-100 ✅ / Best Practices 92 ✅ / SEO 66-69 (의도된 noindex)",
+      "Performance 75 원인: LCP 14.3s (Pretendard 2MB woff2 preload + Firebase client SDK 168KB unused + localhost 4G simulate)",
+      "WCAG AA: 12 토큰 콘트라스트 AAA 8 / AA 3 / Decoration 1 + ARIA 속성 70+ 위치 + 시맨틱 HTML 70 + role=log/dialog/tablist/progressbar/meter 정확 사용",
+      "Auth E2E 정적: registerUser 4-table Firestore 트랜잭션 무결성 + READS 병렬 + WRITES merge + custom claims setup ✅",
+      "Chat E2E 정적: useChannel cleanup off(q) + 3종 구독 + 5s fallback + Admin 모드 hidden 필터 + reportChatMessage 중복 차단 + 3건 자동 hidden ✅",
+      "Quality Gates: M0/M2/M3/M4/M5/M7/M8/M10 PASS / M1 Critical 1건 / M9 FAIL (Performance 75 < 85)",
+      "결론: P5 Act iterate 진입 — ChatWidget dynamic + Pretendard subset + Firebase 트리셰이킹 + next/image"
+    ]},
     {"phase": "p3_d_chat_moderation", "startedAt": "2026-05-15T23:30:00.000Z", "status": "completed", "artifacts": [
       "RTDB 채팅: types/chat.ts + lib/firebase/realtime-db.ts + lib/chat/{masking, use-channel, send-message, image-upload, report-action}",
       "채팅 UI 5: ChatMessage / ChatReportDialog / ChatInput / ChatChannel / ChatWidget (플로팅 3 탭)",
