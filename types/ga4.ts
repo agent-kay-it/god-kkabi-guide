@@ -36,7 +36,16 @@ export type GA4EventName =
   | 'build_like'             // (V1 post_like로 통합 — 호환 유지)
   | 'signup'                 // (v1 호환 — v2부터 register_complete)
   | 'ad_impression'          // AdSense impression (자동 — AdSense ↔ GA4 연동)
-  | 'ad_click';              // AdSense click
+  | 'ad_click'               // AdSense click
+  // ─── V2 신규 (Sprint V2 P3.B-P3.F) ───
+  | 'simulator_run'          // F3.1 시뮬레이션 3선 완료 + 결과 기록
+  | 'simulator_save_build'   // F3.1 결과 → 게시물 작성으로 이동
+  | 'coupon_submit'          // F3.4 쿠폰 제보
+  | 'coupon_verify'          // F3.4 운영자 승인
+  | 'pain_topic_click'       // F3.5 admin 인사이트 패널 클릭
+  | 'locale_switch'          // F3.7 언어 변경
+  | 'premium_subscribe'      // F3.6 구독 시작
+  | 'premium_cancel';        // F3.6 구독 취소
 
 /** Firestore 백업 대상 이벤트 3개 (전체 12개 이벤트 중) */
 export const CORE_BACKUP_EVENTS = ['coupon_copy', 'class_diagnose_complete', 'meta_build_view'] as const;
