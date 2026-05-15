@@ -17,7 +17,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -59,8 +59,16 @@ const CLASS_OPTIONS: ReadonlyArray<{
 
 export function RegisterForm(): React.JSX.Element {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
+
+  // /class-quiz 결과의 prefilledClass=warrior|swordsman|medium 사전 매칭
+  const prefilledClass = searchParams.get('prefilledClass');
+  const initialClass: RegisterFormInput['classId'] =
+    prefilledClass === 'warrior' || prefilledClass === 'swordsman' || prefilledClass === 'medium'
+      ? prefilledClass
+      : 'warrior';
 
   const form = useForm<RegisterFormInput>({
     resolver: zodResolver(RegisterFormSchema),
@@ -69,7 +77,7 @@ export function RegisterForm(): React.JSX.Element {
       gameUid: '',
       munpa: '',
       nickname: '',
-      classId: 'warrior',
+      classId: initialClass,
       age14plus: false,
       chatPublic: false,
       unofficial: false,

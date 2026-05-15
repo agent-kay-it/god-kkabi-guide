@@ -9,6 +9,15 @@
     {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "completed"},
     {"phase": "p1_plan", "startedAt": "2026-05-15T16:00:00.000Z", "status": "completed", "artifacts": ["MASTER-PLAN.md", "SCOPE-CHANGE.md", "prd.md", "design.md", "plan.md"]},
     {"phase": "p2_design", "startedAt": "2026-05-15T17:30:00.000Z", "status": "completed", "artifacts": ["phase-2-design/firestore-schema.md", "phase-2-design/auth-flow.md", "phase-2-design/design-tokens-v2.json", "phase-2-design/component-inventory-v2.md"]},
+    {"phase": "p3_b_wiki_core", "startedAt": "2026-05-15T20:30:00.000Z", "status": "completed", "artifacts": [
+      "시드 데이터: data/wiki/{classes.ts, jinryeong.ts, tips.ts, categories.ts} + types/wiki.ts + types/bookmark.ts",
+      "어댑터: lib/wiki/{classes-adapter.ts, jinryeong-adapter.ts} (Firestore + seed fallback)",
+      "도메인 컴포넌트 6 신규: HeroMeta/HeroMetaBadge / StatCell / Note / TierStripe / ClassCard / JinryeongCard",
+      "위키 페이지: /class (3 직업) / /jinryeong (11 진령 + 티어 + 진영 + 표 + featured) / /tips / /class-quiz",
+      "신규 홈: Hero + 6 카테고리 그리드 (2 active + 4 coming soon) + Tips preview + 디스클레이머 Note",
+      "북마크 시스템: lib/bookmark/actions.ts + BookmarkButton (낙관적 업데이트) + BookmarkList + /me/bookmarks",
+      "직업 진단 v2: 7문항 + /register?prefilledClass= 매칭 + 잘못된 진령 이름 교정"
+    ]},
     {"phase": "p3_a_scaffolding", "startedAt": "2026-05-15T19:00:00.000Z", "status": "completed", "artifacts": [
       "디자인 토큰 v2 + Pretendard/JetBrains Mono",
       "shadcn 8 신규 + GlassCard/Pill 커스텀 + cva 4-색 variants",

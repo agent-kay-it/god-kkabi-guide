@@ -120,8 +120,6 @@ interface ClassResult {
   summary: string;
   strengths: string[];
   recommendedJinryeong: string[];
-  buildLinkHref?: string;
-  buildLinkLabel?: string;
 }
 
 const CLASS_RESULTS: Record<ClassId, ClassResult> = {
@@ -153,9 +151,7 @@ const CLASS_RESULTS: Record<ClassId, ClassResult> = {
       '결투장 메타 상위권 직업',
       '스킬 연출이 가장 화려한 직업군',
     ],
-    recommendedJinryeong: ['음영귀', '강림도', '백림명'],
-    buildLinkHref: '/builds/meta-swordsman',
-    buildLinkLabel: '검객 메타 빌드 보기',
+    recommendedJinryeong: ['홍길동', '서해용왕', '음영귀'],
   },
   medium: {
     id: 'medium',
@@ -441,20 +437,18 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
 
         {/* CTA */}
         <div className="flex flex-col gap-3 sm:flex-row">
-          {result.buildLinkHref ? (
-            <Link
-              href={result.buildLinkHref}
-              className="flex-1 rounded-lg bg-bronze px-4 py-3 text-center text-sm font-bold text-ink-base transition-card hover:bg-bronze-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
-              aria-label={result.buildLinkLabel}
-            >
-              {result.buildLinkLabel ?? '메타 빌드 보기'}
-            </Link>
-          ) : null}
           <Link
-            href="/jinryeong"
+            href={`/register?prefilledClass=${result.id}`}
+            className="flex-1 rounded-lg bg-bronze px-4 py-3 text-center text-sm font-bold text-ink-base transition-card hover:bg-bronze-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
+            aria-label={`${result.name}로 등록 시작하기`}
+          >
+            이 직업으로 등록하기
+          </Link>
+          <Link
+            href="/class"
             className="flex-1 rounded-lg border border-bronze/30 px-4 py-3 text-center text-sm font-semibold text-bronze transition-card hover:bg-ink-card-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
           >
-            진령 티어 확인하기
+            직업 가이드 상세
           </Link>
         </div>
       </div>
@@ -462,7 +456,7 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
       <button
         type="button"
         onClick={onReset}
-        className="w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm font-medium text-text-mute transition-card hover:border-bronze hover:text-text-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-gold focus-visible:ring-offset-2"
+        className="w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm font-medium text-text-mute transition-card hover:border-bronze hover:text-text-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
         aria-label="직업 진단 다시 하기"
       >
         다시 진단하기

@@ -23,8 +23,11 @@ interface TopBarProps {
 }
 
 const NAV_ITEMS: ReadonlyArray<{ href: string; label: string }> = [
-  // P3.A 단계는 홈만 노출. 위키/채팅 메뉴는 P3.B 데이터 시드 후 활성화.
+  // P3.B 단계 위키 카테고리 활성화 (직업/진령/팁). 장비/스킬/문파/콘텐츠/채팅은 P3.C/D에서 추가.
   { href: '/', label: '홈' },
+  { href: '/class', label: '직업' },
+  { href: '/jinryeong', label: '진령' },
+  { href: '/tips', label: '팁' },
 ];
 
 export function TopBar({ session, signOutAction }: TopBarProps): React.JSX.Element {

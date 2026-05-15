@@ -4,9 +4,10 @@
  *
  * v1 → v2:
  *  - 재사용 (토큰 swap): TOC / PriorityFlow / PayTier / ScreenshotStrip / Footer
- *  - 재작성 (P3.A 단계 토큰만, P3.C에서 Firestore 어댑터화): EventCard / TipCard
- *  - 폐기: DomainAlert (→ ui/alert), BuildTagBadge (→ ui/badge + lib/wiki/build-tag.ts)
- *  - 신규 (P3.B/C 추가 예정): HeroMeta / StatCell / Note / TierStripe / ClassCard / JinryeongCard / EquipmentCard / SkillCard
+ *  - 재작성 (Firestore 어댑터 P3.C): EventCard / TipCard
+ *  - 폐기: DomainAlert / BuildTagBadge
+ *  - 신규 (P3.B): HeroMeta / HeroMetaBadge / StatCell / Note / TierStripe / ClassCard / JinryeongCard
+ *  - 신규 (P3.C 예정): EquipmentCard / SkillCard
  */
 export { TOC, type TOCProps, type TOCItem } from './toc';
 export {
@@ -23,3 +24,11 @@ export {
   type ScreenshotItem,
 } from './screenshot-strip';
 export { Footer, type FooterProps, type FooterSource } from './footer';
+
+// v2 신규
+export { HeroMeta, HeroMetaBadge } from './hero-meta';
+export { StatCell, type StatCellProps } from './stat-cell';
+export { Note, type NoteProps } from './note';
+export { TierStripe, type TierStripeProps } from './tier-stripe';
+export { ClassCard, type ClassCardProps } from './class-card';
+export { JinryeongCard, type JinryeongCardProps } from './jinryeong-card';
