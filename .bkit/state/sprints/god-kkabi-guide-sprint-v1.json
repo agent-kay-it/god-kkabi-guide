@@ -1,0 +1,90 @@
+{
+  "sprintId": "god-kkabi-guide-sprint-v1",
+  "name": "Sprint V1 — UGC + 카카오 본격 + AdSense + 댓글 + 페널티 + Pretendard subset",
+  "version": "v1.0",
+  "trustLevel": 4,
+  "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
+  "phase": "p3_do",
+  "phaseHistory": [
+    {"phase": "p0_pre", "startedAt": "2026-05-16T05:30:00.000Z", "status": "completed", "artifacts": [
+      "Sprint v2 archive tag: v2.0.0-mvp-v2-archived",
+      "Sprint V1 state 등록 + 졸업 KPI 10건 + Quality Gates M0-M12"
+    ]},
+    {"phase": "p1_plan", "startedAt": "2026-05-16T06:00:00.000Z", "status": "completed", "artifacts": [
+      "docs/sprint/04-sprint-v1/MASTER-PLAN.md (5 인풋 + 스코프 + Phase 분해 + 운영자 게이트)",
+      "docs/sprint/04-sprint-v1/prd.md (사용자 시나리오 3 + 기능 요구사항 F-1~F-7 + KPI 10건 + 리스크 5)",
+      "docs/sprint/04-sprint-v1/plan.md (P3.A-E sub-phase + 산출물 명세 + P4-P8)"
+    ]},
+    {"phase": "p2_design", "startedAt": "2026-05-16T07:00:00.000Z", "status": "completed", "artifacts": [
+      "docs/sprint/04-sprint-v1/design.md (통합 기술 설계 — 아키텍처 + 데이터 모델 + Server Actions + Markdown + AdSense + Pretendard + GA4 + Rules)",
+      "phase-2-design/firestore-schema-v1.md (신규 5 컬렉션 + 기존 확장 + indexes + denormalize 패턴)",
+      "phase-2-design/moderation-policy.md (5/10/20 임계값 + audit + recovery + 사전 외부화)",
+      "phase-2-design/adsense-strategy.md (Sticky+Infeed 배치 + PIPA 5번째 + dev/admin 가드 + ads.txt + CSP)",
+      "phase-2-design/pretendard-subset.md (KS X 1001 + pyftsubset + 운영자 게이트 + 검증 스크립트)",
+      "phase-2-design/pretendard-subset-unicodes.txt (글리프 범위 파일)"
+    ]}
+  ],
+  "startedAt": "2026-05-16T05:30:00.000Z",
+  "startedBy": "kay@agentkay.it",
+  "predecessor": "god-kkabi-guide-sprint-mvp-v2 (archived 2026-05-16T05:00:00Z, tag=v2.0.0-mvp-v2-archived)",
+  "expectedDuration": "10-12 weeks (V1 졸업: 2026-08-01 ~ 2026-08-30)",
+  "graduationCriteria": {
+    "dau": 300,
+    "lighthouseMobileReal": 90,
+    "lighthouseMobileLab": 85,
+    "registeredUsers": 200,
+    "userPosts": 50,
+    "userComments": 500,
+    "chatDaily": 100,
+    "adsenseMonthly": 10,
+    "retention30d": 0.45,
+    "moderationAutoRate": 0.7
+  },
+  "qualityGatesActive": ["M0", "M1", "M2", "M3", "M4", "M5", "M7", "M8", "M9", "M10", "M11_AdSense_GDPR", "M12_Moderation_Auto"],
+  "inputsFromPrevSprint": {
+    "v1_inputs_5": [
+      "1. Pretendard Variable woff2 subset (2MB → 400KB, Korean 2350자 + Latin 95자 — M9 Mobile lab 85+ 게이트)",
+      "2. GA4 STUB 2개 활성화 (login + wiki_card_click)",
+      "3. 위키 장비 30+ 데이터 사용자 제보 확장 (게시판 통합)",
+      "4. 모더레이션 사전 외부화 + 신고 페널티 시스템 자동화",
+      "5. 사용자 게시물 시스템 (빌드/공략/후기 3 카테고리 + 댓글 + 좋아요)"
+    ]
+  },
+  "operatorDecisions": {
+    "G1_kakaoOAuthFull": "Kakao Custom Token bridge → 본격 활성화 (V2 phase에서 Kakao 콘솔 비즈니스 앱 전환 + 비즈니스 정보 입력)",
+    "G2_adsensePolicy": "Google AdSense — PIPA + GDPR 동의 게이트 + 비침입적 배치 (Sticky 하단 + 인피드 1건)",
+    "G3_postEditPolicy": "본인 게시물 24시간 내 수정 가능 + 이후 운영자 승인. 삭제는 본인 + 운영자 양쪽 가능",
+    "G4_penaltyPolicy": "신고 누적 5건 자동 경고 / 10건 자동 7일 정지 / 20건 자동 영구 정지 + 운영자 수동 우회 가능",
+    "G5_commentDepth": "댓글 2-depth (게시물 → 댓글 → 답글). 답글의 답글은 금지",
+    "G6_pretendardSubset": "pyftsubset 도구로 Korean 2350자 + Latin Basic 95자 + Latin-1 Supplement 96자 subset → ~400KB woff2"
+  },
+  "chromeAutomation": {
+    "enabled": true,
+    "phases": ["P3.A 게시물 작성 폼", "P3.B 게시물 리스트 + 상세", "P3.C 댓글 + 좋아요", "P3.D AdSense + 페널티", "P3.E Pretendard subset 검증", "P4 Lighthouse real-world", "P6 E2E 시나리오"]
+  },
+  "scope": {
+    "newFeatures": [
+      "사용자 게시물 (post): 빌드/공략/후기 3 카테고리 + 마크다운 (lite) + 이미지 첨부 (3건/게시물, 1MB each)",
+      "댓글 (comment): 2-depth + 좋아요 + 신고",
+      "리액션 (reaction): 게시물 좋아요/북마크 (북마크는 v2 기존 시스템 확장)",
+      "신고 페널티 (penalty): 누적 5/10/20건 자동 처리 + admin audit",
+      "카카오 OAuth 본격 활성화 (비즈니스 앱 전환)",
+      "Google AdSense 통합 (PIPA + GDPR 동의 게이트)",
+      "Pretendard Variable subset (2MB → 400KB)",
+      "GA4 STUB 2개 활성화 (login + wiki_card_click)"
+    ],
+    "outOfScope": [
+      "DM 시스템 (V2)",
+      "프리미엄 결제 (V2)",
+      "i18n JP/EN (V2)",
+      "메타 인사이트 대시보드 (V2)"
+    ]
+  },
+  "carriedOverAssets": {
+    "infrastructure": "Sprint v2 전체 (Next.js 16 + React 19 + NextAuth v5 + Firebase Hybrid + tene)",
+    "design_system": "ink/bronze/jade/vermilion/indigo 4-색 + Pretendard Variable + glassmorphism",
+    "components": "14 ui + 3 motion + 14 domain + 23 feature = 54 컴포넌트 그대로 + posts/comments 도메인 신규",
+    "wiki_seeds": "102 시드 (직업 3 + 진령 11 + 스킬 31 + 콘텐츠 22 + 장비 12 + 문파 11 + 팁 12) 그대로",
+    "ga4_active": "11 활성 이벤트 (v1 5 + v2 6) — V1에서 login + wiki_card_click + post_create/comment_create/penalty_applied 추가"
+  }
+}
