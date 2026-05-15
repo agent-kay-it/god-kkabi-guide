@@ -12,6 +12,8 @@ import localFont from 'next/font/local';
 import { JetBrains_Mono } from 'next/font/google';
 import { AnalyticsBootstrap } from '@/components/analytics-bootstrap';
 import { PageEngagementTracker } from '@/components/feature/page-engagement-tracker';
+import { TopBar } from '@/components/feature/top-bar';
+import { auth, signOut } from '@/lib/auth/auth';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import './globals.css';
@@ -91,11 +93,36 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>): React.JSX.Element {
+}>): Promise<React.JSX.Element> {
+  const session = await auth();
+  const userMenuSession = session?.user
+    ? {
+        user: {
+          id: session.user.id,
+          name: session.user.name ?? null,
+          email: session.user.email ?? null,
+          image: session.user.image ?? null,
+          ...(session.user.role !== undefined ? { role: session.user.role } : {}),
+          ...(session.user.registered !== undefined
+            ? { registered: session.user.registered }
+            : {}),
+          ...(session.user.nickname !== undefined
+            ? { nickname: session.user.nickname }
+            : {}),
+          ...(session.user.serverId !== undefined
+            ? { serverId: session.user.serverId }
+            : {}),
+        },
+      }
+    : null;
+  async function signOutAction(): Promise<void> {
+    'use server';
+    await signOut({ redirectTo: '/' });
+  }
   return (
     <html
       lang="ko"
@@ -112,7 +139,8 @@ export default function RootLayout({
         <TooltipProvider delayDuration={200}>
           <AnalyticsBootstrap />
           <PageEngagementTracker />
-          {children}
+          <TopBar session={userMenuSession} signOutAction={signOutAction} />
+          <div className="pt-14">{children}</div>
           <Toaster />
         </TooltipProvider>
       </body>
