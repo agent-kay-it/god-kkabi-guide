@@ -4,8 +4,24 @@
   "version": "v2.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) — 코드 인프라 완성 + 외부 의존성은 운영자 게이트 분리",
-  "phase": "p0_pre",
-  "phaseHistory": [],
+  "phase": "p5_act",
+  "phaseHistory": [
+    {"phase": "p0_pre+p1_plan+p2_design", "completedAt": "2026-05-15T22:00:00Z", "artifacts": ["sprint-v2.json state + prd.md §11-§12 carry+L4 노트 + phase-2-design/v2-design-details.md (carry policy + F3.1-F3.7 spec + 9 신규 컬렉션 + 6 indexes + GA4 8 + Quality Gates M13-M15 + 7-Layer F8-F15)"]},
+    {"phase": "p3_do", "completedAt": "2026-05-15T23:30:00Z", "artifacts": [
+      "P3.A Carry-over 6건: CA-m1 (주석) + CA-M1 (valid-ids-cache + validateTagMembership + actions 통합) + CA-m2 부분 (post/reaction) + CA-m3 (chunk 30) + CA-m4 (rehype 외부 이미지 차단) + GAP-M3 (admin-pending + AdminPendingTable)",
+      "P3.B F3.1 시뮬레이터 + F3.2 진령 채용률: synergy-matrix 10 시드 + SimulatorCanvas + jinryeong-rate aggregation + recharts + cron",
+      "P3.C F3.3 PvP 트렌드 + F3.4 쿠폰: pvp-trend aggregation + 쿠폰 제보/검증/투표 + admin-coupon-table",
+      "P3.D F3.5 NLP: 26 키워드 사전 + extractor + 주간 aggregation + admin 인사이트 (LLM 미사용 비용 회피)",
+      "P3.E F3.6 프리미엄: Toss Payments 통합 + subscriptions/payment_history + webhook signature + isPremium + shouldShowAds",
+      "P3.F F3.7 i18n: next-intl 인프라 + ko/ja/en messages + LocaleSwitcher (페이지 마이그레이션 운영자 게이트)",
+      "GA4 8 신규 정의 + 검증: pnpm typecheck + build 38 routes"
+    ]},
+    {"phase": "p4_check", "completedAt": "2026-05-15T23:50:00Z", "artifacts": [
+      "phase-4-check/REPORT.md — Match Rate 87.5% (Gap MAJ 2) + Code 5축 평균 85.4 (Critical 3 결제 멱등성 + Important 9 + Minor 11)",
+      "Quality Gates 9/15 Pass + M13 Payment PCI 미충족 (CA2-C1~C3) → P5 Act 필수",
+      "P5 통합 우선순위 8건 (Critical 3 + Major 1 + Important 4) ~3h"
+    ]}
+  ],
   "startedAt": "2026-05-15T21:40:00.000Z",
   "startedBy": "kay@agentkay.it",
   "predecessor": "god-kkabi-guide-sprint-v1 (archived 2026-05-15T21:30:00Z, tag=v1.0.0-v1-archived, finalMatchRate=0.945)",
