@@ -25,10 +25,16 @@ export {
 } from './screenshot-strip';
 export { Footer, type FooterProps, type FooterSource } from './footer';
 
-// v2 신규
+// v2 신규 — P3.B
 export { HeroMeta, HeroMetaBadge } from './hero-meta';
 export { StatCell, type StatCellProps } from './stat-cell';
 export { Note, type NoteProps } from './note';
 export { TierStripe, type TierStripeProps } from './tier-stripe';
 export { ClassCard, type ClassCardProps } from './class-card';
 export { JinryeongCard, type JinryeongCardProps } from './jinryeong-card';
+
+// v2 신규 — P3.C
+export { SkillCard, type SkillCardProps } from './skill-card';
+export { ContentCard, type ContentCardProps } from './content-card';
+export { EquipmentCard, type EquipmentCardProps } from './equipment-card';
+export { MunpaCard, type MunpaCardProps } from './munpa-card';

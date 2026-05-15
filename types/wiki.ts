@@ -123,6 +123,148 @@ export interface WikiTipDoc {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// 스킬 (wiki_skills)
+// ─────────────────────────────────────────────────────────────────
+
+export type SkillKind = 'core' | 'active' | 'passive';
+
+export const SKILL_KIND_LABEL: Record<SkillKind, string> = {
+  core: '코어',
+  active: '액티브',
+  passive: '패시브',
+};
+
+export const SKILL_KIND_ACCENT: Record<SkillKind, 'vermilion' | 'bronze' | 'indigo'> = {
+  core: 'vermilion',
+  active: 'bronze',
+  passive: 'indigo',
+};
+
+export interface WikiSkillDoc {
+  id: string; // slug (예: 'warrior-cheontalchanggyeong')
+  name: string;
+  classId: WikiClassId;
+  kind: SkillKind;
+  description: string; // 본문 (1-2 문장)
+  /** 메타 운영 메모 (선택) */
+  metaNote?: string;
+  updatedAt?: Timestamp;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 콘텐츠 (wiki_contents) — 던전 / PvP / 이벤트 / 메커니즘
+// ─────────────────────────────────────────────────────────────────
+
+export type WikiContentKind =
+  | 'dungeon' // 진령 던전, 무한 던전, 보스 던전, 비경
+  | 'pvp' // 결투장
+  | 'event' // 출석/누적/확률업/콜라보/시즌/일일
+  | 'mechanic' // 소환풀/천장/원신/초기화/별레벨 등
+  | 'meta'; // 자동사냥/제련 메커니즘
+
+export type ContentSchedule =
+  | 'daily'
+  | 'weekly'
+  | 'limited'
+  | 'permanent'
+  | 'event'
+  | 'collab'
+  | 'season';
+
+export const CONTENT_KIND_LABEL: Record<WikiContentKind, string> = {
+  dungeon: '던전',
+  pvp: 'PvP',
+  event: '이벤트',
+  mechanic: '메커니즘',
+  meta: '메타 운영',
+};
+
+export const SCHEDULE_LABEL: Record<ContentSchedule, string> = {
+  daily: '매일',
+  weekly: '매주',
+  limited: '한정',
+  permanent: '상시',
+  event: '이벤트',
+  collab: '콜라보',
+  season: '시즌',
+};
+
+export const SCHEDULE_ACCENT: Record<
+  ContentSchedule,
+  'bronze' | 'jade' | 'vermilion' | 'indigo'
+> = {
+  daily: 'bronze',
+  weekly: 'jade',
+  limited: 'vermilion',
+  permanent: 'jade',
+  event: 'bronze',
+  collab: 'indigo',
+  season: 'vermilion',
+};
+
+export interface WikiContentDoc {
+  id: string;
+  name: string;
+  kind: WikiContentKind;
+  schedule: ContentSchedule;
+  /** 짧은 요약 (카드/리스트용) */
+  summary: string;
+  /** 긴 본문 (상세 카드) */
+  description?: string;
+  /** 핵심 행동 지침 (불릿) */
+  keyPoints?: string[];
+  /** 보상/특이사항 */
+  rewardNote?: string;
+  /** 카테고리 라벨 추가 (예: DAILY/ENDLESS/BOSS/COOP) */
+  badge?: string;
+  updatedAt?: Timestamp;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 장비 가이드 (wiki_equipment) — 제련 시스템 중심 12-15 카드
+// ─────────────────────────────────────────────────────────────────
+
+export type EquipmentTopic =
+  | 'system'     // 제련 시스템 기본
+  | 'priority'   // 자원 우선순위
+  | 'enchant'    // 강화수정
+  | 'gacha'      // 999뽑기/확률업
+  | 'decompose'  // 분해/환원
+  | 'set';       // 세트효과 (V1+ 추가 예정)
+
+export const EQUIPMENT_TOPIC_LABEL: Record<EquipmentTopic, string> = {
+  system: '시스템',
+  priority: '우선순위',
+  enchant: '강화',
+  gacha: '뽑기',
+  decompose: '분해',
+  set: '세트',
+};
+
+export interface WikiEquipmentDoc {
+  id: string;
+  name: string;
+  topic: EquipmentTopic;
+  summary: string;
+  description?: string;
+  keyPoints?: string[];
+  warningNote?: string;
+  updatedAt?: Timestamp;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 문파 가이드 (wiki_munpa_guide) — V1+ 실시간 랭킹 별도
+// ─────────────────────────────────────────────────────────────────
+
+export interface WikiMunpaGuideDoc {
+  id: string;
+  title: string;
+  category: 'benefit' | 'criteria' | 'etiquette';
+  summary: string;
+  bullets?: string[];
+}
+
+// ─────────────────────────────────────────────────────────────────
 // 6 위키 카테고리 — 홈 그리드에 노출
 // ─────────────────────────────────────────────────────────────────
 

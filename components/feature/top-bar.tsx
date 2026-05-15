@@ -23,10 +23,13 @@ interface TopBarProps {
 }
 
 const NAV_ITEMS: ReadonlyArray<{ href: string; label: string }> = [
-  // P3.B 단계 위키 카테고리 활성화 (직업/진령/팁). 장비/스킬/문파/콘텐츠/채팅은 P3.C/D에서 추가.
-  { href: '/', label: '홈' },
+  // P3.C 단계 6 카테고리 모두 활성화. 채팅은 P3.D 추가.
   { href: '/class', label: '직업' },
   { href: '/jinryeong', label: '진령' },
+  { href: '/skill', label: '스킬' },
+  { href: '/equipment', label: '장비' },
+  { href: '/content', label: '콘텐츠' },
+  { href: '/munpa', label: '문파' },
   { href: '/tips', label: '팁' },
 ];
 
