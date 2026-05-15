@@ -4,11 +4,19 @@
   "version": "v2.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p3_a",
+  "phase": "p4_check",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "completed"},
     {"phase": "p1_plan", "startedAt": "2026-05-15T16:00:00.000Z", "status": "completed", "artifacts": ["MASTER-PLAN.md", "SCOPE-CHANGE.md", "prd.md", "design.md", "plan.md"]},
     {"phase": "p2_design", "startedAt": "2026-05-15T17:30:00.000Z", "status": "completed", "artifacts": ["phase-2-design/firestore-schema.md", "phase-2-design/auth-flow.md", "phase-2-design/design-tokens-v2.json", "phase-2-design/component-inventory-v2.md"]},
+    {"phase": "p3_d_chat_moderation", "startedAt": "2026-05-15T23:30:00.000Z", "status": "completed", "artifacts": [
+      "RTDB 채팅: types/chat.ts + lib/firebase/realtime-db.ts + lib/chat/{masking, use-channel, send-message, image-upload, report-action}",
+      "채팅 UI 5: ChatMessage / ChatReportDialog / ChatInput / ChatChannel / ChatWidget (플로팅 3 탭)",
+      "모더레이션 + admin: lib/moderation/actions.ts (ban/unban/reset/resolve + audit log) + AdminModerationTable + /admin (role=admin guard)",
+      "보안 규칙 4: database.rules.json + firestore.rules + storage.rules + firebase.json + firestore.indexes.json (10 composite)",
+      "이미지 업로드: 1MB 압축 + JPG/PNG/WebP 화이트리스트 + browser-image-compression",
+      "운영자 게이트 문서 P3.D-OPERATOR-GATES.md (RTDB/Storage 활성화 + role=admin + Vercel env 14건 + 도메인 G4)"
+    ]},
     {"phase": "p3_c_wiki_expansion", "startedAt": "2026-05-15T22:00:00.000Z", "status": "completed", "artifacts": [
       "types/wiki.ts 확장 + 시드 (skills 31 + contents 22 + equipment 12 + munpa-guide 11 + tips 5→12)",
       "어댑터: lib/wiki/{skill,content,equipment}-adapter.ts (Firestore + seed fallback)",
