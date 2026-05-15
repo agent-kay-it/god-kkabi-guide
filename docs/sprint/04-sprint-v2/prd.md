@@ -259,5 +259,42 @@ V1 누적 회원 (DAU 2K+)
 | 통합 PRD | `docs/01-pm/04-prd.md` §7.4 V2 User Stories, §10 V3 가상 리포트 |
 | Sprint V1 졸업 KPI | (V1 종료 후 보고서) |
 
-> **Status**: Draft v1.0 — pending review.
+> **Status**: Draft v2.0 — Sprint V1 carry-over + L4 단일 세션 압축 실행 통합 (2026-05-15)
 > 다음 산출물: `plan.md` → `design.md` (시뮬레이터 + NLP + 결제 흐름).
+
+---
+
+## 11. Sprint V1 Carry-over (V2 통합)
+
+| ID | 원인 | V2 작업 |
+|----|------|---------|
+| GAP-M3 | V1 PRD F-1.3 운영자 승인 큐 UI 누락 | `/admin/posts/pending` + approvePendingEdit/rejectPendingEdit Server Action |
+| CA-M1 | `lib/post/schema.ts:16` 태그 prefix 형식만 강제 | Zod refine + wiki seed cross-check + 5분 캐시 |
+| CA-m1 | `lib/post/schema.ts` 헤더 주석 misleading | 주석 재작성 |
+| CA-m2 | Server Action catch 블록 console.error 누락 | 8 모듈 표준 형식 일괄 적용 |
+| CA-m3 | `getMyReactionsForPosts` 30 in 쿼리 chunk 분할 미적용 | 30 초과 chunk 분할 방어 |
+| CA-m4 | Body Markdown 외부 이미지 정책 미확정 | rehype-sanitize allowedDomains 추가 또는 Storage URL만 허용 |
+
+---
+
+## 12. 단일 세션 L4 압축 실행 노트
+
+원래 Sprint V2는 24주 (M10-M15, 2027-02-08~2027-08-08) 예상. 본 세션 (2026-05-15)은 L4 Aggressive 자동 모드로 PDCA 압축 실행.
+
+### 12.1 P3 Do sub-phases (압축)
+
+| Sub-Phase | 범위 | 외부 의존성 | 처리 |
+|-----------|------|------------|------|
+| P3.A | Carry-over 6건 | 없음 | ✅ 즉시 |
+| P3.B | F3.1 시뮬레이터 + F3.2 진령 채용률 | 없음 | ✅ 코드 완성 |
+| P3.C | F3.3 PvP 트렌드 + F3.4 쿠폰 검증 | 없음 (커뮤니티 제보) | ✅ 코드 완성 |
+| P3.D | F3.5 NLP 클러스터링 (정규식 + 빈도, LLM 미사용) | 없음 | ✅ 코드 완성 |
+| P3.E | F3.6 Toss Payments 인프라 | Toss 사업자 가입 5-10일 | ⚠️ 인프라 완성 / 운영자 게이트 |
+| P3.F | F3.7 next-intl JP/EN 인프라 | 번역 데이터 | ⚠️ 인프라 + KO 추출 / 운영자 게이트 |
+
+### 12.2 운영자 게이트
+
+1. Toss Payments: 사업자 등록 + 가입 검토 5-10일 + Vercel env 4건
+2. JP/EN 번역: messages/ja.json + messages/en.json
+3. NLP 키워드 사전: 운영 데이터 누적 후 정확도 보강
+4. Lighthouse 재측정: production CDN locale별

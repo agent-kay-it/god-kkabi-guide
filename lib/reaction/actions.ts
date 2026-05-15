@@ -101,8 +101,20 @@ export async function toggleReaction(
 }
 
 /**
+ * Sprint V2 P3.A — CA-m3: Firestore reactions subcollection 조회 chunk 분할 helper.
+ * 30개 이상의 targetIds 지원. 내부적으로 30개 chunk로 분할 후 Promise.all 동시 실행.
+ */
+const REACTION_CHUNK_SIZE = 30;
+
+function chunkArray<T>(arr: readonly T[], size: number): readonly (readonly T[])[] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push([...arr.slice(i, i + size)]);
+  return out;
+}
+
+/**
  * 본인의 좋아요 상태를 일괄 조회 (게시물 리스트/상세 페이지 초기 렌더용).
- * targetIds 길이 ≤ 30 권장 (Firestore in 쿼리 한계).
+ * Sprint V2 P3.A — CA-m3: 30+ chunk 분할 방어 적용.
  */
 export async function getMyReactionsForPosts(
   postIds: readonly string[],
@@ -113,15 +125,26 @@ export async function getMyReactionsForPosts(
   if (!uid || !hasAdminCredentials() || postIds.length === 0) return result;
   try {
     const db = getAdminFirestore();
-    const promises = postIds.slice(0, 30).map((postId) =>
-      db.collection('posts').doc(postId).collection('reactions').doc(uid).get(),
+    const chunks = chunkArray(postIds, REACTION_CHUNK_SIZE);
+    const snapsByChunk = await Promise.all(
+      chunks.map((chunk) =>
+        Promise.all(
+          chunk.map((postId) =>
+            db.collection('posts').doc(postId).collection('reactions').doc(uid).get(),
+          ),
+        ),
+      ),
     );
-    const snaps = await Promise.all(promises);
-    snaps.forEach((snap, i) => {
-      result.set(postIds[i]!, snap.exists);
-    });
+    let idx = 0;
+    for (const chunkSnaps of snapsByChunk) {
+      for (const snap of chunkSnaps) {
+        result.set(postIds[idx]!, snap.exists);
+        idx++;
+      }
+    }
     return result;
-  } catch {
+  } catch (err) {
+    console.error('[lib/reaction/actions] getMyReactionsForPosts:', err);
     return result;
   }
 }
@@ -142,22 +165,33 @@ export async function getMyReactionsForComments(
   if (!uid || !hasAdminCredentials() || commentIds.length === 0) return result;
   try {
     const db = getAdminFirestore();
-    const promises = commentIds.slice(0, 30).map((commentId) =>
-      db
-        .collection('posts')
-        .doc(postId)
-        .collection('comments')
-        .doc(commentId)
-        .collection('reactions')
-        .doc(uid)
-        .get(),
+    const chunks = chunkArray(commentIds, REACTION_CHUNK_SIZE);
+    const snapsByChunk = await Promise.all(
+      chunks.map((chunk) =>
+        Promise.all(
+          chunk.map((commentId) =>
+            db
+              .collection('posts')
+              .doc(postId)
+              .collection('comments')
+              .doc(commentId)
+              .collection('reactions')
+              .doc(uid)
+              .get(),
+          ),
+        ),
+      ),
     );
-    const snaps = await Promise.all(promises);
-    snaps.forEach((snap, i) => {
-      result.set(commentIds[i]!, snap.exists);
-    });
+    let idx = 0;
+    for (const chunkSnaps of snapsByChunk) {
+      for (const snap of chunkSnaps) {
+        result.set(commentIds[idx]!, snap.exists);
+        idx++;
+      }
+    }
     return result;
-  } catch {
+  } catch (err) {
+    console.error('[lib/reaction/actions] getMyReactionsForComments:', err);
     return result;
   }
 }

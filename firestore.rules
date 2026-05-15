@@ -156,6 +156,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Sprint V2 P3.A — post_edit_audits: admin read만 / Server Action에서만 write
+    match /post_edit_audits/{auditId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
     // 기본 거부
     match /{document=**} {
       allow read, write: if false;

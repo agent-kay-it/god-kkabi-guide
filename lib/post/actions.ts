@@ -25,7 +25,12 @@ import {
   getAdminFirestore,
   hasAdminCredentials,
 } from '@/lib/firebase/admin';
-import { PostInputSchema, POST_FREE_EDIT_WINDOW_MS } from './schema';
+import {
+  PostInputSchema,
+  POST_FREE_EDIT_WINDOW_MS,
+  validateTagMembership,
+} from './schema';
+import { loadValidWikiIdSets } from '@/lib/wiki/valid-ids-cache';
 import { extractExcerpt } from './markdown';
 import { recordReport } from '@/lib/penalty/actions';
 import type {
@@ -133,6 +138,21 @@ export async function createPost(raw: unknown): Promise<PostActionResult> {
   }
   const input = parsed.data;
 
+  // Sprint V2 P3.A — CA-M1: 태그 멤버십 검증 (wiki seed cross-check)
+  if (input.tags.length > 0) {
+    const validIds = await loadValidWikiIdSets();
+    const invalidTags = validateTagMembership(input.tags, validIds);
+    if (invalidTags.length > 0) {
+      return {
+        ok: false,
+        error: 'VALIDATION_FAILED',
+        fieldErrors: {
+          tags: `존재하지 않는 wiki 항목 태그: ${invalidTags.join(', ')}`,
+        },
+      };
+    }
+  }
+
   try {
     const db = getAdminFirestore();
     const postRef = db.collection('posts').doc();
@@ -173,6 +193,7 @@ export async function createPost(raw: unknown): Promise<PostActionResult> {
     revalidatePath('/me/posts');
     return { ok: true, postId: postRef.id };
   } catch (err) {
+    console.error('[lib/post/actions] createPost:', err);
     return {
       ok: false,
       error: 'INTERNAL',
@@ -197,6 +218,21 @@ export async function updatePost(
     return { ok: false, error: 'VALIDATION_FAILED' };
   }
   const input = parsed.data;
+
+  // Sprint V2 P3.A — CA-M1: 태그 멤버십 검증
+  if (input.tags.length > 0) {
+    const validIds = await loadValidWikiIdSets();
+    const invalidTags = validateTagMembership(input.tags, validIds);
+    if (invalidTags.length > 0) {
+      return {
+        ok: false,
+        error: 'VALIDATION_FAILED',
+        fieldErrors: {
+          tags: `존재하지 않는 wiki 항목 태그: ${invalidTags.join(', ')}`,
+        },
+      };
+    }
+  }
 
   try {
     const db = getAdminFirestore();
@@ -227,7 +263,7 @@ export async function updatePost(
           updatedAt: now,
         });
       } else {
-        // 24h 후: 운영자 승인 큐 (pendingEdit field)
+        // 24h 후: 운영자 승인 큐 (pendingEdit field + requestedAt for GAP-M3 admin 큐)
         tx.update(postRef, {
           status: 'pending_edit',
           pendingEdit: {
@@ -236,6 +272,7 @@ export async function updatePost(
             bodyExcerpt: extractExcerpt(input.body, 150),
             tags: input.tags,
             imageUrls: input.imageUrls,
+            requestedAt: now,
           },
           updatedAt: now,
         });
@@ -244,11 +281,13 @@ export async function updatePost(
 
     revalidatePath(`/post/${postId}`);
     revalidatePath('/me/posts');
+    revalidatePath('/admin/posts/pending');
     return { ok: true };
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'INTERNAL';
     if (msg === 'NOT_FOUND') return { ok: false, error: 'NOT_FOUND' };
     if (msg === 'FORBIDDEN') return { ok: false, error: 'FORBIDDEN' };
+    console.error('[lib/post/actions] updatePost:', err);
     return { ok: false, error: 'INTERNAL', message: msg };
   }
 }
