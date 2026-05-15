@@ -1,0 +1,190 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$version": "2.0.0",
+  "$description": "갓깨비 키우기 가이드 v2 디자인 토큰 — Editorial × Glassmorphism × Bronze/Jade/Vermilion/Indigo 4-색 액센트 시스템. source/godkkabi-guide :root 정밀 추출 + shadcn/ui new-york 매핑.",
+  "$source": [
+    "source/godkkabi-guide/index.html :root (lines 8-32)",
+    "docs/sprint/03-sprint-mvp-v2/design.md §3.0–§3.4",
+    "shadcn/ui new-york (https://ui.shadcn.com)"
+  ],
+  "$lastUpdated": "2026-05-15",
+
+  "color": {
+    "ink": {
+      "$description": "배경 레이어. base = 최하단 / elev = 1-step 위 / card = 반투명 카드 표면 (glassmorphism 핵심)",
+      "base":          { "$value": "#07070b", "$type": "color", "$comment": "최하단 캔버스, body 배경" },
+      "elev":          { "$value": "#0e0e15", "$type": "color", "$comment": "elevated section bg" },
+      "card":          { "$value": "rgba(22, 22, 32, 0.55)",  "$type": "color", "$comment": "glass card default (alpha 0.55)" },
+      "card-strong":   { "$value": "rgba(28, 28, 40, 0.78)",  "$type": "color", "$comment": "glass card hover/active (alpha 0.78)" },
+      "line":          { "$value": "rgba(255, 255, 255, 0.06)", "$type": "color", "$comment": "기본 보더 / divider" },
+      "line-strong":   { "$value": "rgba(255, 255, 255, 0.12)", "$type": "color", "$comment": "강조 보더 (hover, focus)" }
+    },
+
+    "bronze": {
+      "$description": "메인 액센트. swordsman (검사) / Tier 1 / 일반 CTA / 링크. shadcn primary 매핑.",
+      "default": { "$value": "#c89968", "$type": "color", "$comment": "본체. contrast on ink-base = 7.21:1 (AAA)" },
+      "soft":    { "$value": "#e8c79a", "$type": "color", "$comment": "hover / highlight. contrast on ink-base = 11.40:1 (AAA)" },
+      "deep":    { "$value": "#8a6841", "$type": "color", "$comment": "pressed / muted background. contrast on ink-base = 3.41:1 (AA Large only)" }
+    },
+
+    "jade": {
+      "$description": "보조 / pve / success / 영구 콘텐츠 / 안내. shadcn 'success' 슬롯.",
+      "default": { "$value": "#7eb6a8", "$type": "color", "$comment": "contrast on ink-base = 6.93:1 (AAA)" },
+      "soft":    { "$value": "#a8d4c8", "$type": "color", "$comment": "highlight. contrast on ink-base = 9.84:1 (AAA)" }
+    },
+
+    "vermilion": {
+      "$description": "warrior (전사) / Tier 0 / danger / pvp / 한정 이벤트. shadcn destructive 매핑.",
+      "default": { "$value": "#c87870", "$type": "color", "$comment": "contrast on ink-base = 5.61:1 (AA, AAA Large)" },
+      "soft":    { "$value": "#e5a7a1", "$type": "color", "$comment": "highlight. contrast on ink-base = 9.20:1 (AAA)" }
+    },
+
+    "indigo": {
+      "$description": "mage (마법사) / Tier 2 / info / 협업 콘텐츠.",
+      "default": { "$value": "#8b8bc5", "$type": "color", "$comment": "contrast on ink-base = 5.86:1 (AA, AAA Large)" }
+    },
+
+    "text": {
+      "$description": "텍스트 hierarchy. 본문 = text / 보조 = soft / 비활성 = mute.",
+      "default": { "$value": "#ece7dd", "$type": "color", "$comment": "본문. contrast on ink-base = 14.71:1 (AAA)" },
+      "soft":    { "$value": "#b8b1a4", "$type": "color", "$comment": "label / caption. contrast on ink-base = 9.65:1 (AAA)" },
+      "mute":    { "$value": "#6e6a64", "$type": "color", "$comment": "비활성. contrast on ink-base = 4.51:1 (AA only)" }
+    },
+
+    "$contrastReport": {
+      "$description": "WCAG 2.1 검증 (계산 기준 ink.base #07070b, https://webaim.org/resources/contrastchecker/)",
+      "passing": {
+        "AAA": ["bronze.default", "bronze.soft", "jade.default", "jade.soft", "vermilion.soft", "text.default", "text.soft"],
+        "AA":  ["vermilion.default", "indigo.default", "text.mute"],
+        "AA-Large-only": ["bronze.deep"]
+      },
+      "rules": [
+        "본문 텍스트는 text.default 사용 (AAA 14.71:1)",
+        "보조 텍스트는 text.soft 사용 (AAA 9.65:1)",
+        "비활성/placeholder는 text.mute 사용 (AA 4.51:1) — 14px 이하 금지",
+        "Badge/Chip 라벨은 bronze.soft / jade.soft / vermilion.soft / indigo.default 사용",
+        "bronze.deep는 데코레이션 (3px stripe, gradient stop)에만 사용. 텍스트 사용 금지."
+      ]
+    }
+  },
+
+  "radius": {
+    "$description": "라운드. shadcn --radius 0.75rem (12px) 기본을 14px로 상향 (editorial feel).",
+    "sm":      { "$value": "6px",   "$type": "dimension", "$comment": "Badge / Pill 내부" },
+    "card":    { "$value": "14px",  "$type": "dimension", "$comment": "Card 기본 (rounded-2xl 대체)" },
+    "card-lg": { "$value": "16px",  "$type": "dimension", "$comment": "Hero / 대형 Card" },
+    "pill":    { "$value": "999px", "$type": "dimension", "$comment": "HeroMeta / Badge full pill" }
+  },
+
+  "shadow": {
+    "$description": "Hero glow + glass elevation 2 종.",
+    "glow-bronze": { "$value": "0 0 64px rgba(200, 153, 104, 0.18)", "$type": "shadow", "$comment": "Hero, primary CTA hover" },
+    "glow-jade":   { "$value": "0 0 48px rgba(126, 182, 168, 0.14)", "$type": "shadow", "$comment": "success toast, jade card hover" },
+    "glass-elev":  { "$value": "0 24px 60px rgba(0, 0, 0, 0.45)",    "$type": "shadow", "$comment": "Modal, Popover, Dialog" }
+  },
+
+  "font": {
+    "$description": "Pretendard Variable (sans) + JetBrains Mono (mono). Pretendard는 local woff2, Mono는 next/font/google.",
+    "sans": {
+      "$value": "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', sans-serif",
+      "$type": "fontFamily",
+      "$comment": "본문 / 헤딩. localFont via /public/fonts/PretendardVariable.woff2",
+      "$source": "https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/woff2/PretendardVariable.woff2"
+    },
+    "mono": {
+      "$value": "'JetBrains Mono', 'SF Mono', Consolas, monospace",
+      "$type": "fontFamily",
+      "$comment": "수치 / 코드 / 데이터. next/font/google subset=latin, weight=400/500/700"
+    }
+  },
+
+  "ease": {
+    "$description": "Animation easing — Apple-style cubic-bezier.",
+    "out":     { "$value": "cubic-bezier(0.16, 1, 0.3, 1)",      "$type": "cubicBezier" },
+    "in-out":  { "$value": "cubic-bezier(0.65, 0, 0.35, 1)",     "$type": "cubicBezier" }
+  },
+
+  "duration": {
+    "$description": "Animation duration — prefers-reduced-motion 존중 (globals.css에서 0.01ms 오버라이드).",
+    "fast":   { "$value": "150ms", "$type": "duration", "$comment": "Badge / chip hover" },
+    "base":   { "$value": "300ms", "$type": "duration", "$comment": "Card / Button transition" },
+    "slow":   { "$value": "500ms", "$type": "duration", "$comment": "Modal / Drawer enter" }
+  },
+
+  "breakpoint": {
+    "$description": "Tailwind v4 @theme. xs/sm/md = mobile range (320-414), lg+ = tablet/desktop.",
+    "xs": { "$value": "320px", "$type": "dimension" },
+    "sm": { "$value": "375px", "$type": "dimension" },
+    "md": { "$value": "414px", "$type": "dimension" },
+    "lg": { "$value": "768px", "$type": "dimension" },
+    "xl": { "$value": "1024px", "$type": "dimension" },
+    "2xl": { "$value": "1280px", "$type": "dimension" }
+  },
+
+  "$shadcnMapping": {
+    "$description": "shadcn/ui --css-vars 슬롯과 v2 토큰 매핑. globals.css :root 블록에 그대로 옮김.",
+    "--background":          "color.ink.base",
+    "--foreground":          "color.text.default",
+    "--card":                "color.ink.card",
+    "--card-foreground":     "color.text.default",
+    "--popover":             "color.ink.card-strong",
+    "--popover-foreground":  "color.text.default",
+    "--primary":             "color.bronze.default",
+    "--primary-foreground":  "color.ink.base",
+    "--secondary":           "color.ink.elev",
+    "--secondary-foreground":"color.text.default",
+    "--muted":               "color.ink.elev",
+    "--muted-foreground":    "color.text.mute",
+    "--accent":              "color.bronze.soft",
+    "--accent-foreground":   "color.ink.base",
+    "--destructive":         "color.vermilion.default",
+    "--destructive-foreground":"color.text.default",
+    "--success":             "color.jade.default",
+    "--info":                "color.indigo.default",
+    "--border":              "color.ink.line",
+    "--input":               "color.ink.line-strong",
+    "--ring":                "color.bronze.default",
+    "--radius":              "radius.card"
+  },
+
+  "$semanticAccentMap": {
+    "$description": "도메인 시맨틱 → 색 토큰 매핑. 컴포넌트에서 cva variant으로 사용.",
+    "class.warrior":     "vermilion",
+    "class.swordsman":   "bronze",
+    "class.mage":        "indigo",
+    "tier.0":            "vermilion",
+    "tier.1":            "bronze",
+    "tier.2":            "indigo",
+    "tier.3":            "text.soft",
+    "content.pvp":       "vermilion",
+    "content.pve":       "jade",
+    "content.event.limited": "vermilion",
+    "content.event.permanent": "jade",
+    "content.event.collab":    "indigo",
+    "alert.danger":      "vermilion",
+    "alert.warning":     "bronze",
+    "alert.success":     "jade",
+    "alert.info":        "indigo",
+    "chat.channel.all":    "bronze",
+    "chat.channel.server": "jade",
+    "chat.channel.munpa":  "indigo"
+  },
+
+  "$migrationFromV1": {
+    "$description": "v1 → v2 토큰 매핑. v1 tokens 제거 + v2로 swap.",
+    "v1.bg-primary":      { "v2": "ink.base",       "note": "#0a0612 → #07070b (더 어둡게)" },
+    "v1.bg-secondary":    { "v2": "ink.elev",       "note": "#14092a → #0e0e15 (purple tint 제거)" },
+    "v1.bg-card":         { "v2": "ink.card",       "note": "솔리드 → rgba (glassmorphism 도입)" },
+    "v1.accent-gold":     { "v2": "bronze.default", "note": "#e8b860 → #c89968 (덜 채도, 더 editorial)" },
+    "v1.accent-gold-light":{ "v2": "bronze.soft",   "note": "#f6d27b → #e8c79a" },
+    "v1.accent-red":      { "v2": "vermilion.default", "note": "#c93b4a → #c87870 (덜 채도)" },
+    "v1.accent-purple":   { "v2": "indigo.default", "note": "#8b5cf6 → #8b8bc5 (덜 채도, 협업/info 슬롯)" },
+    "v1.accent-cyan":     { "v2": "DELETED",        "note": "#38d9d9 제거 (4-색 시스템 단순화)" },
+    "v1.accent-green":    { "v2": "jade.default",   "note": "#5dd66c → #7eb6a8 (덜 채도)" },
+    "v1.text-primary":    { "v2": "text.default",   "note": "#f0e6d8 → #ece7dd" },
+    "v1.text-secondary":  { "v2": "text.soft",      "note": "#b9aec0 → #b8b1a4 (warm tone)" },
+    "v1.text-muted":      { "v2": "text.mute",      "note": "#8a7b94 → #6e6a64" },
+    "v1.shadow-glow":     { "v2": "shadow.glow-bronze", "note": "24px → 64px (더 dramatic)" },
+    "v1.font-sans":       { "v2": "font.sans",      "note": "Noto Sans KR → Pretendard Variable" }
+  }
+}

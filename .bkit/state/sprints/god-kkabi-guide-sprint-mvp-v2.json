@@ -4,9 +4,12 @@
   "version": "v2.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p0",
+  "phase": "p3_a",
   "phaseHistory": [
-    {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "in_progress"}
+    {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "completed"},
+    {"phase": "p1_plan", "startedAt": "2026-05-15T16:00:00.000Z", "status": "completed", "artifacts": ["MASTER-PLAN.md", "SCOPE-CHANGE.md", "prd.md", "design.md", "plan.md"]},
+    {"phase": "p2_design", "startedAt": "2026-05-15T17:30:00.000Z", "status": "completed", "artifacts": ["phase-2-design/firestore-schema.md", "phase-2-design/auth-flow.md", "phase-2-design/design-tokens-v2.json", "phase-2-design/component-inventory-v2.md"]},
+    {"phase": "p3_a_scaffolding", "startedAt": "2026-05-15T19:00:00.000Z", "status": "in_progress"}
   ],
   "startedAt": "2026-05-15T15:30:00.000Z",
   "startedBy": "kay@agentkay.it",
