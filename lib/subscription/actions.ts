@@ -13,8 +13,8 @@ import { auth } from '@/lib/auth/auth';
 import {
   getAdminFirestore,
   hasAdminCredentials,
-  setUserClaims,
 } from '@/lib/firebase/admin';
+import { setUserClaimsWithRetry } from '@/lib/firebase/claims-retry-queue';
 import {
   SUBSCRIPTION_PRICE,
   type SubscriptionDoc,
@@ -71,6 +71,28 @@ export async function confirmSubscription(input: {
   const expectedAmount = SUBSCRIPTION_PRICE.premium_monthly.amount;
   if (input.amount !== expectedAmount) {
     return { ok: false, error: 'AMOUNT_MISMATCH', message: `expected ${expectedAmount}` };
+  }
+
+  // Sprint V3 GAP-P6-IMP-1: Toss API confirm fast-path skip.
+  // 이미 처리된 orderId면 Toss API를 다시 호출하지 않는다 (Toss는 이미 confirmed
+  // orderId에 4xx 반환 → 잘못된 "결제 검증 실패" UI 노출 위험). payment_history
+  // doc id == orderId 멱등성을 활용해 fast-path 종료.
+  try {
+    const db = getAdminFirestore();
+    const fastSnap = await db.collection('payment_history').doc(input.orderId).get();
+    if (fastSnap.exists) {
+      const fastData = fastSnap.data() as { subscriptionId?: string; status?: string; uid?: string };
+      if (
+        fastData.status === 'completed' &&
+        fastData.subscriptionId &&
+        fastData.uid === guard.uid
+      ) {
+        return { ok: true, subscriptionId: fastData.subscriptionId };
+      }
+    }
+  } catch (err) {
+    // fast-path 실패는 정상 흐름으로 fallthrough — 멱등성은 트랜잭션에서 다시 보장.
+    console.warn('[lib/subscription/actions] fast-path lookup:', err);
   }
 
   let confirmed;
@@ -153,12 +175,13 @@ export async function confirmSubscription(input: {
       );
     });
 
-    // Firebase Auth custom claim (RTDB/Storage rules 등에서 사용 가능)
-    try {
-      await setUserClaims(guard.uid, { role: 'user', registered: true, tier: 'premium' });
-    } catch (err) {
-      console.error('[lib/subscription/actions] setUserClaims:', err);
-    }
+    // Firebase Auth custom claim (RTDB/Storage rules 등에서 사용 가능).
+    // Sprint V3 P3.A (CA2-I11): 실패 시 Firestore retry queue로 fallthrough.
+    await setUserClaimsWithRetry(guard.uid, {
+      role: 'user',
+      registered: true,
+      tier: 'premium',
+    });
 
     revalidatePath('/me/subscription');
     revalidatePath('/premium');

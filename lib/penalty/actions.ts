@@ -24,8 +24,8 @@ import { auth } from '@/lib/auth/auth';
 import {
   getAdminFirestore,
   hasAdminCredentials,
-  setUserClaims,
 } from '@/lib/firebase/admin';
+import { setUserClaimsWithRetry } from '@/lib/firebase/claims-retry-queue';
 import {
   BAN_7D_DURATION_MS,
   PENALTY_THRESHOLDS,
@@ -114,9 +114,10 @@ export async function recordReport(
       }
     });
 
-    // 트랜잭션 외: claim 변경 (Admin Auth) — Firestore와 동일 트랜잭션 불가
+    // 트랜잭션 외: claim 변경 (Admin Auth) — Firestore와 동일 트랜잭션 불가.
+    // Sprint V3 P3.A (CA2-I11): retry queue로 일시 장애 대비.
     if (penaltyApplied === 'ban_permanent') {
-      await setUserClaims(input.targetUid, { role: 'banned' });
+      await setUserClaimsWithRetry(input.targetUid, { role: 'banned' });
     }
 
     // audit log

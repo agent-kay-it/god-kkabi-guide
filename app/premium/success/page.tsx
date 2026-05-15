@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
 
 import { confirmSubscription } from '@/lib/subscription/actions';
+import { SUPPORT_EMAIL } from '@/lib/config/support';
 import { Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -79,7 +80,7 @@ export default async function PremiumSuccessPage({
           오류: {result.error}
           {result.message ? ` (${result.message})` : ''}
           <br />
-          이미 결제된 경우 운영자에게 문의해주세요 (kay@agentkay.it).
+          이미 결제된 경우 운영자에게 문의해주세요 ({SUPPORT_EMAIL}).
         </Note>
       )}
     </main>

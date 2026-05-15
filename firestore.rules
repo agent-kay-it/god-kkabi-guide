@@ -251,6 +251,33 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Sprint V3 P3.A (CA2-I11) — user_claims_retry_queue: admin read (모니터링) / Server Action만 write
+    match /user_claims_retry_queue/{queueId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Sprint V3 P3.B (F4.2) — B2B API
+    // api_clients: admin read / Server Action issue/revoke만 write
+    match /api_clients/{clientId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /api_usage/{usageId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    // Sprint V3 P3.C (F4.3) — Admin SaaS whitelabel
+    match /tenant_themes/{tenantId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    // Sprint V3 P3.D (F4.1) — 외부 신호 ETL
+    match /external_signals/{signalId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
     // Sprint V2 P3.C — coupons: 검증된 것만 공개 read / 등록 사용자 create (pending) / admin verify
     match /coupons/{couponId} {
       allow read: if resource.data.status == 'verified' || isAdmin();

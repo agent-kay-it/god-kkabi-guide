@@ -1,10 +1,13 @@
 # Sprint V3 — B2B 영업/인수 (Endgame)
 
+> **상태**: 🟢 **IN_PROGRESS** (2026-05-16~) — L4 자동 모드 단일 세션 압축 실행
+> 실행 plan: `docs/sprint/05-sprint-v3/plan-execution.md`
+>
 > **Sprint ID**: `god-kkabi-guide-sprint-v3`
 > 기간: M16-M24 (36주, 약 252일, 2027-08-09 ~ 2028-05-15)
-> 작성일: 2026-05-14 · 운영자: kay@agentkay.it (1인 개인 프로젝트)
+> 작성일: 2026-05-14 · 실행 시작: 2026-05-16 · 운영자: kay@agentkay.it (1인 개인 프로젝트)
 > 상위 문서: `docs/sprint/00-master-plan.md` §3.5, §5.3
-> 입력: Sprint V2 M15 졸업 (DAU 5K+ / 빌드 10K+) + `docs/01-pm/04-prd.md` §10 B2B 자산화
+> 입력: Sprint V2 M15 졸업 (DAU 5K+ / 빌드 10K+) + `docs/01-pm/04-prd.md` §10 B2B 자산화 + V2 carry 6건
 
 ---
 

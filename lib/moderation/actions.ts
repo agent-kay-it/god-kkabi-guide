@@ -22,8 +22,8 @@ import {
   getAdminDatabase,
   getAdminFirestore,
   hasAdminCredentials,
-  setUserClaims,
 } from '@/lib/firebase/admin';
+import { setUserClaimsWithRetry } from '@/lib/firebase/claims-retry-queue';
 
 export type ModerationResult =
   | { ok: true; message?: string }
@@ -83,7 +83,8 @@ export async function banUser(
       banReason: reason || '운영자 정지',
       updatedAt: FieldValue.serverTimestamp(),
     });
-    await setUserClaims(targetUid, {
+    // Sprint V3 P3.A (CA2-I11): retry queue로 일시 장애 대비.
+    await setUserClaimsWithRetry(targetUid, {
       role: 'banned',
       bannedReason: reason || '운영자 정지',
     });
@@ -110,7 +111,8 @@ export async function unbanUser(targetUid: string): Promise<ModerationResult> {
       banReason: FieldValue.delete(),
       updatedAt: FieldValue.serverTimestamp(),
     });
-    await setUserClaims(targetUid, { role: 'user' });
+    // Sprint V3 P3.A (CA2-I11): retry queue로 일시 장애 대비.
+    await setUserClaimsWithRetry(targetUid, { role: 'user' });
     await logModeration(guard.uid, 'unban', targetUid);
     revalidatePath('/admin');
     return { ok: true };

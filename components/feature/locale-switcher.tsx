@@ -47,7 +47,13 @@ export function LocaleSwitcher({ current }: LocaleSwitcherProps): React.JSX.Elem
     if (next === current) return;
     startTransition(() => {
       void logEvent('locale_switch', { from: current, to: next });
-      document.cookie = `NEXT_LOCALE=${next}; path=/; max-age=31536000`;
+      // Sprint V3 P3.A — CA2-I8: cookie 보안 강화.
+      // - SameSite=Lax: CSRF 방어 (i18n 선택은 GET이므로 Lax로 충분).
+      // - Secure: production https에서만 (localhost http 개발 환경 제외).
+      // - max-age 31536000 (1년).
+      const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+      const secureFlag = isHttps ? '; Secure' : '';
+      document.cookie = `NEXT_LOCALE=${next}; path=/; max-age=31536000; SameSite=Lax${secureFlag}`;
       router.refresh();
     });
   }

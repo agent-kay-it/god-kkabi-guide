@@ -5,6 +5,7 @@
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SUPPORT_EMAIL } from '@/lib/config/support';
 
 export interface FooterSource {
   label: string;
@@ -30,7 +31,7 @@ const DEFAULT_SOURCES: readonly FooterSource[] = [
 ];
 
 export function Footer({
-  contactEmail = 'kay@agentkay.it',
+  contactEmail = SUPPORT_EMAIL,
   lastUpdated,
   sources = DEFAULT_SOURCES,
   className,

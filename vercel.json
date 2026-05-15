@@ -16,6 +16,14 @@
     {
       "path": "/api/cron/aggregate-pain-topics",
       "schedule": "10 15 * * 0"
+    },
+    {
+      "path": "/api/cron/retry-user-claims",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/etl-external-signals",
+      "schedule": "0 18 * * *"
     }
   ]
 }

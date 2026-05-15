@@ -20,6 +20,7 @@ import { AdSenseScript } from '@/components/feature/adsense-script';
 import { AdSlotSticky } from '@/components/feature/ad-slot-sticky';
 import { auth, signOut } from '@/lib/auth/auth';
 import { shouldShowAds } from '@/lib/subscription/guards';
+import { AUTHOR_NAME } from '@/lib/config/support';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import './globals.css';
@@ -52,9 +53,9 @@ export const metadata: Metadata = {
   description:
     '갓깨비 키우기 위키 · 실시간 채팅 · 북마크 · 직업/진령/장비/스킬 데이터베이스. 1인 팬이 운영하는 비공식 커뮤니티 가이드.',
   applicationName: '갓깨비 키우기 가이드',
-  authors: [{ name: 'kay@agentkay.it' }],
-  creator: 'kay@agentkay.it',
-  publisher: 'kay@agentkay.it',
+  authors: [{ name: AUTHOR_NAME }],
+  creator: AUTHOR_NAME,
+  publisher: AUTHOR_NAME,
   keywords: [
     '갓깨비 키우기',
     '갓깨비 위키',

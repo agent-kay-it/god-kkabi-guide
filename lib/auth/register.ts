@@ -27,8 +27,8 @@ import { auth } from '@/lib/auth/auth';
 import {
   getAdminFirestore,
   hasAdminCredentials,
-  setUserClaims,
 } from '@/lib/firebase/admin';
+import { setUserClaimsWithRetry } from '@/lib/firebase/claims-retry-queue';
 import {
   RegisterFormSchema,
   type RegisterFormInput,
@@ -233,7 +233,8 @@ export async function registerUser(
     });
 
     // 7) Firebase Auth custom claims (RTDB rules에서 registered=true claim 평가용)
-    await setUserClaims(uid, { role: 'user', registered: true });
+    // Sprint V3 P3.A (CA2-I11): retry queue로 일시 장애 대비.
+    await setUserClaimsWithRetry(uid, { role: 'user', registered: true });
 
     return { ok: true };
   } catch (err) {

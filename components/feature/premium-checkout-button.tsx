@@ -47,11 +47,33 @@ export function PremiumCheckoutButton({ uid }: PremiumCheckoutButtonProps): Reac
     if (typeof window !== 'undefined' && window.TossPayments) return window.TossPayments;
     setLoadingSdk(true);
     try {
+      // Sprint V3 P3.A (CA2-I10): 동일 src의 <script> 중복 삽입 차단.
+      // 동일 요청 동시 실행 시 한 번만 fetch + 두 호출 모두 동일 Promise 공유.
+      const TOSS_SDK_URL = 'https://js.tosspayments.com/v1/payment';
       await new Promise<void>((resolve, reject) => {
+        const existing = document.querySelector<HTMLScriptElement>(
+          `script[src="${TOSS_SDK_URL}"]`,
+        );
+        if (existing) {
+          if (existing.dataset['tossSdkReady'] === '1') {
+            resolve();
+            return;
+          }
+          existing.addEventListener('load', () => resolve(), { once: true });
+          existing.addEventListener(
+            'error',
+            () => reject(new Error('Toss SDK load failed')),
+            { once: true },
+          );
+          return;
+        }
         const script = document.createElement('script');
-        script.src = 'https://js.tosspayments.com/v1/payment';
+        script.src = TOSS_SDK_URL;
         script.async = true;
-        script.onload = () => resolve();
+        script.onload = () => {
+          script.dataset['tossSdkReady'] = '1';
+          resolve();
+        };
         script.onerror = () => reject(new Error('Toss SDK load failed'));
         document.head.appendChild(script);
       });

@@ -23,6 +23,7 @@ import {
   type BannedUserSummary,
 } from '@/lib/moderation/actions';
 import { REPORT_REASON_LABEL, type ReportReason } from '@/types/chat';
+import { SUPPORT_EMAIL, supportMailto } from '@/lib/config/support';
 
 export interface AdminModerationTableProps {
   readonly pendingReports: readonly PendingReportSummary[];
@@ -258,8 +259,8 @@ export function AdminModerationTable({
 
       <p className="mt-4 text-center text-xs text-text-mute">
         문의 / 권한 요청 →{' '}
-        <Link href="mailto:kay@agentkay.it" className="text-bronze underline-offset-4 hover:underline">
-          kay@agentkay.it
+        <Link href={supportMailto()} className="text-bronze underline-offset-4 hover:underline">
+          {SUPPORT_EMAIL}
         </Link>
       </p>
     </Tabs>
