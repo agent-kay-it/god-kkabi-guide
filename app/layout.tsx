@@ -11,6 +11,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import { AnalyticsBootstrap } from '@/components/analytics-bootstrap';
+import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
 const notoSansKr = Noto_Sans_KR({
@@ -95,6 +96,7 @@ export default function RootLayout({
       <body className="antialiased">
         <AnalyticsBootstrap />
         {children}
+        <Toaster />
       </body>
     </html>
   );
