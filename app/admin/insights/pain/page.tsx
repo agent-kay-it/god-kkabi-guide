@@ -7,7 +7,15 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { listPainTopics, TOTAL_PAIN_KEYWORDS } from '@/lib/nlp/aggregate';
 import { type PainCategory } from '@/types/nlp';
-import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 import { PainTopicRow } from '@/components/feature/pain-topic-row';
 
 export const metadata: Metadata = {
@@ -36,18 +44,19 @@ export default async function AdminPainPage({
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>Admin / NLP</HeroMetaBadge>
           <span className="font-mono">사전 {TOTAL_PAIN_KEYWORDS} 키워드</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          Pain Topic 인사이트
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          매주 월요일 00:00 KST 자동 집계 — 게시물 + 댓글 본문에서 KR 키워드 매칭 빈도.
-          LLM 미사용 (비용 회피), 정규식 + aliases 기반.
-        </p>
+        <SectionHead>
+          <SectionEyebrow label="Admin · NLP" />
+          <SectionTitle as="h1">Pain Topic 인사이트</SectionTitle>
+          <SectionLead>
+            매주 월요일 00:00 KST 자동 집계 — 게시물 + 댓글 본문에서 KR 키워드 매칭 빈도.
+            LLM 미사용 (비용 회피), 정규식 + aliases 기반.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       {topics.length === 0 ? (

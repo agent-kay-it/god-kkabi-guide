@@ -10,7 +10,15 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { listPendingReports, listBannedUsers } from '@/lib/moderation/actions';
 import { AdminModerationTable } from '@/components/feature/admin-moderation-table';
-import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 
 export const metadata: Metadata = {
   title: '운영자 콘솔',
@@ -30,17 +38,18 @@ export default async function AdminPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-lg px-5 pb-20 pt-8 sm:px-6">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>운영자 콘솔</HeroMetaBadge>
           <span className="font-mono">admin only</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          모더레이션
-        </h1>
-        <p className="mt-3 text-sm text-text-soft">
-          신고 검토 + 정지 처리 + 등록 초기화. 모든 액션은 moderation_logs에 기록됩니다.
-        </p>
+        <SectionHead>
+          <SectionEyebrow label="Admin · Moderation" />
+          <SectionTitle as="h1">모더레이션</SectionTitle>
+          <SectionLead>
+            신고 검토 + 정지 처리 + 등록 초기화. 모든 액션은 moderation_logs에 기록됩니다.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <Note variant="warn" title="운영자 책임" className="mb-6">

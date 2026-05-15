@@ -11,7 +11,15 @@ import {
   hasAdminCredentials,
 } from '@/lib/firebase/admin';
 import { AdminPenaltyTable } from '@/components/feature/admin-penalty-table';
-import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 import type { PenaltyDoc } from '@/types/penalty';
 
 export const metadata: Metadata = {
@@ -59,17 +67,18 @@ export default async function AdminPenaltiesPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>Admin / 페널티</HeroMetaBadge>
           <span className="font-mono">{penalties.length}건</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          페널티 audit
-        </h1>
-        <p className="mt-3 text-text-soft">
-          자동 / 수동 페널티 이력. false positive 결정 시 복구 가능.
-        </p>
+        <SectionHead>
+          <SectionEyebrow label="Admin · Penalties" />
+          <SectionTitle as="h1">페널티 audit</SectionTitle>
+          <SectionLead>
+            자동 / 수동 페널티 이력. false positive 결정 시 복구 가능.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <Note variant="info" title="자동 페널티 룰">

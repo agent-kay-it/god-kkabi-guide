@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   description:
     '갓깨비 키우기 이벤트 6종 (상시·정기·한정·콜라보·시즌·일일) 대응 전략. 누적 소비 이벤트, 홍길동 확정 라인, 쿠폰 코드 입력 경로 가이드.',
   robots: { index: false, follow: false },
+  alternates: { canonical: '/event' },
 };
 
 interface EventItem {

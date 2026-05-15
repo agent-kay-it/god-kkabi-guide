@@ -45,16 +45,24 @@ export interface BookmarkListProps {
   readonly initialBookmarks: readonly BookmarkSummary[];
 }
 
+type SortMode = 'latest' | 'alpha';
+
 export function BookmarkList({ initialBookmarks }: BookmarkListProps): React.JSX.Element {
   const [bookmarks, setBookmarks] =
     useState<readonly BookmarkSummary[]>(initialBookmarks);
   const [filter, setFilter] = useState<BookmarkTargetType | 'all'>('all');
+  const [sort, setSort] = useState<SortMode>('latest');
   const [isPending, startTransition] = useTransition();
 
   const filtered = useMemo(() => {
-    if (filter === 'all') return bookmarks;
-    return bookmarks.filter((b) => b.targetType === filter);
-  }, [bookmarks, filter]);
+    const base = filter === 'all' ? bookmarks : bookmarks.filter((b) => b.targetType === filter);
+    if (sort === 'alpha') {
+      // 가나다순 — 한국어 locale 정렬
+      return [...base].sort((a, b) => a.title.localeCompare(b.title, 'ko'));
+    }
+    // 최신순 — createdAtMs desc
+    return [...base].sort((a, b) => b.createdAtMs - a.createdAtMs);
+  }, [bookmarks, filter, sort]);
 
   function handleRemove(b: BookmarkSummary) {
     startTransition(async () => {
@@ -94,8 +102,9 @@ export function BookmarkList({ initialBookmarks }: BookmarkListProps): React.JSX
 
   return (
     <div className="space-y-6">
-      <div role="tablist" className="flex flex-wrap gap-2" aria-label="북마크 필터">
-        {FILTER_VARIANTS.map((f) => {
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div role="tablist" className="flex flex-wrap gap-2" aria-label="북마크 필터">
+          {FILTER_VARIANTS.map((f) => {
           const count =
             f.id === 'all'
               ? bookmarks.length
@@ -120,6 +129,36 @@ export function BookmarkList({ initialBookmarks }: BookmarkListProps): React.JSX
             </button>
           );
         })}
+        </div>
+
+        {/* Sprint V6 P3.C: 정렬 옵션 */}
+        <div className="flex items-center gap-1 text-xs text-text-mute" role="group" aria-label="북마크 정렬">
+          <span>정렬</span>
+          {(
+            [
+              { id: 'latest' as const, label: '최신순' },
+              { id: 'alpha' as const, label: '가나다순' },
+            ]
+          ).map((opt) => {
+            const isActive = sort === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setSort(opt.id)}
+                className={cn(
+                  'rounded-md px-2 py-1 transition-colors',
+                  isActive
+                    ? 'bg-ink-card-strong text-text'
+                    : 'text-text-mute hover:text-text-soft',
+                )}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="space-y-2">

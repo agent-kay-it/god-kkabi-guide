@@ -13,6 +13,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Search as SearchIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { UserMenu, type UserMenuSession } from './user-menu';
@@ -36,6 +38,7 @@ const NAV_ITEMS: ReadonlyArray<{ href: string; label: string; highlight?: boolea
 
 export function TopBar({ session, signOutAction }: TopBarProps): React.JSX.Element {
   const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -43,6 +46,24 @@ export function TopBar({ session, signOutAction }: TopBarProps): React.JSX.Eleme
     window.addEventListener('scroll', handler, { passive: true });
     return () => window.removeEventListener('scroll', handler);
   }, []);
+
+  // Sprint V6 P3.B: '/' 단축키로 검색 페이지 진입.
+  // input/textarea/contentEditable focus 시에는 무시 (텍스트 입력과 충돌 방지).
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      if (t instanceof HTMLElement) {
+        const tag = t.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        if (t.isContentEditable) return;
+      }
+      e.preventDefault();
+      router.push('/search');
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [router]);
 
   return (
     <nav
@@ -84,7 +105,21 @@ export function TopBar({ session, signOutAction }: TopBarProps): React.JSX.Eleme
           ))}
         </div>
 
-        <UserMenu session={session} signOutAction={signOutAction} />
+        <div className="flex items-center gap-1.5">
+          <Link
+            href="/search"
+            aria-label="사이트 검색 (단축키 /)"
+            title="검색 — / 키"
+            className={cn(
+              'inline-flex h-9 w-9 items-center justify-center rounded-full border border-transparent text-text-soft',
+              'transition-colors duration-200 hover:border-ink-line-strong hover:bg-ink-elev hover:text-bronze-soft',
+              'focus-visible:outline-2 focus-visible:outline-bronze focus-visible:outline-offset-2',
+            )}
+          >
+            <SearchIcon aria-hidden className="h-4 w-4" />
+          </Link>
+          <UserMenu session={session} signOutAction={signOutAction} />
+        </div>
       </div>
     </nav>
   );

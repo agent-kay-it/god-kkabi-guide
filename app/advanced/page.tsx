@@ -31,6 +31,7 @@ export const metadata: Metadata = {
   description:
     '갓깨비 키우기 진령 소환풀 레벨업, 10회 천장, 원신 자동 변환, 진령 초기화 환급, 별 등급 vs 스킬 품급, 진령경험단 4대 수급처. 패치를 거쳐도 변하지 않는 핵심 메커니즘.',
   robots: { index: false, follow: false },
+  alternates: { canonical: '/advanced' },
 };
 
 interface MechanismCard {

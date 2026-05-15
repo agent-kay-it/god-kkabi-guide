@@ -8,7 +8,15 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { listDictionariesForAdmin } from '@/lib/moderation/dictionaries';
 import { AdminDictionaryTable } from '@/components/feature/admin-dictionary-table';
-import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 
 export const metadata: Metadata = {
   title: 'Admin — 모더레이션 사전',
@@ -22,17 +30,18 @@ export default async function AdminDictionariesPage(): Promise<React.JSX.Element
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>Admin / 사전</HeroMetaBadge>
           <span className="font-mono">{initial.length}건</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          모더레이션 사전
-        </h1>
-        <p className="mt-3 text-text-soft">
-          금칙어 / 스팸 키워드 / 화이트리스트 관리. 5분 캐시 후 클라이언트 마스킹에 적용.
-        </p>
+        <SectionHead>
+          <SectionEyebrow label="Admin · Dictionary" />
+          <SectionTitle as="h1">모더레이션 사전</SectionTitle>
+          <SectionLead>
+            금칙어 / 스팸 키워드 / 화이트리스트 관리. 5분 캐시 후 클라이언트 마스킹에 적용.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <Note variant="info" title="사전 외부화 (Sprint V1 인풋 #4)">

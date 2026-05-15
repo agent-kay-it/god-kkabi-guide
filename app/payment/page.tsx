@@ -32,6 +32,7 @@ export const metadata: Metadata = {
   description:
     '갓깨비 키우기 무 · 소 · 중과금 3단계 과금 전략. 가성비 패키지, 결제 타이밍, 누적 소비 이벤트 활용 가이드. 코스튬·탈것 패키지 함정 회피.',
   robots: { index: false, follow: false },
+  alternates: { canonical: '/payment' },
 };
 
 interface PayTierData {

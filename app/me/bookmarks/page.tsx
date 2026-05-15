@@ -8,7 +8,14 @@ import type { Metadata } from 'next';
 
 import { listMyBookmarks } from '@/lib/bookmark/actions';
 import { BookmarkList } from '@/components/feature/bookmark-list';
-import { HeroMeta, HeroMetaBadge } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 
 export const metadata: Metadata = {
   title: '내 북마크',
@@ -21,17 +28,18 @@ export default async function BookmarksPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-md px-5 pb-20 pt-8 sm:px-6">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>내 정보</HeroMetaBadge>
           <span className="font-mono">{bookmarks.length}개 저장</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          북마크
-        </h1>
-        <p className="mt-3 text-sm text-text-soft">
-          위키 / 팁 / 게시물을 모아둔 개인 공간. 카테고리별 필터링 가능.
-        </p>
+        <SectionHead>
+          <SectionEyebrow label="Bookmarks" />
+          <SectionTitle as="h1">북마크</SectionTitle>
+          <SectionLead>
+            위키 / 팁 / 게시물을 모아둔 개인 공간. 카테고리별 필터 + 최신/가나다순 정렬.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <BookmarkList initialBookmarks={bookmarks} />

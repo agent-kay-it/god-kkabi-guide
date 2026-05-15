@@ -8,7 +8,15 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth/auth';
 import { listSignals } from '@/lib/etl/repo';
-import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 import { Badge } from '@/components/ui/badge';
 import { GlassCard } from '@/components/ui/glass-card';
 import type { ExternalSignalSource } from '@/types/etl';
@@ -65,18 +73,20 @@ export default async function AdminExternalSignalsPage({
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>Admin / ETL</HeroMetaBadge>
           <span className="font-mono">{signals.length} signals</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          External Signals
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          외부 데이터 수집 결과. 사람인/Google News는 cron 자동 수집, LinkedIn/Sensor Tower는
-          운영자 수동 upload. Sensor Tower 분기 데이터는 manually_verified 후 R3-C4 차트에 반영.
-        </p>
+        <SectionHead>
+          <SectionEyebrow label="Admin · ETL" />
+          <SectionTitle as="h1">External Signals</SectionTitle>
+          <SectionLead>
+            외부 데이터 수집 결과. 사람인/Google News는 cron 자동 수집, LinkedIn/Sensor Tower는
+            운영자 수동 upload. Sensor Tower 분기 데이터는 manually_verified 후 R3-C4 차트에
+            반영.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <section aria-labelledby="filter-heading" className="mb-4">

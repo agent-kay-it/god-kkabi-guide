@@ -8,7 +8,14 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth/auth';
 import { listApiClients } from '@/lib/b2b/actions';
-import { HeroMeta, HeroMetaBadge } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 import { AdminB2bIssueForm } from '@/components/feature/admin-b2b-issue-form';
 import { AdminB2bClientsTable } from '@/components/feature/admin-b2b-clients-table';
 
@@ -26,18 +33,19 @@ export default async function AdminB2bClientsPage(): Promise<React.JSX.Element> 
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>Admin / B2B</HeroMetaBadge>
           <span className="font-mono">{clients.length} clients</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          B2B API Clients
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          게임사(Joy Net Games / 4399 / Juxin) 별 API Key를 발급하고 사용량을 모니터링합니다.
-          plaintext key는 발급 시점 1회만 표시되므로 즉시 안전한 채널로 전달해야 합니다.
-        </p>
+        <SectionHead>
+          <SectionEyebrow label="Admin · B2B" />
+          <SectionTitle as="h1">B2B API Clients</SectionTitle>
+          <SectionLead>
+            게임사(Joy Net Games / 4399 / Juxin) 별 API Key를 발급하고 사용량을 모니터링합니다.
+            plaintext key는 발급 시점 1회만 표시되므로 즉시 안전한 채널로 전달해야 합니다.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-2">
