@@ -141,6 +141,8 @@ export async function setUserClaims(
     readonly bannedReason?: string;
     /** RTDB rules에서 auth.token.registered 평가용 */
     readonly registered?: boolean;
+    /** Sprint V2: 프리미엄 구독 등급 */
+    readonly tier?: 'free' | 'premium';
   },
 ): Promise<void> {
   const auth = getAdminAuth();

@@ -178,6 +178,10 @@ export const authConfig: NextAuthConfig = {
         if (token.advertisingConsent !== undefined) {
           session.user.advertisingConsent = token.advertisingConsent;
         }
+        // Sprint V2: 프리미엄 구독 등급
+        if (token.tier === 'free' || token.tier === 'premium') {
+          session.user.tier = token.tier;
+        }
       }
       return session;
     },

@@ -95,6 +95,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (data.role === 'admin' || data.role === 'user' || data.role === 'banned') {
             token.role = data.role;
           }
+          if (data.tier === 'premium' || data.tier === 'free') {
+            token.tier = data.tier;
+          }
           if (data.serverId !== undefined) token.serverId = data.serverId;
           if (data.gameUid !== undefined) token.gameUid = data.gameUid;
           if (data.munpa !== undefined) token.munpa = data.munpa;

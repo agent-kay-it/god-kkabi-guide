@@ -21,6 +21,8 @@ declare module 'next-auth' {
       classId?: string;
       /** Sprint V1: AdSense 동의 (PIPA 5번째) */
       advertisingConsent?: boolean;
+      /** Sprint V2: 프리미엄 구독 등급 */
+      tier?: 'free' | 'premium';
     } & DefaultSession['user'];
   }
 
@@ -33,6 +35,7 @@ declare module 'next-auth' {
     nickname?: string;
     classId?: string;
     advertisingConsent?: boolean;
+    tier?: 'free' | 'premium';
   }
 }
 
@@ -54,6 +57,8 @@ declare module 'next-auth/jwt' {
     accessToken?: string;
     /** Sprint V1: AdSense 동의 (PIPA 5번째) */
     advertisingConsent?: boolean;
+    /** Sprint V2: 프리미엄 구독 등급 */
+    tier?: 'free' | 'premium';
   }
 }
 
