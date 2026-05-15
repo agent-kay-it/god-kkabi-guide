@@ -9,7 +9,16 @@
     {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "completed"},
     {"phase": "p1_plan", "startedAt": "2026-05-15T16:00:00.000Z", "status": "completed", "artifacts": ["MASTER-PLAN.md", "SCOPE-CHANGE.md", "prd.md", "design.md", "plan.md"]},
     {"phase": "p2_design", "startedAt": "2026-05-15T17:30:00.000Z", "status": "completed", "artifacts": ["phase-2-design/firestore-schema.md", "phase-2-design/auth-flow.md", "phase-2-design/design-tokens-v2.json", "phase-2-design/component-inventory-v2.md"]},
-    {"phase": "p3_a_scaffolding", "startedAt": "2026-05-15T19:00:00.000Z", "status": "in_progress"}
+    {"phase": "p3_a_scaffolding", "startedAt": "2026-05-15T19:00:00.000Z", "status": "completed", "artifacts": [
+      "디자인 토큰 v2 + Pretendard/JetBrains Mono",
+      "shadcn 8 신규 + GlassCard/Pill 커스텀 + cva 4-색 variants",
+      "NextAuth.js v5 + Firebase Admin SDK (lazy) + proxy.ts (Next.js 16+)",
+      "Kakao Custom Token bridge + /api/auth/kakao-exchange",
+      "등록 폼 + Zod + PIPA 4 + Firestore 트랜잭션 (users/servers/munpas/chat_channels)",
+      "TopBar + UserMenu + AuthButtons + /login + /register placeholder",
+      "tene AUTH_SECRET 자동 생성",
+      "운영자 게이트 문서 P3.A-OPERATOR-GATES.md"
+    ]}
   ],
   "startedAt": "2026-05-15T15:30:00.000Z",
   "startedBy": "kay@agentkay.it",
