@@ -122,8 +122,9 @@ export async function tossChargeBilling(
 }
 
 /**
- * Toss webhook signature 검증.
- * Toss 콘솔에 등록된 secret과 HMAC-SHA256 비교.
+ * Toss webhook signature 검증 — Sprint V2 P5 (CA2-C2).
+ * Toss 콘솔 webhook signature는 base64 인코딩이 표준이지만, 콘솔 설정에 따라 hex일 수도.
+ * 양쪽 모두 검증 + Node.js Buffer 기반 timing-safe compare.
  */
 export async function verifyTossWebhookSignature(
   rawBody: string,
@@ -132,7 +133,8 @@ export async function verifyTossWebhookSignature(
   if (!signature) return false;
   const secret = process.env.TOSS_WEBHOOK_SECRET;
   if (!secret) return false;
-  // Node.js crypto (subtle)
+
+  // HMAC-SHA256 계산
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     'raw',
@@ -141,13 +143,21 @@ export async function verifyTossWebhookSignature(
     false,
     ['sign'],
   );
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(rawBody));
-  const hex = Array.from(new Uint8Array(sig))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-  // timing-safe compare
-  if (hex.length !== signature.length) return false;
+  const sigBuf = await crypto.subtle.sign('HMAC', key, enc.encode(rawBody));
+  const sigBytes = new Uint8Array(sigBuf);
+  const expectedHex = Array.from(sigBytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const expectedBase64 = Buffer.from(sigBytes).toString('base64');
+
+  // Toss signature는 콘솔 설정에 따라 hex 또는 base64. 양쪽 검증.
+  return (
+    timingSafeStringEq(signature, expectedHex) ||
+    timingSafeStringEq(signature, expectedBase64)
+  );
+}
+
+function timingSafeStringEq(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
   let diff = 0;
-  for (let i = 0; i < hex.length; i++) diff |= hex.charCodeAt(i) ^ signature.charCodeAt(i);
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
 }

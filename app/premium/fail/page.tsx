@@ -7,6 +7,7 @@ import { XCircle } from 'lucide-react';
 
 import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
 import { Button } from '@/components/ui/button';
+import { PaymentDropTracker } from '@/components/feature/payment-drop-tracker';
 
 export const metadata: Metadata = {
   title: '결제 실패',
@@ -21,8 +22,11 @@ export default async function PremiumFailPage({
   searchParams: SearchParams;
 }): Promise<React.JSX.Element> {
   const params = await searchParams;
+  const code = params.code ?? 'UNKNOWN';
   return (
     <main className="mx-auto max-w-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
+      {/* GAP-MAJ-1: 결제 실패 페이지 진입 시 payment_drop 1회 */}
+      <PaymentDropTracker code={code} {...(params.message ? { message: params.message } : {})} />
       <header className="mb-8 text-center">
         <HeroMeta className="mb-4 justify-center">
           <HeroMetaBadge>프리미엄 / 결제</HeroMetaBadge>

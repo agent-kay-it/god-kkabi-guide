@@ -11,6 +11,7 @@ import { confirmSubscription } from '@/lib/subscription/actions';
 import { Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
+import { PaymentSuccessTracker } from '@/components/feature/payment-success-tracker';
 
 export const metadata: Metadata = {
   title: '결제 완료 — 프리미엄',
@@ -55,6 +56,8 @@ export default async function PremiumSuccessPage({
 
       {result.ok ? (
         <GlassCard className="space-y-4 p-6 text-center">
+          {/* GAP-MAJ-1 + CA2-I1 + CA2-I9: 결제 확정 성공 시 payment_success + premium_subscribe 1회 */}
+          <PaymentSuccessTracker orderId={orderId} amount={amountNum} />
           <CheckCircle2 className="mx-auto h-12 w-12 text-jade" aria-hidden />
           <p className="text-text">
             결제가 정상 처리되었습니다. 프리미엄 권한이 즉시 활성화됩니다.

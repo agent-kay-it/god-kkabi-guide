@@ -44,8 +44,14 @@ export type GA4EventName =
   | 'coupon_verify'          // F3.4 운영자 승인
   | 'pain_topic_click'       // F3.5 admin 인사이트 패널 클릭
   | 'locale_switch'          // F3.7 언어 변경
-  | 'premium_subscribe'      // F3.6 구독 시작
-  | 'premium_cancel';        // F3.6 구독 취소
+  | 'premium_subscribe'      // F3.6 구독 시작 (성공 page에서 발화 — V2 P5)
+  | 'premium_cancel'         // F3.6 구독 취소
+  // V2 P5 — GAP-MAJ-1: payment funnel 5종 (V3 B2B BigQuery 데모 데이터)
+  | 'payment_view'           // /premium 페이지 진입
+  | 'payment_select'         // "구독하기" 버튼 클릭
+  | 'payment_input'          // Toss 위젯 호출 (결제 정보 입력 시작)
+  | 'payment_success'        // 결제 confirm 성공 (success page)
+  | 'payment_drop';          // 결제 실패 또는 중단 (fail page)
 
 /** Firestore 백업 대상 이벤트 3개 (전체 12개 이벤트 중) */
 export const CORE_BACKUP_EVENTS = ['coupon_copy', 'class_diagnose_complete', 'meta_build_view'] as const;

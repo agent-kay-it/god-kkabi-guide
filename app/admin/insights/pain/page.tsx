@@ -6,10 +6,9 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth/auth';
 import { listPainTopics, TOTAL_PAIN_KEYWORDS } from '@/lib/nlp/aggregate';
-import { PAIN_CATEGORY_LABEL, PAIN_CATEGORY_COLOR, type PainCategory } from '@/types/nlp';
+import { type PainCategory } from '@/types/nlp';
 import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard } from '@/components/ui/glass-card';
+import { PainTopicRow } from '@/components/feature/pain-topic-row';
 
 export const metadata: Metadata = {
   title: 'Admin — Pain Topic 인사이트',
@@ -59,20 +58,16 @@ export default async function AdminPainPage({
         <ul className="space-y-2" role="list">
           {topics.map((t) => (
             <li key={t.id}>
-              <GlassCard className="flex flex-wrap items-center justify-between gap-3 p-3">
-                <div className="flex items-center gap-3">
-                  <Badge variant="bronze">#{t.rank}</Badge>
-                  <Badge variant={PAIN_CATEGORY_COLOR[t.category]}>{PAIN_CATEGORY_LABEL[t.category]}</Badge>
-                  <span className="font-medium text-text">{t.term}</span>
-                  <span className="text-xs text-text-mute">언급 {t.count}회</span>
-                  {t.delta !== undefined ? (
-                    <span className={`text-xs ${t.delta > 0 ? 'text-jade' : t.delta < 0 ? 'text-vermilion' : 'text-text-mute'}`}>
-                      {t.delta > 0 ? `↑${t.delta}` : t.delta < 0 ? `↓${-t.delta}` : '—'}
-                    </span>
-                  ) : null}
-                </div>
-                <span className="font-mono text-xs text-text-mute">{t.weekISO}</span>
-              </GlassCard>
+              {/* CA2-I4: client wrapper로 pain_topic_click GA4 발화 */}
+              <PainTopicRow
+                id={t.id}
+                rank={t.rank}
+                category={t.category}
+                term={t.term}
+                count={t.count}
+                weekISO={t.weekISO}
+                {...(t.delta !== undefined ? { delta: t.delta } : {})}
+              />
             </li>
           ))}
         </ul>

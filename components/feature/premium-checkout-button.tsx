@@ -68,6 +68,8 @@ export function PremiumCheckoutButton({ uid }: PremiumCheckoutButtonProps): Reac
       toast.error('결제 시스템이 아직 설정되지 않았습니다. 운영자에게 문의하세요.');
       return;
     }
+    // GAP-MAJ-1 payment funnel: 진입 시점에 payment_select 발화
+    void logEvent('payment_select', { plan: 'premium_monthly' });
     startTransition(async () => {
       try {
         const TossPayments = await loadTossSdk();
@@ -78,7 +80,8 @@ export function PremiumCheckoutButton({ uid }: PremiumCheckoutButtonProps): Reac
           typeof window !== 'undefined'
             ? window.location.origin
             : process.env.NEXT_PUBLIC_SITE_URL ?? '';
-        void logEvent('premium_subscribe', { amount, plan: 'premium_monthly' });
+        // GAP-MAJ-1 payment funnel: Toss 위젯 호출 직전에 payment_input 발화
+        void logEvent('payment_input', { amount, plan: 'premium_monthly', orderId });
         await tossPayments.requestPayment('카드', {
           amount,
           orderId,
@@ -88,6 +91,11 @@ export function PremiumCheckoutButton({ uid }: PremiumCheckoutButtonProps): Reac
         });
       } catch (err) {
         console.error('[PremiumCheckoutButton]', err);
+        // GAP-MAJ-1: SDK 로드 또는 위젯 호출 실패도 payment_drop
+        void logEvent('payment_drop', {
+          plan: 'premium_monthly',
+          reason: 'sdk_or_widget_error',
+        });
         toast.error('결제 시작 실패: ' + (err instanceof Error ? err.message : 'unknown'));
       }
     });

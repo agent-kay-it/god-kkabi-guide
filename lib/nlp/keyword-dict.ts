@@ -69,17 +69,18 @@ export interface PainExtractMatch {
 /**
  * 텍스트에서 pain keyword 매칭 추출. case-insensitive.
  * 동일 키워드 다중 매칭 = count 합산.
+ *
+ * Sprint V2 P5 (CA2-I6): matchAll 사용 — exec 루프의 lastIndex 부작용 제거 +
+ * Iterator 한 번 순회로 즉시 firstIndex/count 계산. 매칭 객체 생성 비용은 동일.
  */
 export function extractPainKeywords(text: string): readonly PainExtractMatch[] {
   if (!text) return [];
   const matches: PainExtractMatch[] = [];
   for (const [keywordId, pattern] of KEYWORD_PATTERNS) {
-    pattern.lastIndex = 0;
     let count = 0;
     let firstIndex = -1;
-    let m: RegExpExecArray | null;
-    while ((m = pattern.exec(text)) !== null) {
-      if (firstIndex < 0) firstIndex = m.index;
+    for (const m of text.matchAll(pattern)) {
+      if (firstIndex < 0 && m.index !== undefined) firstIndex = m.index;
       count++;
     }
     if (count > 0) matches.push({ keywordId, count, firstIndex });

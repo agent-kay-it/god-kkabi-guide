@@ -162,10 +162,58 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
-    // Sprint V2 P3.B — simulator_runs: 누구나 write (익명 허용) / admin read (개인정보 제외)
+    // Sprint V2 P3.B + P5 (CA2-I2) — simulator_runs: 누구나 write (익명 허용) / admin read.
+    // 강화된 검증: types + value bounds + serverTimestamp + 필드 화이트리스트 + payload guard.
+    // SSOT: lib/simulator/actions.ts recordSimulatorRun (admin SDK 통해 bypass).
+    // 본 rule은 client SDK 직접 write 방어용 (rule이 표현하는 안전한 payload 모양).
     match /simulator_runs/{runId} {
       allow read: if isAdmin();
-      allow create: if request.resource.data.jinryeongIds.size() == 3;
+      allow create: if
+        // 필드 화이트리스트: id + comboId + jinryeongIds + synergyScore + tier + timestamp (필수)
+        // classId + uid (옵션)
+        request.resource.data.keys().hasOnly(
+          ['id', 'uid', 'comboId', 'jinryeongIds', 'classId', 'synergyScore', 'tier', 'timestamp']
+        )
+        && request.resource.data.keys().hasAll(
+          ['id', 'comboId', 'jinryeongIds', 'synergyScore', 'tier', 'timestamp']
+        )
+        // id: doc id와 일치 (auto-id 일관성)
+        && request.resource.data.id is string
+        && request.resource.data.id == runId
+        // jinryeongIds: 정확히 3개 + 중복 없음 + 1≤len≤32
+        && request.resource.data.jinryeongIds is list
+        && request.resource.data.jinryeongIds.size() == 3
+        && request.resource.data.jinryeongIds[0] is string
+        && request.resource.data.jinryeongIds[1] is string
+        && request.resource.data.jinryeongIds[2] is string
+        && request.resource.data.jinryeongIds[0].size() >= 1
+        && request.resource.data.jinryeongIds[0].size() <= 32
+        && request.resource.data.jinryeongIds[1].size() >= 1
+        && request.resource.data.jinryeongIds[1].size() <= 32
+        && request.resource.data.jinryeongIds[2].size() >= 1
+        && request.resource.data.jinryeongIds[2].size() <= 32
+        && request.resource.data.jinryeongIds.toSet().size() == 3
+        // comboId: 32~128 문자 (sorted-join)
+        && request.resource.data.comboId is string
+        && request.resource.data.comboId.size() >= 3
+        && request.resource.data.comboId.size() <= 128
+        // synergyScore: 0~1000
+        && request.resource.data.synergyScore is number
+        && request.resource.data.synergyScore >= 0
+        && request.resource.data.synergyScore <= 1000
+        // tier: enum S/A/B/C/D
+        && request.resource.data.tier is string
+        && request.resource.data.tier in ['S', 'A', 'B', 'C', 'D']
+        // classId 옵션 enum
+        && (!('classId' in request.resource.data)
+            || request.resource.data.classId in ['warrior', 'swordsman', 'medium'])
+        // uid 옵션 — request.auth.uid와 일치 (서버 액션 외 client 위조 방어)
+        && (!('uid' in request.resource.data)
+            || (request.auth != null
+                && request.resource.data.uid is string
+                && request.resource.data.uid == request.auth.uid))
+        // timestamp: server timestamp만 허용
+        && request.resource.data.timestamp == request.time;
       allow update, delete: if false;
     }
 

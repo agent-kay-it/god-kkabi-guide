@@ -50,23 +50,26 @@ export async function POST(request: Request): Promise<NextResponse> {
   const db = getAdminFirestore();
   try {
     if (body.eventType === 'PAYMENT_STATUS_CHANGED' && body.data?.orderId) {
-      // 결제 history 업데이트만 — 활성화는 client confirm에서 처리
-      const histSnap = await db
-        .collection('payment_history')
-        .where('orderId', '==', body.data.orderId)
-        .limit(1)
-        .get();
-      if (!histSnap.empty) {
-        await histSnap.docs[0]!.ref.update({
+      // Sprint V2 P5 — CA2-C3 멱등성: payment_history doc id = orderId.
+      // client confirm보다 webhook이 먼저 도착하는 race 케이스 대응 — set({merge: true})로
+      // doc 존재 여부 관계없이 webhook 상태 보존, 이후 confirmSubscription이 같은 doc에 merge.
+      const histRef = db.collection('payment_history').doc(body.data.orderId);
+      await histRef.set(
+        {
+          id: body.data.orderId,
+          orderId: body.data.orderId,
+          ...(body.data.paymentKey ? { paymentKey: body.data.paymentKey } : {}),
           status:
             body.data.status === 'DONE'
               ? 'completed'
               : body.data.status === 'CANCELED'
                 ? 'canceled'
                 : 'failed',
+          webhookEventType: body.eventType,
           webhookReceivedAt: FieldValue.serverTimestamp(),
-        });
-      }
+        },
+        { merge: true },
+      );
     }
     return NextResponse.json({ ok: true });
   } catch (err) {

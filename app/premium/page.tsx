@@ -11,6 +11,7 @@ import { getActiveSubscription } from '@/lib/subscription/actions';
 import { isPremium } from '@/lib/subscription/guards';
 import { isActivePremium, SUBSCRIPTION_PRICE } from '@/types/subscription';
 import { PremiumCheckoutButton } from '@/components/feature/premium-checkout-button';
+import { PaymentViewTracker } from '@/components/feature/payment-view-tracker';
 import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
 import { Badge } from '@/components/ui/badge';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -42,6 +43,8 @@ export default async function PremiumPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
+      {/* GAP-MAJ-1: /premium 진입 시 payment_view GA4 */}
+      <PaymentViewTracker />
       <header className="mb-8 text-center">
         <HeroMeta className="mb-4 justify-center">
           <HeroMetaBadge>프리미엄</HeroMetaBadge>

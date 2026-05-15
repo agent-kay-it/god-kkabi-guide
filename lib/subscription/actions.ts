@@ -88,17 +88,33 @@ export async function confirmSubscription(input: {
     const db = getAdminFirestore();
     const now = Date.now();
     const period = 30 * 86400000; // 30일
-    const subRef = db.collection('subscriptions').doc();
-    const histRef = db.collection('payment_history').doc();
+
+    // Sprint V2 P5 — CA2-C1/C3 멱등성: payment_history doc id = orderId (Toss 중복 방어).
+    // 동일 orderId 재요청 시 set({merge: true})로 idempotent. confirmSubscription의 새로고침/RSC prefetch 다중 호출 안전.
+    const histRef = db.collection('payment_history').doc(input.orderId);
+    let subscriptionIdResult: string;
 
     await db.runTransaction(async (tx) => {
-      // 기존 active 구독 있으면 ALREADY_ACTIVE
+      // 0) 멱등성 체크 — 이미 처리된 orderId면 기존 subscriptionId 반환
+      const histSnap = await tx.get(histRef);
+      if (histSnap.exists) {
+        const existingHist = histSnap.data() as { subscriptionId?: string };
+        if (existingHist.subscriptionId) {
+          subscriptionIdResult = existingHist.subscriptionId;
+          return;
+        }
+      }
+
+      // 1) 기존 active 구독 있으면 ALREADY_ACTIVE (다른 orderId)
       const existingSnap = await tx.get(
         db.collection('subscriptions').where('uid', '==', guard.uid).where('status', '==', 'active').limit(1),
       );
       if (!existingSnap.empty) {
         throw new Error('ALREADY_ACTIVE');
       }
+
+      const subRef = db.collection('subscriptions').doc();
+      subscriptionIdResult = subRef.id;
 
       tx.set(subRef, {
         id: subRef.id,
@@ -114,18 +130,22 @@ export async function confirmSubscription(input: {
         amount: expectedAmount,
         currency: 'KRW',
       });
-      tx.set(histRef, {
-        id: histRef.id,
-        uid: guard.uid,
-        subscriptionId: subRef.id,
-        orderId: input.orderId,
-        paymentKey: input.paymentKey,
-        status: 'completed',
-        amount: input.amount,
-        currency: 'KRW',
-        ...(confirmed.method ? { method: confirmed.method } : {}),
-        paidAtMs: now,
-      });
+      tx.set(
+        histRef,
+        {
+          id: input.orderId,
+          uid: guard.uid,
+          subscriptionId: subRef.id,
+          orderId: input.orderId,
+          paymentKey: input.paymentKey,
+          status: 'completed',
+          amount: input.amount,
+          currency: 'KRW',
+          ...(confirmed.method ? { method: confirmed.method } : {}),
+          paidAtMs: now,
+        },
+        { merge: true },
+      );
       tx.set(
         db.collection('users').doc(guard.uid),
         { tier: 'premium', updatedAt: FieldValue.serverTimestamp() },
@@ -142,7 +162,7 @@ export async function confirmSubscription(input: {
 
     revalidatePath('/me/subscription');
     revalidatePath('/premium');
-    return { ok: true, subscriptionId: subRef.id };
+    return { ok: true, subscriptionId: subscriptionIdResult! };
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'INTERNAL';
     if (msg === 'ALREADY_ACTIVE') return { ok: false, error: 'ALREADY_ACTIVE' };
