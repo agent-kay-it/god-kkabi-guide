@@ -12,6 +12,10 @@ import {
   Note,
   HeroMeta,
   HeroMetaBadge,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
 } from '@/components/domain';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
@@ -38,17 +42,19 @@ export default async function EquipmentPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 장비</HeroMetaBadge>
           <span className="font-mono">{allEquipment.length} 카드</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          장비 가이드
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          제련 시스템 메커니즘 + 자원 우선순위 + 강화 룰. 개별 장비 데이터는 P3.D admin 단계에서 추가됩니다.
-        </p>
+        <SectionHead>
+          <SectionEyebrow num="04b" label="Forging" />
+          <SectionTitle as="h1">장비 가이드</SectionTitle>
+          <SectionLead>
+            제련 시스템 메커니즘 + 자원 우선순위 + 강화 룰. 개별 장비 데이터는 admin 콘솔에서
+            큐레이션됩니다.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <section className="mb-10" aria-labelledby="resource-priority">

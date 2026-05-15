@@ -7,7 +7,16 @@
  */
 import type { Metadata } from 'next';
 
-import { TipCard, HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
+import {
+  TipCard,
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 import { WIKI_TIPS_SEED } from '@/data/wiki/tips';
 import type { TipCategory } from '@/types/wiki';
 
@@ -35,17 +44,18 @@ export default function TipsPage(): React.JSX.Element {
 
   return (
     <main className="mx-auto max-w-screen-lg px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>실전 팁</HeroMetaBadge>
           <span className="font-mono">{WIKI_TIPS_SEED.length}개 · admin 큐레이션</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          실전 운영 노하우
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          매주 검증되는 운영자 큐레이션 팁 12개. 초보부터 PvP까지 카테고리별로 정리했습니다.
-        </p>
+        <SectionHead>
+          <SectionEyebrow num="08" label="Tactics" />
+          <SectionTitle as="h1">실전 운영 노하우</SectionTitle>
+          <SectionLead>
+            매주 검증되는 운영자 큐레이션 팁 12개. 초보부터 PvP까지 카테고리별로 정리했습니다.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <div className="space-y-10">

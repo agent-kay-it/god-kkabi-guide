@@ -7,14 +7,18 @@ import type { Metadata } from 'next';
 import { listWikiJinryeong } from '@/lib/wiki/jinryeong-adapter';
 import { auth } from '@/lib/auth/auth';
 import {
-  FeaturedJinryeong,
   JinryeongCard,
   Note,
   HeroMeta,
   HeroMetaBadge,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
   TierStack,
   type TierStackItem,
 } from '@/components/domain';
+import { FeaturedJinryeongZoomable } from '@/components/feature/featured-jinryeong-zoomable';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -60,18 +64,19 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-10">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 진령</HeroMetaBadge>
           <span className="font-mono">{allJinryeong.length}종 · 2026.05</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          진령 — 등급보다 시너지
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          진령은 캐릭터와 함께 전투에 참여하는 최대 3명의 동료 시스템. 등급(★)이 아닌 시너지가
-          더 중요합니다.
-        </p>
+        <SectionHead>
+          <SectionEyebrow num="03" label="Jinryeong" />
+          <SectionTitle as="h1">진령 — 등급보다 시너지</SectionTitle>
+          <SectionLead>
+            진령은 캐릭터와 함께 전투에 참여하는 최대 3명의 동료 시스템. 등급(★)이 아닌
+            시너지가 더 중요합니다.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       {/* 티어 리스트 */}
@@ -177,11 +182,13 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
         </GlassCard>
       </section>
 
-      {/* Featured 진령 */}
+      {/* Featured 진령 — V5 P3.B: lightbox 연동 (FeaturedJinryeongZoomable) */}
       {allJinryeong
         .filter((j) => j.featured)
         .map((j) => (
-          <FeaturedJinryeong key={j.id} data={j} />
+          <div key={j.id} className="mb-12">
+            <FeaturedJinryeongZoomable data={j} />
+          </div>
         ))}
 
       {/* 카드 뷰 */}

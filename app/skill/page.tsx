@@ -5,7 +5,16 @@
 import type { Metadata } from 'next';
 
 import { listWikiSkills } from '@/lib/wiki/skill-adapter';
-import { SkillCard, Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
+import {
+  SkillCard,
+  Note,
+  HeroMeta,
+  HeroMetaBadge,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { WikiClassId } from '@/types/wiki';
@@ -39,18 +48,19 @@ export default async function SkillPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 스킬</HeroMetaBadge>
           <span className="font-mono">{allSkills.length}종 · 2026.05</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          스킬 가이드
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          코어 1 + 액티브 3~4 + 패시브 4~5 운영 원리. 스킬명은 업데이트로 변경될 수 있으나
-          구성 원리는 동일하게 통용됩니다.
-        </p>
+        <SectionHead>
+          <SectionEyebrow num="04a" label="Skills" />
+          <SectionTitle as="h1">스킬 가이드</SectionTitle>
+          <SectionLead>
+            코어 1 + 액티브 3~4 + 패시브 4~5 운영 원리. 스킬명은 업데이트로 변경될 수 있으나
+            구성 원리는 동일하게 통용됩니다.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <Note variant="tip" title="스킬 운영 원리 (버전 무관)" className="mb-8">

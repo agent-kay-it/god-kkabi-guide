@@ -14,7 +14,7 @@
 import { useRef, useState, useTransition } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -83,7 +83,9 @@ export function PostForm({
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const postControl = form.control as any;
-  const imageUrls = form.watch('imageUrls');
+  // V5 P3.A: form.watch → useWatch — React Compiler 메모이제이션 호환성 (react-hooks/incompatible-library).
+  // useWatch는 subscription을 control 객체로 따로 등록하여 watch()의 비순수 클로저 문제를 회피.
+  const imageUrls = useWatch({ control: form.control, name: 'imageUrls' }) ?? [];
 
   async function handleImageAdd(file: File) {
     const currentCount = imageUrls.length;

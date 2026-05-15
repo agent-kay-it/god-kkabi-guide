@@ -10,7 +10,16 @@ import { ArrowRight } from 'lucide-react';
 
 import { listWikiClasses } from '@/lib/wiki/classes-adapter';
 import { auth } from '@/lib/auth/auth';
-import { ClassCard, Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
+import {
+  ClassCard,
+  Note,
+  HeroMeta,
+  HeroMetaBadge,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { Button } from '@/components/ui/button';
@@ -56,17 +65,18 @@ export default async function ClassPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-10">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 직업</HeroMetaBadge>
           <span className="font-mono">{classes.length}종</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          직업 가이드
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          전사·검객·영매 3 직업의 메타 비교. 추천 진령 조합과 자동 사냥 효율을 한눈에.
-        </p>
+        <SectionHead>
+          <SectionEyebrow num="02" label="Class" />
+          <SectionTitle as="h1">직업 가이드</SectionTitle>
+          <SectionLead>
+            전사·검객·영매 3 직업의 메타 비교. 추천 진령 조합과 자동 사냥 효율을 한눈에.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <div className="mb-12 grid gap-6 lg:grid-cols-3">

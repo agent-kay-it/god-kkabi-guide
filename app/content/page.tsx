@@ -11,6 +11,10 @@ import {
   Note,
   HeroMeta,
   HeroMetaBadge,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
 } from '@/components/domain';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
@@ -58,18 +62,19 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 콘텐츠</HeroMetaBadge>
           <span className="font-mono">{all.length}종</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          콘텐츠 가이드
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          던전 · PvP · 이벤트 + 진령 시스템 메커니즘과 자동사냥 메타 운영 룰.
-          오전 시간대 일일 콘텐츠 클리어가 누적 효율의 핵심입니다.
-        </p>
+        <SectionHead>
+          <SectionEyebrow num="05" label="Dungeon · PvP" />
+          <SectionTitle as="h1">콘텐츠 가이드</SectionTitle>
+          <SectionLead>
+            던전 · PvP · 이벤트 + 진령 시스템 메커니즘과 자동사냥 메타 운영 룰. 오전 시간대
+            일일 콘텐츠 클리어가 누적 효율의 핵심입니다.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <Tabs defaultValue="dungeon" className="space-y-6">

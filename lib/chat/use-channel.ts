@@ -59,15 +59,30 @@ export function useChannel(
   const [hasMore, setHasMore] = useState(false);
   const oldestKeyRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    setIsLoading(true);
-    setError(null);
+  // V5 P3.A: channelId 변경 시 상태 reset — render-phase update (React 권장 패턴).
+  // 출처: https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  // 이전 패턴: useEffect 내 setIsLoading/setError/setMessages 동기 호출 (react-hooks/set-state-in-effect 위반).
+  // ref 갱신은 render-phase에서 금지되므로 effect setup에서 처리.
+  const [prevChannelId, setPrevChannelId] = useState(channelId);
+  if (prevChannelId !== channelId) {
+    setPrevChannelId(channelId);
     setMessages([]);
+    setError(null);
+    setIsLoading(true);
+    setHasMore(false);
+  }
 
+  useEffect(() => {
+    // ref 초기화는 effect setup에서 (render-phase 금지)
+    oldestKeyRef.current = null;
     let db;
     try {
       db = getRealtimeDB();
     } catch (err) {
+      // Initialization failure는 외부 시스템(Firebase) 상태 → React 상태로 동기화하는
+      // 합법적 use case. react-hooks/set-state-in-effect의 false-positive로
+      // 지정된 disable. 일회성 동기 setState로 cascading render 위험 없음.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError(err instanceof Error ? err.message : 'RTDB unavailable');
       setIsLoading(false);
       return;

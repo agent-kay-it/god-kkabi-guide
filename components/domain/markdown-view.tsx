@@ -21,8 +21,9 @@ export function MarkdownView({
 }: MarkdownViewProps): React.JSX.Element {
   return (
     <article
-      // safeHtml은 rehype-sanitize 화이트리스트로 필터된 HTML — XSS-safe
-      // eslint-disable-next-line react/no-danger
+      // safeHtml은 lib/post/markdown.ts:renderMarkdownToSafeHtml에서
+      // rehype-sanitize 화이트리스트로 필터된 HTML — XSS-safe.
+      // (react/no-danger 룰은 현재 eslint flat config에 미정의 — 보안 검증은 source에서 보장)
       dangerouslySetInnerHTML={{ __html: safeHtml }}
       className={cn(
         'prose prose-invert max-w-none text-text',

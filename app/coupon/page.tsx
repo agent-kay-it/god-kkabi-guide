@@ -8,7 +8,15 @@ import { auth } from '@/lib/auth/auth';
 import { listCoupons } from '@/lib/coupon/actions';
 import { CouponSubmitForm } from '@/components/feature/coupon-submit-form';
 import { CouponList } from '@/components/feature/coupon-list';
-import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 
 export const metadata: Metadata = {
   title: '쿠폰 — 커뮤니티 검증',
@@ -22,18 +30,19 @@ export default async function CouponPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>쿠폰 / 커뮤니티</HeroMetaBadge>
           <span className="font-mono">{coupons.length}건</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          쿠폰
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          공식이 아닌 커뮤니티 제보 정보입니다. 실제 사용은 게임 내에서 직접
-          확인해주세요. 작동 여부는 좋아요/싫어요로 알려주세요.
-        </p>
+        <SectionHead>
+          <SectionEyebrow num="07b" label="Coupons" />
+          <SectionTitle as="h1">쿠폰 — 커뮤니티 검증</SectionTitle>
+          <SectionLead>
+            공식이 아닌 커뮤니티 제보 정보입니다. 실제 사용은 게임 내에서 직접 확인해주세요.
+            작동 여부는 좋아요/싫어요로 알려주세요.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <Note variant="info" title="제보 정책" className="mb-6">

@@ -13,6 +13,7 @@ import type { NextRequest, NextResponse } from 'next/server';
 import { verifyApiAuthAndIncrementUsage, type ApiAuthOk } from './auth';
 import { b2bOk, b2bError, b2bOptions } from './response';
 import { API_RATE_LIMITS, type ApiTier } from '@/types/b2b';
+import { emitAuditLog } from '@/lib/observability/audit-log';
 
 type B2bHandler<T> = (
   req: NextRequest,
@@ -63,16 +64,13 @@ export function createB2bRoute<T>(
       // GA4 측정은 추후 measurement protocol 도입 시 server-side fire — 본 핸들러는
       // JSON audit log로 우선 보존 (Vercel logs / DataDog 등에서 집계 가능).
       const url = new URL(req.url);
-      console.info(
-        JSON.stringify({
-          event: 'b2b_api_call',
-          tenantId: auth.client.tenantId,
-          tier: auth.tier,
-          path: url.pathname,
-          tookMs: Date.now() - startMs,
-          remaining: Number.isFinite(auth.remaining) ? auth.remaining : -1,
-        }),
-      );
+      emitAuditLog('b2b_api_call', {
+        tenantId: auth.client.tenantId,
+        tier: auth.tier,
+        path: url.pathname,
+        tookMs: Date.now() - startMs,
+        remaining: Number.isFinite(auth.remaining) ? auth.remaining : -1,
+      });
       return b2bOk(auth, data, startMs, origin);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'unknown';

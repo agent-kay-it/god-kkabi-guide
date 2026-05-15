@@ -7,7 +7,16 @@
 import type { Metadata } from 'next';
 
 import { WIKI_MUNPA_GUIDE_SEED } from '@/data/wiki/munpa-guide';
-import { MunpaCard, Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
+import {
+  MunpaCard,
+  Note,
+  HeroMeta,
+  HeroMetaBadge,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 
 export const metadata: Metadata = {
@@ -26,17 +35,18 @@ export default function MunpaPage(): React.JSX.Element {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 문파</HeroMetaBadge>
           <span className="font-mono">{WIKI_MUNPA_GUIDE_SEED.length} 항목</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          문파 가이드
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          무료 자원 최대 수익원. 개방 즉시 가입하고, 활성도 높은 문파를 고르세요.
-        </p>
+        <SectionHead>
+          <SectionEyebrow num="10" label="Munpa" />
+          <SectionTitle as="h1">문파 가이드</SectionTitle>
+          <SectionLead>
+            무료 자원 최대 수익원. 개방 즉시 가입하고, 활성도 높은 문파를 고르세요.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       <Note variant="success" title="개방 즉시 가입 권장" className="mb-8">

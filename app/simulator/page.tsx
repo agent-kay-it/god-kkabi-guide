@@ -10,7 +10,15 @@ import type { Metadata } from 'next';
 
 import { listWikiJinryeong } from '@/lib/wiki/jinryeong-adapter';
 import { SimulatorCanvas } from '@/components/feature/simulator-canvas';
-import { HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
+import {
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
+} from '@/components/domain';
 
 export const metadata: Metadata = {
   title: '빌드 시뮬레이터 — 진령 3선 시너지',
@@ -23,18 +31,19 @@ export default async function SimulatorPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
-      <header className="mb-8">
-        <HeroMeta className="mb-4">
+      <header>
+        <HeroMeta className="mb-5">
           <HeroMetaBadge>시뮬레이터</HeroMetaBadge>
           <span className="font-mono">진령 11종</span>
         </HeroMeta>
-        <h1 className="title-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">
-          빌드 시뮬레이터
-        </h1>
-        <p className="mt-3 max-w-2xl text-text-soft">
-          진령 3개를 선택해 시너지 점수 · Tier · 추천 직업을 즉시 확인하세요.
-          마음에 드는 조합은 커뮤니티에 빌드 게시물로 저장할 수 있습니다.
-        </p>
+        <SectionHead>
+          <SectionEyebrow label="Tools" />
+          <SectionTitle as="h1">빌드 시뮬레이터</SectionTitle>
+          <SectionLead>
+            진령 3개를 선택해 시너지 점수 · Tier · 추천 직업을 즉시 확인하세요. 마음에 드는
+            조합은 커뮤니티에 빌드 게시물로 저장할 수 있습니다.
+          </SectionLead>
+        </SectionHead>
       </header>
 
       {jinryeong.length === 0 ? (

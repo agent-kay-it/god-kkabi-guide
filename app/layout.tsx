@@ -23,6 +23,8 @@ import { shouldShowAds } from '@/lib/subscription/guards';
 import { AUTHOR_NAME } from '@/lib/config/support';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { LightboxProvider } from '@/components/feature/lightbox-provider';
+import { BackToTop } from '@/components/feature/back-to-top';
 import './globals.css';
 
 const pretendard = localFont({
@@ -173,23 +175,26 @@ export default async function RootLayout({
       </head>
       <body className="antialiased">
         <TooltipProvider delayDuration={200}>
-          <AnalyticsBootstrap />
-          <PageEngagementTracker />
-          <Suspense fallback={null}>
-            <LoginSuccessTracker />
-          </Suspense>
-          {showAds && adsensePublisher ? (
-            <AdSenseScript publisher={adsensePublisher} />
-          ) : null}
-          <TopBar session={userMenuSession} signOutAction={signOutAction} />
-          <div className={showAds && adsenseSlotSticky ? 'pt-14 pb-[80px] sm:pb-[120px]' : 'pt-14'}>
-            {children}
-          </div>
-          {chatSession ? <ChatWidgetLoader session={chatSession} /> : null}
-          {showAds && adsensePublisher && adsenseSlotSticky ? (
-            <AdSlotSticky publisher={adsensePublisher} slot={adsenseSlotSticky} />
-          ) : null}
-          <Toaster />
+          <LightboxProvider>
+            <AnalyticsBootstrap />
+            <PageEngagementTracker />
+            <Suspense fallback={null}>
+              <LoginSuccessTracker />
+            </Suspense>
+            {showAds && adsensePublisher ? (
+              <AdSenseScript publisher={adsensePublisher} />
+            ) : null}
+            <TopBar session={userMenuSession} signOutAction={signOutAction} />
+            <div className={showAds && adsenseSlotSticky ? 'pt-14 pb-[80px] sm:pb-[120px]' : 'pt-14'}>
+              {children}
+            </div>
+            {chatSession ? <ChatWidgetLoader session={chatSession} /> : null}
+            {showAds && adsensePublisher && adsenseSlotSticky ? (
+              <AdSlotSticky publisher={adsensePublisher} slot={adsenseSlotSticky} />
+            ) : null}
+            <BackToTop />
+            <Toaster />
+          </LightboxProvider>
         </TooltipProvider>
       </body>
     </html>
