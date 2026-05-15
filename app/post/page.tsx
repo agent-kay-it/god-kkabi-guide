@@ -12,6 +12,7 @@ import { Fragment } from 'react';
 
 import { listPosts } from '@/lib/post/actions';
 import { auth } from '@/lib/auth/auth';
+import { shouldShowAds } from '@/lib/subscription/guards';
 import { getMyReactionsForPosts } from '@/lib/reaction/actions';
 import {
   PostCard,
@@ -54,18 +55,16 @@ export default async function PostListPage({
   const canLike = canPost;
   const viewerUid = session?.user?.id ?? null;
 
-  // AdSense 인피드 4-조건 가드 (Sprint V1 GAP-C2):
-  //  production + publisher env + slot env + !admin + advertisingConsent
+  // AdSense 인피드 5-조건 가드 (Sprint V2 P6 GAP-P6-MAJ-1):
+  //  production + publisher env + slot env + shouldShowAds (anonymous/banned/admin/premium/no_consent 분기)
   const adsensePublisher = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER;
   const adsenseSlotInfeed = process.env.NEXT_PUBLIC_ADSENSE_SLOT_INFEED;
-  const isAdmin = session?.user?.role === 'admin';
-  const advertisingConsent = Boolean(session?.user?.advertisingConsent);
+  const adsDecision = shouldShowAds(session);
   const showInfeedAd =
     process.env.NODE_ENV === 'production' &&
     Boolean(adsensePublisher) &&
     Boolean(adsenseSlotInfeed) &&
-    !isAdmin &&
-    advertisingConsent;
+    adsDecision.show;
 
   const { items } = await listPosts({ sort, ...(category ? { category } : {}) });
   const reactionMap = canLike

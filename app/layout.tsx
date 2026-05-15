@@ -19,6 +19,7 @@ import { ChatWidgetLoader } from '@/components/feature/chat-widget-loader';
 import { AdSenseScript } from '@/components/feature/adsense-script';
 import { AdSlotSticky } from '@/components/feature/ad-slot-sticky';
 import { auth, signOut } from '@/lib/auth/auth';
+import { shouldShowAds } from '@/lib/subscription/guards';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import './globals.css';
@@ -144,18 +145,18 @@ export default async function RootLayout({
     await signOut({ redirectTo: '/' });
   }
 
-  // ──────────────── AdSense 가드 (4 조건 AND) ────────────────
+  // ──────────────── AdSense 가드 (5 조건 AND) — Sprint V2 P6 (GAP-P6-MAJ-1) ────────────────
   // 출처: docs/sprint/04-sprint-v1/phase-2-design/adsense-strategy.md §3.1
+  //       + docs/sprint/04-sprint-v2/phase-2-design/v2-design-details.md §6.5
+  //
+  // shouldShowAds로 통합 — anonymous → banned → admin → premium → no_consent → show 5-단계.
+  // production + publisher key 가용성은 환경 조건이므로 별도 AND.
   const adsensePublisher = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER;
   const adsenseSlotSticky = process.env.NEXT_PUBLIC_ADSENSE_SLOT_STICKY;
   const isProduction = process.env.NODE_ENV === 'production';
-  const isAdminUser = session?.user?.role === 'admin';
-  const advertisingConsent = Boolean(session?.user?.advertisingConsent);
+  const adsDecision = shouldShowAds(session);
   const showAds =
-    isProduction &&
-    Boolean(adsensePublisher) &&
-    !isAdminUser &&
-    advertisingConsent;
+    isProduction && Boolean(adsensePublisher) && adsDecision.show;
 
   return (
     <html
