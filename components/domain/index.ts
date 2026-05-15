@@ -45,3 +45,33 @@ export { PostMeta, type PostMetaProps } from './post-meta';
 export { MarkdownView, type MarkdownViewProps } from './markdown-view';
 export { CommentThread, type CommentThreadProps } from './comment-thread';
 export { PenaltyBadge, type PenaltyBadgeProps } from './penalty-badge';
+
+// V4 신규 — Sprint V4 P3.C (Hero + Section)
+export { HeroBackdrop, type HeroBackdropProps } from './hero-backdrop';
+export { HeroAppBlock, type HeroAppBlockProps } from './hero-app-block';
+export {
+  HeroStats,
+  type HeroStatsProps,
+  type HeroStatItem,
+} from './hero-stats';
+export {
+  SectionHead,
+  SectionEyebrow,
+  SectionTitle,
+  SectionLead,
+  type SectionHeadProps,
+  type SectionEyebrowProps,
+  type SectionTitleProps,
+  type SectionLeadProps,
+} from './section-head';
+
+// V4 신규 — Sprint V4 P3.D (Featured + Tier composites)
+export {
+  FeaturedJinryeong,
+  type FeaturedJinryeongProps,
+} from './featured-jinryeong';
+export {
+  TierStack,
+  type TierStackProps,
+  type TierStackItem,
+} from './tier-stack';

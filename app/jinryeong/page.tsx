@@ -7,10 +7,13 @@ import type { Metadata } from 'next';
 import { listWikiJinryeong } from '@/lib/wiki/jinryeong-adapter';
 import { auth } from '@/lib/auth/auth';
 import {
+  FeaturedJinryeong,
   JinryeongCard,
   Note,
   HeroMeta,
   HeroMetaBadge,
+  TierStack,
+  type TierStackItem,
 } from '@/components/domain';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
@@ -37,6 +40,12 @@ const FACTION_VARIANT: Record<WikiJinryeongData['faction'], 'indigo' | 'jade' | 
   sin: 'indigo',
   yo: 'jade',
   in: 'bronze',
+};
+
+const TIER_LABEL: Record<0 | 1 | 2, string> = {
+  0: 'T0',
+  1: 'T1',
+  2: 'T2',
 };
 
 export default async function JinryeongPage(): Promise<React.JSX.Element> {
@@ -74,9 +83,20 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
           <span className="font-mono text-xs text-text-mute">2026.05 메타 기준</span>
         </div>
 
-        {([0, 1, 2] as const).map((tier) => (
-          <TierRow key={tier} tier={tier} jinryeongs={byTier[tier]} />
-        ))}
+        <TierStack
+          tiers={[0, 1, 2].map((tier) => ({
+            tier: tier as 0 | 1 | 2,
+            label: TIER_LABEL[tier as 0 | 1 | 2],
+            items: byTier[tier as 0 | 1 | 2].map(
+              (j): TierStackItem => ({
+                id: j.id,
+                name: j.name,
+                trait: j.effectShort,
+                href: `/jinryeong#${j.id}`,
+              }),
+            ),
+          }))}
+        />
       </section>
 
       {/* 진영 안내 */}
@@ -195,78 +215,5 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
   );
 }
 
-function TierRow({
-  tier,
-  jinryeongs,
-}: {
-  tier: 0 | 1 | 2;
-  jinryeongs: readonly WikiJinryeongData[];
-}): React.JSX.Element {
-  return (
-    <div className="flex gap-4">
-      <div
-        className={cn(
-          'flex w-12 shrink-0 items-center justify-center rounded-[var(--radius-card)] font-mono text-3xl font-black sm:w-16',
-          tier === 0 && 'bg-vermilion/15 text-vermilion',
-          tier === 1 && 'bg-bronze/15 text-bronze',
-          tier === 2 && 'bg-indigo/15 text-indigo',
-        )}
-        aria-label={`티어 ${tier}`}
-      >
-        {tier}
-      </div>
-      <div className="flex flex-1 flex-wrap content-start gap-2">
-        {jinryeongs.map((j) => (
-          <div
-            key={j.id}
-            className="flex items-center gap-2 rounded-full border border-ink-line bg-ink-elev px-3 py-1.5"
-          >
-            <span className="text-sm font-semibold text-text">{j.name}</span>
-            <span className="text-[0.7rem] text-text-mute">{j.effectShort}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-import Image from 'next/image';
-
-function FeaturedJinryeong({ data }: { data: WikiJinryeongData }): React.JSX.Element {
-  return (
-    <section className="mb-12" aria-labelledby={`featured-${data.id}`}>
-      <GlassCard className="flex flex-col gap-6 p-6 sm:p-8 md:flex-row" accent="swordsman">
-        {data.imageUrl ? (
-          <div className="relative aspect-square w-full overflow-hidden rounded-[var(--radius-card)] md:w-64 md:shrink-0">
-            <Image
-              src={data.imageUrl}
-              alt={`${data.name} 상세 이미지`}
-              fill
-              sizes="(max-width: 768px) 100vw, 256px"
-              className="object-cover"
-            />
-          </div>
-        ) : null}
-        <div className="flex flex-col gap-3">
-          <span className="font-mono text-[0.7rem] uppercase tracking-wider text-bronze-soft">
-            Featured · 모든 직업 공통 핵심
-          </span>
-          <h3
-            id={`featured-${data.id}`}
-            className="text-2xl font-bold tracking-tight text-text"
-          >
-            {data.name}
-          </h3>
-          <p className="text-sm leading-relaxed text-text-soft">{data.effectLong}</p>
-          <div className="flex flex-wrap gap-2">
-            {data.recommendedFor.map((r) => (
-              <Badge key={r} variant="bronze" className="text-[0.7rem]">
-                {r}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      </GlassCard>
-    </section>
-  );
-}
+// inline TierRow + FeaturedJinryeong removed — extracted to
+// components/domain/{tier-stack,featured-jinryeong}.tsx (Sprint V4 P3.D)

@@ -4,7 +4,7 @@
  */
 'use client';
 
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { ThumbsUp, ThumbsDown, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -21,6 +21,8 @@ export interface CouponListProps {
 
 export function CouponList({ coupons, canVote }: CouponListProps): React.JSX.Element {
   const [isPending, startTransition] = useTransition();
+  // mount 시 한 번 캡처 — React Compiler 순수성 규칙 준수 (Date.now 직접 호출 금지)
+  const [nowMs] = useState<number>(() => Date.now());
 
   function handleVote(couponId: string, direction: 'up' | 'down') {
     if (!canVote) {
@@ -44,7 +46,7 @@ export function CouponList({ coupons, canVote }: CouponListProps): React.JSX.Ele
   return (
     <ul className="grid gap-3 lg:grid-cols-2" role="list">
       {coupons.map((c) => {
-        const expired = c.expiresAtMs < Date.now();
+        const expired = c.expiresAtMs < nowMs;
         return (
           <li key={c.id}>
             <GlassCard className="space-y-3 p-4">
