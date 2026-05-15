@@ -4,11 +4,21 @@
   "version": "v2.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p6_qa",
+  "phase": "p7_report",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "completed"},
     {"phase": "p1_plan", "startedAt": "2026-05-15T16:00:00.000Z", "status": "completed", "artifacts": ["MASTER-PLAN.md", "SCOPE-CHANGE.md", "prd.md", "design.md", "plan.md"]},
     {"phase": "p2_design", "startedAt": "2026-05-15T17:30:00.000Z", "status": "completed", "artifacts": ["phase-2-design/firestore-schema.md", "phase-2-design/auth-flow.md", "phase-2-design/design-tokens-v2.json", "phase-2-design/component-inventory-v2.md"]},
+    {"phase": "p6_qa", "startedAt": "2026-05-16T03:00:00.000Z", "status": "completed", "artifacts": [
+      "GA4 17 이벤트 인벤토리: types/ga4.ts 정의 12 → 17 확장 (v2 신규 8: login/register_complete/chat_send/chat_image_upload/chat_report/bookmark_add/bookmark_remove/wiki_card_click)",
+      "GA4 활성 11개: v1 5 (page_view/class_diagnose_complete/external_link_click/scroll_depth_75/dwell_60) + v2 6 (register_complete/chat_send/chat_image_upload/chat_report/bookmark_add/bookmark_remove)",
+      "GA4 STUB 2개: login (V1 NextAuth callback 트래커) + wiki_card_click (V1 카드 클릭 트래커)",
+      "GA4 primitive 제약 처리: chat_report.reasons readonly string[] → string (comma-join)",
+      "7-Layer dataFlowIntegrity 4 feature 매트릭스 PASS: Auth (4-table 트랜잭션) / Chat (RTDB live + 마스킹) / Bookmark (denormalize 카운터) / Wiki (Firestore + seed fallback)",
+      "E2E 5 시나리오 정적 검증 PASS: S1 Google → 등록 / S2 Kakao + Custom Token / S3 채팅 전체 + 마스킹 / S4 북마크 토글 + 200 한도 / S5 신고 3건 자동 hidden + admin 처리",
+      "운영자 게이트 명시: Firebase Console (RTDB/Storage/Auth/role=admin claim) + Vercel env 14건 + 도메인 G4 + first production deploy",
+      "라이브 E2E + Lighthouse Mobile production 재측정은 P8 archive 직전 운영자 게이트 사전 작업 후 자동 재실행"
+    ]},
     {"phase": "p5_act", "startedAt": "2026-05-16T02:00:00.000Z", "status": "completed", "artifacts": [
       "C1 Critical 해소: domain→feature 역방향 의존 → slot prop 패턴 (bookmarkSlot?: ReactNode) 4 카드 + 4 페이지",
       "M1 database.rules.json: auth.token.registered=true claim 추가 + setUserClaims registered 시그너처 확장 + register.ts claim 설정",

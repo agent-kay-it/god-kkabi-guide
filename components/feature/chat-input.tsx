@@ -16,7 +16,15 @@ import { Button } from '@/components/ui/button';
 import { sendChatMessage } from '@/lib/chat/send-message';
 import { uploadChatImage } from '@/lib/chat/image-upload';
 import { containsBadWord, maskBadWords } from '@/lib/chat/masking';
+import { logEvent } from '@/lib/firebase/analytics';
 import { cn } from '@/lib/utils';
+
+/** channelId → 채널 종류 (GA4 이벤트 파라미터용) */
+function channelKindOf(channelId: string): 'global' | 'server' | 'munpa' {
+  if (channelId.startsWith('munpa:')) return 'munpa';
+  if (channelId.startsWith('server:')) return 'server';
+  return 'global';
+}
 
 export interface ChatInputProps {
   readonly channelId: string;
@@ -47,6 +55,10 @@ export function ChatInput({
       if (result.ok) {
         setImageUrl(result.url);
         toast.success('이미지가 첨부되었습니다');
+        void logEvent('chat_image_upload', {
+          channel_kind: channelKindOf(channelId),
+          compressed_size_kb: Math.round(file.size / 1024),
+        });
       } else {
         const msg =
           result.error === 'UNSUPPORTED_TYPE'
@@ -75,6 +87,8 @@ export function ChatInput({
       });
     }
 
+    const hasImage = Boolean(imageUrl);
+    const hadBadWord = containsBadWord(trimmed);
     startTransition(async () => {
       const result = await sendChatMessage({
         channelId,
@@ -85,6 +99,11 @@ export function ChatInput({
       if (result.ok) {
         setText('');
         setImageUrl(null);
+        void logEvent('chat_send', {
+          channel_kind: channelKindOf(channelId),
+          has_image: hasImage,
+          masked_count: hadBadWord ? 1 : 0,
+        });
       } else {
         const msg =
           result.error === 'EMPTY'

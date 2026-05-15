@@ -23,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
 import { registerUser } from '@/lib/auth/register';
+import { logEvent } from '@/lib/firebase/analytics';
 import { RegisterFormSchema, type RegisterFormInput } from '@/lib/auth/register-schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -92,6 +93,11 @@ export function RegisterForm(): React.JSX.Element {
       const result = await registerUser(values);
       if (result.ok) {
         toast.success('등록이 완료되었습니다');
+        void logEvent('register_complete', {
+          class_id: values.classId,
+          server_id: values.serverId,
+          analytics_consent: values.analytics,
+        });
         router.push('/');
         router.refresh();
         return;

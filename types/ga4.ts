@@ -5,9 +5,9 @@
  */
 
 export type GA4EventName =
-  // ─── MVP 활성 9개 ───
+  // ─── v1 활성 9개 (carry-over) ───
   | 'page_view'              // 모든 페이지 진입 (Firebase Analytics 자동 발화)
-  | 'coupon_copy'            // 쿠폰 클릭 복사 + Firestore 백업
+  | 'coupon_copy'            // 쿠폰 클릭 복사 + Firestore 백업 (v2에서 폐기 — 호환 유지)
   | 'class_diagnose_complete' // 직업 진단 완료 + Firestore 백업
   | 'meta_build_view'        // 검객 메타 빌드 페이지 dwell ≥5s + Firestore 백업
   | 'jinryeong_card_click'   // 진령 카드 클릭
@@ -15,10 +15,19 @@ export type GA4EventName =
   | 'external_link_click'    // 출처 외부 링크 클릭
   | 'scroll_depth_75'        // 75% 스크롤 도달
   | 'dwell_60'               // 60초 이상 체류
+  // ─── v2 신규 8개 ───
+  | 'login'                  // Google/Kakao 로그인 성공
+  | 'register_complete'      // 등록 폼 완료 (PIPA 4 동의 + 5필드)
+  | 'chat_send'              // 채팅 메시지 전송 (마스킹 후)
+  | 'chat_image_upload'      // 채팅 이미지 첨부 업로드 (압축 후)
+  | 'chat_report'            // 채팅 메시지 신고
+  | 'bookmark_add'           // 북마크 추가
+  | 'bookmark_remove'        // 북마크 제거
+  | 'wiki_card_click'        // 위키 카드 클릭 (class/skill/equipment/content/munpa)
   // ─── V1+ stub ───
   | 'build_create'           // 빌드 작성 완료 (V1 UGC 활성화 시)
   | 'build_like'             // 빌드 좋아요 (V1)
-  | 'signup';                // 회원가입 완료 (V1 Firebase Auth)
+  | 'signup';                // (v1 호환 — v2부터 register_complete 사용)
 
 /** Firestore 백업 대상 이벤트 3개 (전체 12개 이벤트 중) */
 export const CORE_BACKUP_EVENTS = ['coupon_copy', 'class_diagnose_complete', 'meta_build_view'] as const;
@@ -76,5 +85,40 @@ export interface GA4EventParams {
     page_title?: string;
     page_location?: string;
     page_path?: string;
+  };
+  login: {
+    method: 'google' | 'kakao';
+  };
+  register_complete: {
+    class_id: 'warrior' | 'swordsman' | 'medium';
+    server_id: string;
+    analytics_consent: boolean;
+  };
+  chat_send: {
+    channel_kind: 'global' | 'server' | 'munpa';
+    has_image: boolean;
+    masked_count: number;
+  };
+  chat_image_upload: {
+    channel_kind: 'global' | 'server' | 'munpa';
+    compressed_size_kb: number;
+  };
+  chat_report: {
+    channel_kind: 'global' | 'server' | 'munpa';
+    /** ReportReason의 comma-join (GA4 primitive 제약) */
+    reasons: string;
+    auto_hidden: boolean;
+  };
+  bookmark_add: {
+    target_type: string;
+    target_id: string;
+  };
+  bookmark_remove: {
+    target_type: string;
+    target_id: string;
+  };
+  wiki_card_click: {
+    category: 'class' | 'jinryeong' | 'skill' | 'equipment' | 'content' | 'munpa';
+    target_id: string;
   };
 }

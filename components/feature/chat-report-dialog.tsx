@@ -21,6 +21,13 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { reportChatMessage } from '@/lib/chat/report-action';
+import { logEvent } from '@/lib/firebase/analytics';
+
+function channelKindOf(channelId: string): 'global' | 'server' | 'munpa' {
+  if (channelId.startsWith('munpa:')) return 'munpa';
+  if (channelId.startsWith('server:')) return 'server';
+  return 'global';
+}
 import {
   REPORT_REASON_LABEL,
   type ReportReason,
@@ -83,6 +90,12 @@ export function ChatReportDialog(props: ChatReportDialogProps): React.JSX.Elemen
             ? '신고가 접수되어 메시지가 자동 숨김 처리되었습니다.'
             : '신고가 접수되었습니다. 운영자가 검토 후 처리합니다.',
         );
+        void logEvent('chat_report', {
+          channel_kind: channelKindOf(props.channelId),
+          // GA4 primitive 제약 — 배열은 comma-join으로 직렬화
+          reasons: Array.from(reasons).join(','),
+          auto_hidden: result.autoHidden,
+        });
         setReasons(new Set());
         setExtraText('');
         props.onOpenChange(false);

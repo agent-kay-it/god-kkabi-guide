@@ -16,6 +16,7 @@ import { Bookmark, BookmarkCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { addBookmark, removeBookmark } from '@/lib/bookmark/actions';
+import { logEvent } from '@/lib/firebase/analytics';
 import { Button } from '@/components/ui/button';
 import type { BookmarkTargetType } from '@/types/bookmark';
 import { cn } from '@/lib/utils';
@@ -78,6 +79,10 @@ export function BookmarkButton({
       if (result.ok) {
         setBookmarked(next);
         toast.success(next ? '북마크에 추가했습니다' : '북마크에서 제거했습니다');
+        void logEvent(next ? 'bookmark_add' : 'bookmark_remove', {
+          target_type: targetType,
+          target_id: targetId,
+        });
       } else {
         // 롤백
         setOptimisticBookmarked(!next);
