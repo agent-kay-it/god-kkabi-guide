@@ -94,6 +94,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={notoSansKr.variable} suppressHydrationWarning>
+      <head>
+        {/* 외부 CDN preconnect — LCP 개선 (Lighthouse Phase 5 iterate) */}
+        <link rel="preconnect" href="https://play-lh.googleusercontent.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://firebase.googleapis.com" />
+        <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+      </head>
       <body className="antialiased">
         <AnalyticsBootstrap />
         <PageEngagementTracker />
