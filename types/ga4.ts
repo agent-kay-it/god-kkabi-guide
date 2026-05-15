@@ -51,7 +51,13 @@ export type GA4EventName =
   | 'payment_select'         // "구독하기" 버튼 클릭
   | 'payment_input'          // Toss 위젯 호출 (결제 정보 입력 시작)
   | 'payment_success'        // 결제 confirm 성공 (success page)
-  | 'payment_drop';          // 결제 실패 또는 중단 (fail page)
+  | 'payment_drop'           // 결제 실패 또는 중단 (fail page)
+  // V3 P5 — B2B funnel 5종 (GAP-V3-MAJ-1)
+  | 'b2b_api_call'           // B2B REST endpoint 호출 (server-side measurement protocol 또는 client 보조)
+  | 'b2b_tenant_login'       // admin/b2b/clients issueApiClient 발급
+  | 'b2b_export'             // tenant/reports 샘플 export 다운로드 클릭
+  | 'external_signal_fetch'  // ETL cron 종료 시 server-side 로깅
+  | 'acquisition_loi_view';  // 인수 LOI / 가격 안내 페이지 진입
 
 /** Firestore 백업 대상 이벤트 3개 (전체 12개 이벤트 중) */
 export const CORE_BACKUP_EVENTS = ['coupon_copy', 'class_diagnose_complete', 'meta_build_view'] as const;

@@ -34,6 +34,20 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       return { ok: false, processed: 0, errors: 1 };
     }),
   ]);
+  // GAP-V3-MAJ-1: B2B funnel server-side audit log.
+  // GA4 측 측정은 추후 measurement protocol 도입 시 server-side fire — 본 cron은 audit log로 우선 보존.
+  console.info(
+    JSON.stringify({
+      event: 'external_signal_fetch',
+      saraminProcessed: saramin.processed,
+      saraminErrors: saramin.errors,
+      saraminSkipped: 'skipped' in saramin ? saramin.skipped : false,
+      googleNewsProcessed: news.processed,
+      googleNewsErrors: news.errors,
+      googleNewsSkipped: 'skipped' in news ? news.skipped : false,
+      timestamp: new Date().toISOString(),
+    }),
+  );
   return NextResponse.json({
     ok: true,
     saramin,

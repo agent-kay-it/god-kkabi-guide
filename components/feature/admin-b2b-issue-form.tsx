@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 
 import { issueApiClient } from '@/lib/b2b/actions';
 import type { ApiTier } from '@/types/b2b';
+import { logEvent } from '@/lib/firebase/analytics';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Input } from '@/components/ui/input';
@@ -66,6 +67,12 @@ export function AdminB2bIssueForm(): React.JSX.Element {
         plaintext: result.result.apiKeyPlaintext,
         prefix: result.result.client.apiKeyPrefix,
         tenantName: result.result.client.tenantName,
+      });
+      // GAP-V3-MAJ-1: B2B funnel — tenant 발급 이벤트
+      void logEvent('b2b_tenant_login', {
+        tenant_id: result.result.client.tenantId,
+        tier: result.result.client.tier,
+        monthly_fee_krw: result.result.client.monthlyFeeKrw,
       });
       toast.success('API Key 발급 완료 — 1회만 표시됩니다. 즉시 복사하세요.');
     });

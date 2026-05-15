@@ -59,6 +59,20 @@ export function createB2bRoute<T>(
 
     try {
       const data = await handler(req, auth);
+      // GAP-V3-MAJ-1: B2B funnel server-side audit log (b2b_api_call).
+      // GA4 측정은 추후 measurement protocol 도입 시 server-side fire — 본 핸들러는
+      // JSON audit log로 우선 보존 (Vercel logs / DataDog 등에서 집계 가능).
+      const url = new URL(req.url);
+      console.info(
+        JSON.stringify({
+          event: 'b2b_api_call',
+          tenantId: auth.client.tenantId,
+          tier: auth.tier,
+          path: url.pathname,
+          tookMs: Date.now() - startMs,
+          remaining: Number.isFinite(auth.remaining) ? auth.remaining : -1,
+        }),
+      );
       return b2bOk(auth, data, startMs, origin);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'unknown';

@@ -3,13 +3,13 @@
  * 분기 리포트 다운로드 + CSV/JSON export 안내. admin demo.
  */
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { FileDown, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 import { auth } from '@/lib/auth/auth';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Note } from '@/components/domain';
+import { B2bExportLink } from '@/components/feature/b2b-export-link';
 
 export const metadata: Metadata = {
   title: '리포트',
@@ -72,13 +72,7 @@ export default async function TenantReportsPage(): Promise<React.JSX.Element> {
                 <p className="text-sm text-text-soft">{r.description}</p>
                 <div className="flex items-center justify-between text-xs text-text-mute">
                   <span>주기: {r.cadence}</span>
-                  <Link
-                    href={`/api/v1/builds?limit=10`}
-                    className="inline-flex items-center gap-1 text-bronze hover:underline"
-                  >
-                    <FileDown className="h-3 w-3" aria-hidden />
-                    샘플 JSON
-                  </Link>
+                  <B2bExportLink href={`/api/v1/builds?limit=10`} reportId={r.id} />
                 </div>
               </GlassCard>
             </li>
