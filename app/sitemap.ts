@@ -33,6 +33,12 @@ const ENTRIES: readonly SitemapEntry[] = [
   { path: '/skill-equip', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/dungeon', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/payment', priority: 0.7, changeFrequency: 'monthly' },
+
+  // Supplementary (P3.C-3)
+  { path: '/event', priority: 0.8, changeFrequency: 'weekly' },
+  { path: '/tips', priority: 0.75, changeFrequency: 'monthly' },
+  { path: '/sources', priority: 0.5, changeFrequency: 'monthly' },
+  { path: '/intro', priority: 0.6, changeFrequency: 'monthly' },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
