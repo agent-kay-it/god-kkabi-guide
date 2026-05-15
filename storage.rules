@@ -15,6 +15,21 @@ service firebase.storage {
         && (request.auth.uid == userId || request.auth.token.role == 'admin');
     }
 
+    // 게시물 이미지 (Sprint V1) — 본인 폴더 + registered=true + 미차단 + 1MB + MIME 화이트리스트
+    // 출처: docs/sprint/04-sprint-v1/design.md §3.1 (post images)
+    //      + phase-4-check CA-C1 (P3에서 누락)
+    match /posts/{userId}/{filename} {
+      allow read: if true; // 공개 읽기 — 게시물 자체가 public
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.auth.token.role != 'banned'
+        && request.auth.token.registered == true
+        && request.resource.size <= 1 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if request.auth != null
+        && (request.auth.uid == userId || request.auth.token.role == 'admin');
+    }
+
     // 기본 거부
     match /{allPaths=**} {
       allow read, write: if false;

@@ -11,6 +11,7 @@ import { ArrowRight } from 'lucide-react';
 import { listWikiClasses } from '@/lib/wiki/classes-adapter';
 import { auth } from '@/lib/auth/auth';
 import { ClassCard, Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
+import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { Button } from '@/components/ui/button';
 import type { WikiClassDoc } from '@/types/wiki';
@@ -70,21 +71,22 @@ export default async function ClassPage(): Promise<React.JSX.Element> {
 
       <div className="mb-12 grid gap-6 lg:grid-cols-3">
         {classes.map((c) => (
-          <ClassCard
-            key={c.id}
-            data={c}
-            stats={CLASS_STATS[c.id]}
-            bookmarkSlot={
-              <BookmarkButton
-                targetType="class"
-                targetId={c.id}
-                title={`${c.name} (${c.subName})`}
-                href={`/class#${c.id}`}
-                emoji={c.emoji}
-                canBookmark={canBookmark}
-              />
-            }
-          />
+          <WikiCardTracker key={c.id} category="class" targetId={c.id}>
+            <ClassCard
+              data={c}
+              stats={CLASS_STATS[c.id]}
+              bookmarkSlot={
+                <BookmarkButton
+                  targetType="class"
+                  targetId={c.id}
+                  title={`${c.name} (${c.subName})`}
+                  href={`/class#${c.id}`}
+                  emoji={c.emoji}
+                  canBookmark={canBookmark}
+                />
+              }
+            />
+          </WikiCardTracker>
         ))}
       </div>
 

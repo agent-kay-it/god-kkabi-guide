@@ -329,9 +329,18 @@ export async function listPosts(
   }
   try {
     const db = getAdminFirestore();
-    let q: FirebaseFirestore.Query = db
-      .collection('posts')
-      .where('status', '==', 'published');
+    let q: FirebaseFirestore.Query = db.collection('posts');
+
+    // Sprint V1 GAP-M2: 본인 글 조회 시 pending_edit도 포함 (운영자 승인 대기 표시).
+    // 외부 viewer / 카테고리 탐색 시는 published만 노출.
+    const session = filter.authorUid ? await auth() : null;
+    const isOwnerView =
+      Boolean(filter.authorUid) && session?.user?.id === filter.authorUid;
+    if (isOwnerView) {
+      q = q.where('status', 'in', ['published', 'pending_edit']);
+    } else {
+      q = q.where('status', '==', 'published');
+    }
 
     if (filter.category) {
       q = q.where('category', '==', filter.category);

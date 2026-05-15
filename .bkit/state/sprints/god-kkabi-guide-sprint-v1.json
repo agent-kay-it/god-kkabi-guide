@@ -4,7 +4,7 @@
   "version": "v1.0",
   "trustLevel": 4,
   "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
-  "phase": "p5_act",
+  "phase": "p6_qa",
   "phaseHistory": [
     {"phase": "p0_pre", "startedAt": "2026-05-16T05:30:00.000Z", "status": "completed", "artifacts": [
       "Sprint v2 archive tag: v2.0.0-mvp-v2-archived",
@@ -41,6 +41,18 @@
       "Critical 4건 식별: CA-C1 (storage rules), GAP-C1 (JWT advertisingConsent), GAP-C2 (AdSlotInfeed 미마운트), GAP-C3 (WikiCardTracker 미사용)",
       "Major 3건 식별: GAP-M1 (댓글 liked 하드코딩), GAP-M2 (pending_edit 본인 미표시), CA-M2 (CSP img-src 확인)",
       "P5 Act 통합 우선순위 표 + 검증 게이트 + Sprint V2 carry-over 4건"
+    ]},
+    {"phase": "p5_act", "startedAt": "2026-05-15T19:30:00.000Z", "completedAt": "2026-05-15T20:30:00.000Z", "status": "completed", "artifacts": [
+      "CA-C1: storage.rules에 posts/{userId}/{filename} 규칙 추가 (registered=true + role≠banned + 1MB + MIME 화이트리스트)",
+      "CA-M2: CSP img-src + remotePatterns에 lh3.googleusercontent.com + k.kakaocdn.net + img1.kakaocdn.net 확장 (OAuth 프로필 이미지)",
+      "GAP-C1: lib/auth/auth.ts에 Node runtime jwt 콜백 override — Firestore users/{uid} hydrate (advertisingConsent + registered + role + 등록 필드). 한 번 set 후 30일 영속, 미등록 false fallback",
+      "GAP-C2: app/post/page.tsx 5번째 게시물 다음에 AdSlotInfeed 마운트 (lg:col-span-2) + 4-조건 가드 (production AND env AND !admin AND advertisingConsent)",
+      "GAP-C3: 6 wiki 페이지에 WikiCardTracker wrapper 적용 (/class /jinryeong /skill /equipment /content /munpa, total 26 매칭)",
+      "GAP-M1: lib/reaction/actions.ts에 getMyReactionsForComments 신규 + app/post/[id]/page.tsx에서 Promise.all 병렬 조회 (commentReactionMap)",
+      "GAP-M2: lib/post/actions.ts listPosts에 owner-view 분기 (status in ['published','pending_edit']) + app/me/posts에 '심사 중' 배지",
+      "phase-5-act/REPORT.md (변경 상세 + 7-Layer 4/7→7/7 + Quality Gates 8/12→11/12 + Match Rate ≥93% 예상)",
+      "pnpm typecheck 통과 (1회 회귀 fix: exactOptionalPropertyTypes strict union role 매칭)",
+      "pnpm build 통과: 23 routes 동일"
     ]}
   ],
   "startedAt": "2026-05-16T05:30:00.000Z",

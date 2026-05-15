@@ -125,3 +125,39 @@ export async function getMyReactionsForPosts(
     return result;
   }
 }
+
+/**
+ * 본인의 댓글 좋아요 상태를 일괄 조회 (게시물 상세 페이지 댓글 트리 초기 렌더용).
+ * Sprint V1 — Phase 5 Act (GAP-M1).
+ *
+ * commentIds 길이 ≤ 30 권장. 각 댓글의 reactions/{uid} 문서 존재 여부로 판정.
+ */
+export async function getMyReactionsForComments(
+  postId: string,
+  commentIds: readonly string[],
+): Promise<ReadonlyMap<string, boolean>> {
+  const session = await auth();
+  const uid = session?.user?.id;
+  const result = new Map<string, boolean>();
+  if (!uid || !hasAdminCredentials() || commentIds.length === 0) return result;
+  try {
+    const db = getAdminFirestore();
+    const promises = commentIds.slice(0, 30).map((commentId) =>
+      db
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .doc(commentId)
+        .collection('reactions')
+        .doc(uid)
+        .get(),
+    );
+    const snaps = await Promise.all(promises);
+    snaps.forEach((snap, i) => {
+      result.set(commentIds[i]!, snap.exists);
+    });
+    return result;
+  } catch {
+    return result;
+  }
+}

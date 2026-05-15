@@ -8,6 +8,7 @@ import type { Metadata } from 'next';
 
 import { WIKI_MUNPA_GUIDE_SEED } from '@/data/wiki/munpa-guide';
 import { MunpaCard, Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
+import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 
 export const metadata: Metadata = {
   title: '문파 가이드 — 가입 이점 + 선택 기준',
@@ -85,7 +86,9 @@ function MunpaSection({
       </div>
       <div className="grid gap-3 md:grid-cols-2">
         {guides.map((g) => (
-          <MunpaCard key={g.id} data={g} />
+          <WikiCardTracker key={g.id} category="munpa" targetId={g.id}>
+            <MunpaCard data={g} />
+          </WikiCardTracker>
         ))}
       </div>
     </section>

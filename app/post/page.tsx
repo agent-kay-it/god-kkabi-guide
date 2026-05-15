@@ -8,6 +8,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PenSquare } from 'lucide-react';
 
+import { Fragment } from 'react';
+
 import { listPosts } from '@/lib/post/actions';
 import { auth } from '@/lib/auth/auth';
 import { getMyReactionsForPosts } from '@/lib/reaction/actions';
@@ -18,6 +20,7 @@ import {
   HeroMetaBadge,
 } from '@/components/domain';
 import { LikeButton } from '@/components/feature/like-button';
+import { AdSlotInfeed } from '@/components/feature/ad-slot-infeed';
 import { Button } from '@/components/ui/button';
 import {
   POST_CATEGORY_LABEL,
@@ -50,6 +53,19 @@ export default async function PostListPage({
   const canPost = Boolean(session?.user?.registered && session.user.role !== 'banned');
   const canLike = canPost;
   const viewerUid = session?.user?.id ?? null;
+
+  // AdSense 인피드 4-조건 가드 (Sprint V1 GAP-C2):
+  //  production + publisher env + slot env + !admin + advertisingConsent
+  const adsensePublisher = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER;
+  const adsenseSlotInfeed = process.env.NEXT_PUBLIC_ADSENSE_SLOT_INFEED;
+  const isAdmin = session?.user?.role === 'admin';
+  const advertisingConsent = Boolean(session?.user?.advertisingConsent);
+  const showInfeedAd =
+    process.env.NODE_ENV === 'production' &&
+    Boolean(adsensePublisher) &&
+    Boolean(adsenseSlotInfeed) &&
+    !isAdmin &&
+    advertisingConsent;
 
   const { items } = await listPosts({ sort, ...(category ? { category } : {}) });
   const reactionMap = canLike
@@ -125,21 +141,28 @@ export default async function PostListPage({
         </Note>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
-          {items.map((post) => (
-            <PostCard
-              key={post.id}
-              data={post}
-              actionsSlot={
-                <LikeButton
-                  targetType="post"
-                  targetId={post.id}
-                  postCategory={post.category}
-                  initialLiked={reactionMap.get(post.id) ?? false}
-                  initialCount={post.likeCount}
-                  canLike={canLike && post.authorUid !== viewerUid}
-                />
-              }
-            />
+          {items.map((post, idx) => (
+            <Fragment key={post.id}>
+              <PostCard
+                data={post}
+                actionsSlot={
+                  <LikeButton
+                    targetType="post"
+                    targetId={post.id}
+                    postCategory={post.category}
+                    initialLiked={reactionMap.get(post.id) ?? false}
+                    initialCount={post.likeCount}
+                    canLike={canLike && post.authorUid !== viewerUid}
+                  />
+                }
+              />
+              {/* Sprint V1 GAP-C2: 5번째 카드 다음에 AdSense 인피드 슬롯 (production + consent) */}
+              {showInfeedAd && idx === 4 && adsensePublisher && adsenseSlotInfeed ? (
+                <div className="lg:col-span-2">
+                  <AdSlotInfeed publisher={adsensePublisher} slot={adsenseSlotInfeed} />
+                </div>
+              ) : null}
+            </Fragment>
           ))}
         </div>
       )}

@@ -11,6 +11,7 @@ import { auth } from '@/lib/auth/auth';
 import { listPosts } from '@/lib/post/actions';
 import { PostCard, HeroMeta, HeroMetaBadge, Note } from '@/components/domain';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
   title: '내 게시물',
@@ -51,7 +52,19 @@ export default async function MyPostsPage(): Promise<React.JSX.Element> {
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {items.map((post) => (
-            <PostCard key={post.id} data={post} />
+            <div key={post.id} className="relative">
+              {/* Sprint V1 GAP-M2: 24h 이후 수정 → pending_edit 상태 배지 */}
+              {post.status === 'pending_edit' ? (
+                <Badge
+                  variant="bronze"
+                  className="absolute -top-2 right-3 z-10 shadow-md"
+                  aria-label="운영자 승인 대기 중"
+                >
+                  심사 중
+                </Badge>
+              ) : null}
+              <PostCard data={post} />
+            </div>
           ))}
         </div>
       )}

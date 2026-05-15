@@ -13,6 +13,7 @@ import {
   HeroMetaBadge,
 } from '@/components/domain';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
+import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -173,19 +174,20 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {allJinryeong.map((j) => (
-            <JinryeongCard
-              key={j.id}
-              data={j}
-              bookmarkSlot={
-                <BookmarkButton
-                  targetType="jinryeong"
-                  targetId={j.id}
-                  title={j.name}
-                  href={`/jinryeong#${j.id}`}
-                  canBookmark={canBookmark}
-                />
-              }
-            />
+            <WikiCardTracker key={j.id} category="jinryeong" targetId={j.id}>
+              <JinryeongCard
+                data={j}
+                bookmarkSlot={
+                  <BookmarkButton
+                    targetType="jinryeong"
+                    targetId={j.id}
+                    title={j.name}
+                    href={`/jinryeong#${j.id}`}
+                    canBookmark={canBookmark}
+                  />
+                }
+              />
+            </WikiCardTracker>
           ))}
         </div>
       </section>

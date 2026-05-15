@@ -14,7 +14,10 @@ import { notFound } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getPost } from '@/lib/post/actions';
 import { listComments } from '@/lib/comment/actions';
-import { getMyReactionsForPosts } from '@/lib/reaction/actions';
+import {
+  getMyReactionsForPosts,
+  getMyReactionsForComments,
+} from '@/lib/reaction/actions';
 import { renderMarkdownToSafeHtml } from '@/lib/post/markdown';
 import {
   MarkdownView,
@@ -68,10 +71,16 @@ export default async function PostDetailPage({ params }: PageProps): Promise<Rea
   const safeHtml = await renderMarkdownToSafeHtml(post.body);
   const comments = await listComments(id, viewerIsAdmin);
 
-  // 본인 좋아요 상태 (post + comments 일괄 조회는 별도 함수 필요. V1 MVP는 post만)
-  const reactionMap = canInteract
-    ? await getMyReactionsForPosts([post.id])
-    : new Map<string, boolean>();
+  // 본인 좋아요 상태 — post + comments 병렬 조회 (Sprint V1 GAP-M1)
+  const [reactionMap, commentReactionMap] = await Promise.all([
+    canInteract ? getMyReactionsForPosts([post.id]) : Promise.resolve(new Map<string, boolean>()),
+    canInteract
+      ? getMyReactionsForComments(
+          id,
+          comments.slice(0, 30).map((c) => c.id),
+        )
+      : Promise.resolve(new Map<string, boolean>()),
+  ]);
   const isLiked = reactionMap.get(post.id) ?? false;
 
   return (
@@ -127,7 +136,7 @@ export default async function PostDetailPage({ params }: PageProps): Promise<Rea
               viewerIsAdmin={viewerIsAdmin}
               canInteract={canInteract}
               isReply={isReply}
-              liked={false /* V1 MVP — 댓글 좋아요 초기상태는 미적용, useOptimistic으로 동작 */}
+              liked={commentReactionMap.get(comment.id) ?? false}
             />
           )}
         />

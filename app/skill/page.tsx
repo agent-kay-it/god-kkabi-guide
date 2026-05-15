@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 
 import { listWikiSkills } from '@/lib/wiki/skill-adapter';
 import { SkillCard, Note, HeroMeta, HeroMetaBadge } from '@/components/domain';
+import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { WikiClassId } from '@/types/wiki';
 
@@ -115,7 +116,9 @@ function SkillGroupSection({
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {skills.map((s) => (
-          <SkillCard key={s.id} data={s} />
+          <WikiCardTracker key={s.id} category="skill" targetId={s.id}>
+            <SkillCard data={s} />
+          </WikiCardTracker>
         ))}
       </div>
     </section>

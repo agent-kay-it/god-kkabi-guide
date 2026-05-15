@@ -13,6 +13,7 @@ import {
   HeroMetaBadge,
 } from '@/components/domain';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
+import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CONTENT_KIND_LABEL } from '@/types/wiki';
 import type { WikiContentDoc } from '@/types/wiki';
@@ -89,7 +90,9 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-4 md:grid-cols-2">
             {byKind.dungeon.map((c) => (
-              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              <WikiCardTracker key={c.id} category="content" targetId={c.id}>
+                <ContentCard data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              </WikiCardTracker>
             ))}
           </div>
         </TabsContent>
@@ -101,7 +104,9 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-4">
             {byKind.pvp.map((c) => (
-              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              <WikiCardTracker key={c.id} category="content" targetId={c.id}>
+                <ContentCard data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              </WikiCardTracker>
             ))}
           </div>
         </TabsContent>
@@ -112,7 +117,9 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-3 md:grid-cols-2">
             {byKind.event.map((c) => (
-              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              <WikiCardTracker key={c.id} category="content" targetId={c.id}>
+                <ContentCard data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              </WikiCardTracker>
             ))}
           </div>
         </TabsContent>
@@ -123,7 +130,9 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-3 md:grid-cols-2">
             {byKind.mechanic.map((c) => (
-              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              <WikiCardTracker key={c.id} category="content" targetId={c.id}>
+                <ContentCard data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              </WikiCardTracker>
             ))}
           </div>
         </TabsContent>
@@ -134,7 +143,9 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
           </Note>
           <div className="grid gap-3 md:grid-cols-2">
             {byKind.meta.map((c) => (
-              <ContentCard key={c.id} data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              <WikiCardTracker key={c.id} category="content" targetId={c.id}>
+                <ContentCard data={c} bookmarkSlot={<ContentBookmarkSlot data={c} canBookmark={canBookmark} />} />
+              </WikiCardTracker>
             ))}
           </div>
         </TabsContent>
