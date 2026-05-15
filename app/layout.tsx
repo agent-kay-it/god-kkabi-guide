@@ -11,6 +11,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import { AnalyticsBootstrap } from '@/components/analytics-bootstrap';
+import { PageEngagementTracker } from '@/components/feature/page-engagement-tracker';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
@@ -95,6 +96,7 @@ export default function RootLayout({
     <html lang="ko" className={notoSansKr.variable} suppressHydrationWarning>
       <body className="antialiased">
         <AnalyticsBootstrap />
+        <PageEngagementTracker />
         {children}
         <Toaster />
       </body>
