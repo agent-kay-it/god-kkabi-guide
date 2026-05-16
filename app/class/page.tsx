@@ -10,6 +10,7 @@ import { ArrowRight } from 'lucide-react';
 
 import { listWikiClasses } from '@/lib/wiki/classes-adapter';
 import { auth } from '@/lib/auth/auth';
+import { buildRelatedJinryeongForClass } from '@/lib/personalization/related';
 import {
   ClassCard,
   Note,
@@ -81,10 +82,20 @@ export default async function ClassPage(): Promise<React.JSX.Element> {
 
       <div className="mb-12 grid gap-6 lg:grid-cols-3">
         {classes.map((c) => (
-          <WikiCardTracker key={c.id} category="class" targetId={c.id}>
+          <WikiCardTracker
+            key={c.id}
+            category="class"
+            targetId={c.id}
+            recentlyViewed={{
+              title: `${c.name} · ${c.subName}`,
+              href: `/class#${c.id}`,
+              emoji: c.emoji,
+            }}
+          >
             <ClassCard
               data={c}
               stats={CLASS_STATS[c.id]}
+              relatedJinryeong={buildRelatedJinryeongForClass(c)}
               bookmarkSlot={
                 <BookmarkButton
                   targetType="class"

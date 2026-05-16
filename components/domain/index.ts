@@ -75,3 +75,10 @@ export {
   type TierStackProps,
   type TierStackItem,
 } from './tier-stack';
+
+// V7 신규 — Sprint V7 P3.B (Related cross-references)
+export {
+  RelatedItems,
+  type RelatedItemsProps,
+  type RelatedItem,
+} from './related-items';

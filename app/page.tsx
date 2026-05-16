@@ -40,6 +40,7 @@ import {
   TipCard,
 } from '@/components/domain';
 import { Reveal } from '@/components/feature/reveal';
+import { RecentlyViewedList } from '@/components/feature/recently-viewed-list';
 import { WIKI_CATEGORIES } from '@/data/wiki/categories';
 import { WIKI_TIPS_SEED } from '@/data/wiki/tips';
 import { cn } from '@/lib/utils';
@@ -297,6 +298,11 @@ export default async function HomePage(): Promise<React.JSX.Element> {
             이 순서로 자연스럽게 콘텐츠가 열린다.
           </Note>
         </Reveal>
+      </section>
+
+      {/* ============ RECENTLY VIEWED (Sprint V7 P3.A — client only) ============ */}
+      <section className="mx-auto w-full max-w-screen-xl border-t border-ink-line px-5 py-10 sm:px-[5vw] sm:py-12">
+        <RecentlyViewedList />
       </section>
 
       {/* ============ WIKI CATEGORIES ============ */}

@@ -18,6 +18,7 @@ import { Search as SearchIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { UserMenu, type UserMenuSession } from './user-menu';
+import { MobileNav } from './mobile-nav';
 
 interface TopBarProps {
   readonly session: UserMenuSession | null;
@@ -74,19 +75,22 @@ export function TopBar({ session, signOutAction }: TopBarProps): React.JSX.Eleme
           'border-ink-line bg-[rgba(7,7,11,0.72)] backdrop-blur-[20px] backdrop-saturate-[180%]',
       )}
     >
-      <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-4 px-5 py-3.5 sm:px-[5vw]">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-tight text-text"
-        >
-          <span
-            aria-hidden
-            className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-bronze/15 text-bronze-soft"
+      <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-3 px-5 py-3.5 sm:px-[5vw]">
+        <div className="flex items-center gap-2">
+          <MobileNav items={NAV_ITEMS} />
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-tight text-text"
           >
-            ◑
-          </span>
-          <span>깨비지기</span>
-        </Link>
+            <span
+              aria-hidden
+              className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-bronze/15 text-bronze-soft"
+            >
+              ◑
+            </span>
+            <span>깨비지기</span>
+          </Link>
+        </div>
 
         <div className="hidden items-center gap-1 overflow-x-auto sm:flex">
           {NAV_ITEMS.map((item) => (

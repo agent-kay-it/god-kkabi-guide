@@ -10,6 +10,7 @@ import { Check, X } from 'lucide-react';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
 import { StatCell } from './stat-cell';
+import { RelatedItems, type RelatedItem } from './related-items';
 import { CLASS_ACCENT, type WikiClassDoc } from '@/types/wiki';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +25,11 @@ export interface ClassCardProps {
    * Clean Architecture 일방향(ui→motion→domain→feature) 준수를 위해 직접 import 금지.
    */
   bookmarkSlot?: React.ReactNode;
+  /**
+   * Sprint V7 P3.B — 클릭 가능한 추천 진령 link 목록.
+   * 미제공 시 기존 정적 Badge fallback 유지 (하위 호환).
+   */
+  relatedJinryeong?: readonly RelatedItem[];
   className?: string;
 }
 
@@ -31,6 +37,7 @@ export function ClassCard({
   data,
   stats,
   bookmarkSlot,
+  relatedJinryeong,
   className,
 }: ClassCardProps): React.JSX.Element {
   const accent = CLASS_ACCENT[data.id];
@@ -113,22 +120,37 @@ export function ClassCard({
           </section>
         </div>
 
-        <section
-          aria-label={`${data.name} 추천 진령 조합`}
-          className="rounded-[var(--radius-card)] border border-bronze/20 bg-bronze/5 p-4"
-        >
-          <h4 className="mb-2 text-[0.72rem] font-semibold uppercase tracking-wider text-bronze-soft">
-            추천 진령 조합
-          </h4>
-          <div className="mb-2 flex flex-wrap gap-2">
-            {data.recommendedJinryeong.map((j) => (
-              <Badge key={j} variant="bronze" className="text-[0.72rem]">
-                {j}
-              </Badge>
-            ))}
+        {/* Sprint V7 P3.B: relatedJinryeong이 제공되면 클릭 가능한 chip 사용,
+            아니면 기존 정적 Badge fallback (하위 호환). */}
+        {relatedJinryeong && relatedJinryeong.length > 0 ? (
+          <div>
+            <RelatedItems
+              title={`${data.name} 추천 진령 조합`}
+              items={relatedJinryeong}
+              className="mt-0"
+            />
+            <p className="mt-2 text-xs leading-relaxed text-text-soft">
+              {data.jinryeongNote}
+            </p>
           </div>
-          <p className="text-xs leading-relaxed text-text-soft">{data.jinryeongNote}</p>
-        </section>
+        ) : (
+          <section
+            aria-label={`${data.name} 추천 진령 조합`}
+            className="rounded-[var(--radius-card)] border border-bronze/20 bg-bronze/5 p-4"
+          >
+            <h4 className="mb-2 text-[0.72rem] font-semibold uppercase tracking-wider text-bronze-soft">
+              추천 진령 조합
+            </h4>
+            <div className="mb-2 flex flex-wrap gap-2">
+              {data.recommendedJinryeong.map((j) => (
+                <Badge key={j} variant="bronze" className="text-[0.72rem]">
+                  {j}
+                </Badge>
+              ))}
+            </div>
+            <p className="text-xs leading-relaxed text-text-soft">{data.jinryeongNote}</p>
+          </section>
+        )}
       </div>
     </GlassCard>
   );

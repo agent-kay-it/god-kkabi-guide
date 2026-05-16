@@ -17,23 +17,53 @@
 import { useCallback } from 'react';
 
 import { logEvent } from '@/lib/firebase/analytics';
+import { addRecentlyViewed } from '@/lib/personalization/recently-viewed';
+import type { SearchEntryType } from '@/lib/search/wiki-search-index';
 
 export interface WikiCardTrackerProps {
   readonly category: 'class' | 'jinryeong' | 'skill' | 'equipment' | 'content' | 'munpa';
   readonly targetId: string;
   readonly children: React.ReactNode;
   readonly className?: string;
+  /** Sprint V7 P3.A: Recently Viewed에 push할 메타데이터. 미제공 시 GA만 발화. */
+  readonly recentlyViewed?: {
+    readonly title: string;
+    readonly href: string;
+    readonly emoji?: string;
+  };
 }
+
+const CATEGORY_TO_SEARCH_TYPE: Record<
+  WikiCardTrackerProps['category'],
+  SearchEntryType
+> = {
+  class: 'class',
+  jinryeong: 'jinryeong',
+  skill: 'skill',
+  equipment: 'equipment',
+  content: 'content',
+  munpa: 'munpa',
+};
 
 export function WikiCardTracker({
   category,
   targetId,
   children,
   className,
+  recentlyViewed,
 }: WikiCardTrackerProps): React.JSX.Element {
   const handleClick = useCallback(() => {
     void logEvent('wiki_card_click', { category, target_id: targetId });
-  }, [category, targetId]);
+    if (recentlyViewed) {
+      addRecentlyViewed({
+        id: `${category}-${targetId}`,
+        type: CATEGORY_TO_SEARCH_TYPE[category],
+        title: recentlyViewed.title,
+        href: recentlyViewed.href,
+        ...(recentlyViewed.emoji !== undefined ? { emoji: recentlyViewed.emoji } : {}),
+      });
+    }
+  }, [category, targetId, recentlyViewed]);
 
   // a11y: 카드 내부에 이미 button/link가 있으므로 wrapper는 div + onClickCapture로 버블링 캡처.
   // tabindex/role은 자식 컴포넌트가 담당 (a/button).

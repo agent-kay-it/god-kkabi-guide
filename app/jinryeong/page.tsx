@@ -201,7 +201,15 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {allJinryeong.map((j) => (
-            <WikiCardTracker key={j.id} category="jinryeong" targetId={j.id}>
+            <WikiCardTracker
+              key={j.id}
+              category="jinryeong"
+              targetId={j.id}
+              recentlyViewed={{
+                title: j.name,
+                href: `/jinryeong#${j.id}`,
+              }}
+            >
               <JinryeongCard
                 data={j}
                 bookmarkSlot={

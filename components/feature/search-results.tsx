@@ -16,8 +16,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Search as SearchIcon, X } from 'lucide-react';
+import { ArrowRight, Clock, Search as SearchIcon, Sparkles, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -29,6 +30,11 @@ import {
   type SearchEntryType,
   type SearchHit,
 } from '@/lib/search/wiki-search-index';
+import {
+  addRecentSearch,
+  SUGGESTED_QUERIES,
+} from '@/lib/personalization/recent-searches';
+import { useRecentSearches } from '@/hooks/use-recent-searches';
 import { cn } from '@/lib/utils';
 
 const POPULAR_LINKS: ReadonlyArray<{
@@ -54,8 +60,12 @@ export function SearchResults({
   index,
   initialQuery,
 }: SearchResultsProps): React.JSX.Element {
+  const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
+  // Sprint V7 P4: useSyncExternalStore 기반 hook — setState-in-effect 회피.
+  // 동일 탭 내 addRecentSearch 호출 시 자동 반영 (custom event broadcast).
+  const recentSearches = useRecentSearches();
 
   // debounce 150ms — 키 입력마다 매칭하면 100여 항목이라도 인지 가능한 지연 발생 가능
   useEffect(() => {
@@ -81,6 +91,24 @@ export function SearchResults({
     () => searchIndex(index, debouncedQuery),
     [index, debouncedQuery],
   );
+
+  // Sprint V7 P3.C + P4: 의미 있는 결과가 나왔을 때 최근 검색어 저장 (debounced).
+  // addRecentSearch는 store에 write + 동일 탭 broadcast — useRecentSearches 자동 반영.
+  // 외부 시스템 (localStorage) 업데이트는 useEffect 합법 use case.
+  useEffect(() => {
+    if (debouncedQuery.length < 2) return;
+    if (hits.length === 0) return;
+    addRecentSearch(debouncedQuery);
+  }, [debouncedQuery, hits.length]);
+
+  // Sprint V7 P3.C: Enter → 첫 결과로 이동
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return;
+    if (hits.length === 0) return;
+    e.preventDefault();
+    const first = hits[0];
+    if (first) router.push(first.entry.href);
+  }
 
   // 카테고리별 그룹 (정렬은 hits 자체 score순 유지)
   const grouped = useMemo(() => {
@@ -112,9 +140,10 @@ export function SearchResults({
           inputMode="search"
           autoFocus
           autoComplete="off"
-          placeholder="직업 / 진령 / 스킬 / 콘텐츠 — 키워드를 입력하세요"
+          placeholder="직업 / 진령 / 스킬 / 콘텐츠 — Enter로 첫 결과 이동"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={onKeyDown}
           aria-label="검색어 입력"
           className={cn(
             'w-full rounded-[var(--radius-card)] border border-ink-line-strong bg-ink-elev pl-12 pr-12 py-4 text-base text-text',
@@ -144,13 +173,74 @@ export function SearchResults({
 
       {/* Body */}
       {!hasQuery ? (
-        <PopularSection />
+        <>
+          {recentSearches.length > 0 ? (
+            <QueryChipsSection
+              icon={<Clock aria-hidden className="h-3.5 w-3.5" />}
+              title="최근 검색어"
+              queries={recentSearches}
+              onPick={setQuery}
+            />
+          ) : null}
+          <PopularSection />
+        </>
       ) : hits.length === 0 ? (
-        <EmptyHits query={debouncedQuery} />
+        <>
+          <EmptyHits query={debouncedQuery} />
+          <QueryChipsSection
+            icon={<Sparkles aria-hidden className="h-3.5 w-3.5" />}
+            title="추천 검색어"
+            queries={SUGGESTED_QUERIES}
+            onPick={setQuery}
+          />
+        </>
       ) : (
         <GroupedResults grouped={grouped} totalHits={hits.length} />
       )}
     </div>
+  );
+}
+
+function QueryChipsSection({
+  icon,
+  title,
+  queries,
+  onPick,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  queries: readonly string[];
+  onPick: (q: string) => void;
+}): React.JSX.Element {
+  return (
+    <section aria-labelledby={`chips-${title}`}>
+      <div className="mb-3 flex items-center gap-2">
+        <span className="text-text-mute">{icon}</span>
+        <h2
+          id={`chips-${title}`}
+          className="text-[0.72rem] uppercase tracking-[0.2em] text-text-mute"
+        >
+          {title}
+        </h2>
+      </div>
+      <ul className="flex flex-wrap gap-2" role="list">
+        {queries.map((q) => (
+          <li key={q}>
+            <button
+              type="button"
+              onClick={() => onPick(q)}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-full border border-ink-line-strong bg-ink-elev/70 px-3 py-1.5 text-sm text-text-soft',
+                'transition-colors hover:border-bronze hover:bg-bronze/10 hover:text-bronze-soft',
+                'focus-visible:outline-2 focus-visible:outline-bronze focus-visible:outline-offset-2',
+              )}
+            >
+              {q}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
