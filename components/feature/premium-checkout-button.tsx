@@ -101,7 +101,7 @@ export function PremiumCheckoutButton({ uid }: PremiumCheckoutButtonProps): Reac
         const origin =
           typeof window !== 'undefined'
             ? window.location.origin
-            : process.env.NEXT_PUBLIC_SITE_URL ?? '';
+            : process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.com';
         // GAP-MAJ-1 payment funnel: Toss 위젯 호출 직전에 payment_input 발화
         void logEvent('payment_input', { amount, plan: 'premium_monthly', orderId });
         await tossPayments.requestPayment('카드', {

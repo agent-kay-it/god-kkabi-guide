@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.vercel.app';
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.com';
 
 export default function robots(): MetadataRoute.Robots {
   // v2 준비 기간 동안 색인 차단 — P3.D production 배포 시 다시 허용

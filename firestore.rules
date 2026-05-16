@@ -278,6 +278,18 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Sprint 10 P-D (F2.2) — OG link preview cache: server-only (Admin SDK).
+    // 7일 TTL, urlHash(SHA256 prefix 32 char) 기반.
+    match /linkPreviewCache/{urlHash} {
+      allow read, write: if false;
+    }
+
+    // Sprint 10 P-E (F3.x) — pinned chat messages: 모든 인증 사용자 read / Server Action만 write
+    match /pinned_messages/{pinnedId} {
+      allow read: if isAuth();
+      allow write: if false;
+    }
+
     // Sprint V2 P3.C — coupons: 검증된 것만 공개 read / 등록 사용자 create (pending) / admin verify
     match /coupons/{couponId} {
       allow read: if resource.data.status == 'verified' || isAdmin();
