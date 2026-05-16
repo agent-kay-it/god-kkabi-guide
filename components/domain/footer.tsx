@@ -1,10 +1,11 @@
 /**
  * <Footer> — 디스클레이머 + 출처 + Contact.
- * 출처: docs/sprint/02-sprint-mvp/design.md §3.14
+ * 출처: docs/sprint/03-sprint-mvp-v2/design.md §3.0 — v2 bronze + glass + ink line.
  */
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SUPPORT_EMAIL } from '@/lib/config/support';
 
 export interface FooterSource {
   label: string;
@@ -30,7 +31,7 @@ const DEFAULT_SOURCES: readonly FooterSource[] = [
 ];
 
 export function Footer({
-  contactEmail = 'kay@agentkay.it',
+  contactEmail = SUPPORT_EMAIL,
   lastUpdated,
   sources = DEFAULT_SOURCES,
   className,
@@ -38,13 +39,13 @@ export function Footer({
   return (
     <footer
       className={cn(
-        'mt-16 space-y-6 border-t border-border-soft px-4 py-10 text-sm text-text-secondary sm:px-6',
+        'mt-16 space-y-6 border-t border-ink-line px-4 py-10 text-sm text-text-soft sm:px-6',
         className,
       )}
       role="contentinfo"
     >
-      <section className="mx-auto max-w-3xl rounded-card border border-border-soft bg-bg-card p-5 sm:p-6">
-        <h2 className="mb-2 text-base font-bold text-accent-gold">비공식 팬 가이드 알림</h2>
+      <section className="glass mx-auto max-w-3xl rounded-[var(--radius-card)] p-5 sm:p-6">
+        <h2 className="mb-2 text-base font-bold text-bronze-soft">비공식 팬 가이드 알림</h2>
         <p className="leading-relaxed">
           본 사이트는 비공식 팬 가이드로, 저작권자(Joy Net Games / JOY MOBILE NETWORK PTE.
           LTD. / 4399 / Kakao Games / 인용된 외부 가이드 저작권자)의 요청 시 24시간 이내에
@@ -53,7 +54,7 @@ export function Footer({
       </section>
 
       <section className="mx-auto max-w-3xl space-y-2">
-        <h2 className="text-sm font-bold text-text-secondary">출처</h2>
+        <h2 className="text-sm font-bold text-text-soft">출처</h2>
         <ul className="space-y-1 text-xs">
           {sources.map((s) => (
             <li key={s.href}>
@@ -61,7 +62,7 @@ export function Footer({
                 href={s.href}
                 target="_blank"
                 rel="nofollow noopener noreferrer"
-                className="text-accent-gold underline-offset-4 hover:underline"
+                className="text-bronze underline-offset-4 hover:underline"
               >
                 {s.label}
               </Link>
@@ -70,14 +71,14 @@ export function Footer({
         </ul>
       </section>
 
-      <section className="mx-auto flex max-w-3xl flex-col items-start justify-between gap-3 border-t border-border-soft pt-6 text-xs text-text-muted sm:flex-row sm:items-center">
+      <section className="mx-auto flex max-w-3xl flex-col items-start justify-between gap-3 border-t border-ink-line pt-6 text-xs text-text-mute sm:flex-row sm:items-center">
         <p>
           © {new Date().getFullYear()} 갓깨비 키우기 비공식 팬 가이드 (1인 개인 프로젝트){' '}
           {lastUpdated ? `· 최종 업데이트 ${lastUpdated}` : null}
         </p>
         <Link
           href={`mailto:${contactEmail}`}
-          className="inline-flex items-center gap-1.5 text-accent-gold underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-1.5 text-bronze underline-offset-4 hover:underline"
         >
           <Mail aria-hidden="true" className="h-3.5 w-3.5" />
           {contactEmail}

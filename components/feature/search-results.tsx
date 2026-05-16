@@ -1,0 +1,418 @@
+/**
+ * <SearchResults> — Sprint V6 P3.A.
+ *
+ * 클라이언트 컴포넌트:
+ *  - controlled input (debounce 150ms)
+ *  - searchIndex(...) 메모리 매칭
+ *  - 카테고리별 그룹 + score 정렬
+ *  - URL query (?q=...) sync (replaceState로 history 오염 방지)
+ *  - 빈 query → 인기 카테고리 link 안내
+ *  - WCAG: input aria-label + role="region" + 결과 개수 라이브 영역
+ *
+ * Server에서 받은 index는 한 번만 렌더 후 메모리 유지 (refs).
+ *
+ * 출처: docs/sprint/08-sprint-v6/MASTER-PLAN.md §2
+ */
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { ArrowRight, Clock, Search as SearchIcon, Sparkles, X } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { GlassCard } from '@/components/ui/glass-card';
+import {
+  SEARCH_TYPE_LABEL,
+  SEARCH_TYPE_VARIANT,
+  searchIndex,
+  type SearchEntry,
+  type SearchEntryType,
+  type SearchHit,
+} from '@/lib/search/wiki-search-index';
+import {
+  addRecentSearch,
+  SUGGESTED_QUERIES,
+} from '@/lib/personalization/recent-searches';
+import { useRecentSearches } from '@/hooks/use-recent-searches';
+import { cn } from '@/lib/utils';
+
+const POPULAR_LINKS: ReadonlyArray<{
+  href: string;
+  label: string;
+  iconUrl?: string;
+  emoji: string;
+  type: SearchEntryType;
+}> = [
+  { href: '/class', label: '직업 3종', iconUrl: '/images/wiki/menu/class.webp', emoji: '⚔️', type: 'class' },
+  { href: '/jinryeong', label: '진령 11종', iconUrl: '/images/wiki/menu/jinryeong.webp', emoji: '🔮', type: 'jinryeong' },
+  { href: '/skill', label: '스킬 31종', iconUrl: '/images/wiki/menu/skill.webp', emoji: '✨', type: 'skill' },
+  { href: '/equipment', label: '장비 가이드', iconUrl: '/images/wiki/menu/equipment.webp', emoji: '🛡️', type: 'equipment' },
+  { href: '/content', label: '콘텐츠 22종', iconUrl: '/images/wiki/menu/content.webp', emoji: '🎯', type: 'content' },
+  { href: '/tips', label: '실전 팁 12개', iconUrl: '/images/wiki/menu/tip.webp', emoji: '💡', type: 'tip' },
+];
+
+export interface SearchResultsProps {
+  readonly index: readonly SearchEntry[];
+  readonly initialQuery: string;
+}
+
+export function SearchResults({
+  index,
+  initialQuery,
+}: SearchResultsProps): React.JSX.Element {
+  const router = useRouter();
+  const [query, setQuery] = useState(initialQuery);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
+  // Sprint V7 P4: useSyncExternalStore 기반 hook — setState-in-effect 회피.
+  // 동일 탭 내 addRecentSearch 호출 시 자동 반영 (custom event broadcast).
+  const recentSearches = useRecentSearches();
+
+  // debounce 150ms — 키 입력마다 매칭하면 100여 항목이라도 인지 가능한 지연 발생 가능
+  useEffect(() => {
+    const t = window.setTimeout(() => setDebouncedQuery(query), 150);
+    return () => window.clearTimeout(t);
+  }, [query]);
+
+  // URL ?q= sync (replaceState로 history 깔끔)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const current = url.searchParams.get('q') ?? '';
+    if (current === debouncedQuery) return;
+    if (debouncedQuery.length === 0) {
+      url.searchParams.delete('q');
+    } else {
+      url.searchParams.set('q', debouncedQuery);
+    }
+    window.history.replaceState(null, '', url.toString());
+  }, [debouncedQuery]);
+
+  const hits = useMemo<readonly SearchHit[]>(
+    () => searchIndex(index, debouncedQuery),
+    [index, debouncedQuery],
+  );
+
+  // Sprint V7 P3.C + P4: 의미 있는 결과가 나왔을 때 최근 검색어 저장 (debounced).
+  // addRecentSearch는 store에 write + 동일 탭 broadcast — useRecentSearches 자동 반영.
+  // 외부 시스템 (localStorage) 업데이트는 useEffect 합법 use case.
+  useEffect(() => {
+    if (debouncedQuery.length < 2) return;
+    if (hits.length === 0) return;
+    addRecentSearch(debouncedQuery);
+  }, [debouncedQuery, hits.length]);
+
+  // Sprint V7 P3.C: Enter → 첫 결과로 이동
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return;
+    if (hits.length === 0) return;
+    e.preventDefault();
+    const first = hits[0];
+    if (first) router.push(first.entry.href);
+  }
+
+  // 카테고리별 그룹 (정렬은 hits 자체 score순 유지)
+  const grouped = useMemo(() => {
+    const map = new Map<SearchEntryType, SearchHit[]>();
+    for (const hit of hits) {
+      const arr = map.get(hit.entry.type);
+      if (arr) arr.push(hit);
+      else map.set(hit.entry.type, [hit]);
+    }
+    return map;
+  }, [hits]);
+
+  const hasQuery = debouncedQuery.trim().length > 0;
+
+  return (
+    <div className="space-y-8">
+      {/* Input */}
+      <div className="relative">
+        <label htmlFor="search-input" className="sr-only">
+          검색어 입력
+        </label>
+        <SearchIcon
+          aria-hidden
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-mute"
+        />
+        <input
+          id="search-input"
+          type="search"
+          inputMode="search"
+          autoFocus
+          autoComplete="off"
+          placeholder="직업 / 진령 / 스킬 / 콘텐츠 — Enter로 첫 결과 이동"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={onKeyDown}
+          aria-label="검색어 입력"
+          className={cn(
+            'w-full rounded-[var(--radius-card)] border border-ink-line-strong bg-ink-elev pl-12 pr-12 py-4 text-base text-text',
+            'placeholder:text-text-mute',
+            'transition-colors duration-200 ease-out',
+            'focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/30',
+          )}
+        />
+        {query.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setQuery('')}
+            aria-label="검색어 지우기"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-text-mute transition-colors hover:bg-ink-card-strong hover:text-text"
+          >
+            <X aria-hidden className="h-4 w-4" />
+          </button>
+        ) : null}
+      </div>
+
+      {/* Live region for screen readers */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {hasQuery
+          ? `${hits.length}개 결과를 찾았습니다.`
+          : '검색어를 입력해주세요.'}
+      </div>
+
+      {/* Body */}
+      {!hasQuery ? (
+        <>
+          {recentSearches.length > 0 ? (
+            <QueryChipsSection
+              icon={<Clock aria-hidden className="h-3.5 w-3.5" />}
+              title="최근 검색어"
+              queries={recentSearches}
+              onPick={setQuery}
+            />
+          ) : null}
+          <PopularSection />
+        </>
+      ) : hits.length === 0 ? (
+        <>
+          <EmptyHits query={debouncedQuery} />
+          <QueryChipsSection
+            icon={<Sparkles aria-hidden className="h-3.5 w-3.5" />}
+            title="추천 검색어"
+            queries={SUGGESTED_QUERIES}
+            onPick={setQuery}
+          />
+        </>
+      ) : (
+        <GroupedResults grouped={grouped} totalHits={hits.length} />
+      )}
+    </div>
+  );
+}
+
+function QueryChipsSection({
+  icon,
+  title,
+  queries,
+  onPick,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  queries: readonly string[];
+  onPick: (q: string) => void;
+}): React.JSX.Element {
+  return (
+    <section aria-labelledby={`chips-${title}`}>
+      <div className="mb-3 flex items-center gap-2">
+        <span className="text-text-mute">{icon}</span>
+        <h2
+          id={`chips-${title}`}
+          className="text-[0.72rem] uppercase tracking-[0.2em] text-text-mute"
+        >
+          {title}
+        </h2>
+      </div>
+      <ul className="flex flex-wrap gap-2" role="list">
+        {queries.map((q) => (
+          <li key={q}>
+            <button
+              type="button"
+              onClick={() => onPick(q)}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-full border border-ink-line-strong bg-ink-elev/70 px-3 py-1.5 text-sm text-text-soft',
+                'transition-colors hover:border-bronze hover:bg-bronze/10 hover:text-bronze-soft',
+                'focus-visible:outline-2 focus-visible:outline-bronze focus-visible:outline-offset-2',
+              )}
+            >
+              {q}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function PopularSection(): React.JSX.Element {
+  return (
+    <section aria-labelledby="popular-categories">
+      <h2
+        id="popular-categories"
+        className="mb-4 text-[0.72rem] uppercase tracking-[0.2em] text-text-mute"
+      >
+        인기 카테고리
+      </h2>
+      {/* V7 P5: 모바일/태블릿(<md)은 1열 stack — 인기 카테고리 6개 가독성 보강. md+ 2열, lg+ 3열. */}
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {POPULAR_LINKS.map((p) => (
+          <Link
+            key={p.href}
+            href={p.href}
+            className="group block focus-visible:outline-none"
+          >
+            <GlassCard
+              interactive
+              className="flex items-center gap-3 p-4 transition-card hover:border-bronze/40"
+            >
+              {p.iconUrl ? (
+                <span
+                  aria-hidden
+                  className="block h-10 w-10 shrink-0 overflow-hidden rounded-[10px] ring-1 ring-bronze/30"
+                >
+                  <Image
+                    src={p.iconUrl}
+                    alt=""
+                    width={80}
+                    height={80}
+                    className="h-full w-full object-cover"
+                  />
+                </span>
+              ) : (
+                <span aria-hidden className="text-2xl">
+                  {p.emoji}
+                </span>
+              )}
+              <span className="flex-1">
+                <span className="block text-sm font-semibold text-text group-hover:text-bronze-soft">
+                  {p.label}
+                </span>
+                <span className="block text-xs text-text-mute">
+                  {SEARCH_TYPE_LABEL[p.type]} 카테고리 둘러보기
+                </span>
+              </span>
+              <ArrowRight
+                aria-hidden
+                className="h-4 w-4 shrink-0 text-text-mute transition-transform group-hover:translate-x-0.5 group-hover:text-bronze"
+              />
+            </GlassCard>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function EmptyHits({ query }: { query: string }): React.JSX.Element {
+  return (
+    <GlassCard className="p-8 text-center" accent="swordsman">
+      <p className="text-base font-semibold text-text">
+        &lsquo;{query}&rsquo;에 대한 결과가 없습니다
+      </p>
+      <p className="mt-2 text-sm text-text-soft">
+        다른 키워드를 시도하거나 위 카테고리에서 직접 둘러보세요.
+      </p>
+    </GlassCard>
+  );
+}
+
+function GroupedResults({
+  grouped,
+  totalHits,
+}: {
+  grouped: Map<SearchEntryType, SearchHit[]>;
+  totalHits: number;
+}): React.JSX.Element {
+  // 표시 순서 — UX: 직업/진령 우선, 그 다음 콘텐츠/스킬
+  const order: readonly SearchEntryType[] = [
+    'class',
+    'jinryeong',
+    'skill',
+    'equipment',
+    'content',
+    'tip',
+    'munpa',
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div className="text-sm text-text-mute">
+        총 <span className="font-mono font-semibold text-bronze-soft">{totalHits}</span>개
+        결과
+      </div>
+
+      {order.map((type) => {
+        const items = grouped.get(type);
+        if (!items || items.length === 0) return null;
+        return (
+          <section key={type} aria-labelledby={`result-${type}`}>
+            <div className="mb-3 flex items-baseline gap-2">
+              <h2
+                id={`result-${type}`}
+                className="text-[1.05rem] font-semibold text-text"
+              >
+                {SEARCH_TYPE_LABEL[type]}
+              </h2>
+              <span className="font-mono text-xs text-text-mute">
+                {items.length}건
+              </span>
+            </div>
+            <ul className="space-y-2" role="list">
+              {items.map((hit) => (
+                <li key={hit.entry.id}>
+                  <ResultRow hit={hit} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
+function ResultRow({ hit }: { hit: SearchHit }): React.JSX.Element {
+  const { entry } = hit;
+  return (
+    <Link
+      href={entry.href}
+      className="group flex items-start gap-3 rounded-[var(--radius-card)] border border-ink-line bg-ink-elev/40 p-4 transition-card hover:-translate-y-0.5 hover:border-bronze/40 hover:bg-ink-card-strong/70 focus-visible:outline-2 focus-visible:outline-bronze focus-visible:outline-offset-2"
+    >
+      {entry.iconUrl ? (
+        <span
+          aria-hidden
+          className="block h-9 w-9 shrink-0 overflow-hidden rounded-[10px] ring-1 ring-bronze/30"
+        >
+          <Image
+            src={entry.iconUrl}
+            alt=""
+            width={72}
+            height={72}
+            className="h-full w-full object-cover"
+          />
+        </span>
+      ) : entry.emoji ? (
+        <span aria-hidden className="text-xl">
+          {entry.emoji}
+        </span>
+      ) : null}
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-baseline gap-2">
+          <span className="text-base font-semibold text-text group-hover:text-bronze-soft">
+            {entry.title}
+          </span>
+          <Badge variant={SEARCH_TYPE_VARIANT[entry.type]} className="text-[0.65rem]">
+            {SEARCH_TYPE_LABEL[entry.type]}
+          </Badge>
+        </div>
+        <p className="mt-1 line-clamp-2 text-sm text-text-soft">{entry.description}</p>
+      </div>
+      <ArrowRight
+        aria-hidden
+        className="mt-1 h-4 w-4 shrink-0 text-text-mute transition-transform group-hover:translate-x-0.5 group-hover:text-bronze"
+      />
+    </Link>
+  );
+}

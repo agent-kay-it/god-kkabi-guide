@@ -1,0 +1,55 @@
+{
+  "_meta": {
+    "locale": "ko",
+    "version": "v2.0",
+    "lastUpdated": "2026-05-15",
+    "completeness": 1.0
+  },
+  "common": {
+    "siteName": "갓깨비 키우기 — 비공식 팬 가이드",
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "수정",
+    "back": "뒤로",
+    "next": "다음",
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도",
+    "submit": "제출",
+    "confirm": "확인"
+  },
+  "nav": {
+    "home": "홈",
+    "class": "직업",
+    "jinryeong": "진령",
+    "skill": "스킬",
+    "equipment": "장비",
+    "content": "콘텐츠",
+    "munpa": "문파",
+    "tips": "팁",
+    "post": "커뮤니티",
+    "coupon": "쿠폰",
+    "simulator": "시뮬레이터",
+    "insights": "인사이트",
+    "premium": "프리미엄",
+    "myBookmarks": "내 북마크",
+    "myPosts": "내 게시물",
+    "mySubscription": "내 구독",
+    "login": "로그인",
+    "logout": "로그아웃",
+    "register": "등록"
+  },
+  "footer": {
+    "unofficial": "본 사이트는 비공식 팬 사이트입니다. 게임과 관련된 모든 권리는 원저작자에게 있습니다.",
+    "operator": "운영자 문의: kay@agentkay.it"
+  },
+  "premium": {
+    "title": "프리미엄 구독",
+    "subtitle": "월 ₩4,900 — 광고 없는 경험",
+    "subscribe": "구독하기",
+    "manage": "내 구독 관리",
+    "active": "구독 중",
+    "canceled": "취소됨"
+  }
+}

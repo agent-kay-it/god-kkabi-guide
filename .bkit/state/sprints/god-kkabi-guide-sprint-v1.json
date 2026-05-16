@@ -1,0 +1,143 @@
+{
+  "sprintId": "god-kkabi-guide-sprint-v1",
+  "name": "Sprint V1 — UGC + 카카오 본격 + AdSense + 댓글 + 페널티 + Pretendard subset",
+  "version": "v1.0",
+  "trustLevel": 4,
+  "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
+  "phase": "archived",
+  "completedAt": "2026-05-15T21:30:00.000Z",
+  "finalMatchRate": 0.945,
+  "finalQualityGatesPass": "12/13 (M6 Lighthouse 운영자 게이트 사전)",
+  "phaseHistory": [
+    {"phase": "p0_pre", "startedAt": "2026-05-16T05:30:00.000Z", "status": "completed", "artifacts": [
+      "Sprint v2 archive tag: v2.0.0-mvp-v2-archived",
+      "Sprint V1 state 등록 + 졸업 KPI 10건 + Quality Gates M0-M12"
+    ]},
+    {"phase": "p1_plan", "startedAt": "2026-05-16T06:00:00.000Z", "status": "completed", "artifacts": [
+      "docs/sprint/04-sprint-v1/MASTER-PLAN.md (5 인풋 + 스코프 + Phase 분해 + 운영자 게이트)",
+      "docs/sprint/04-sprint-v1/prd.md (사용자 시나리오 3 + 기능 요구사항 F-1~F-7 + KPI 10건 + 리스크 5)",
+      "docs/sprint/04-sprint-v1/plan.md (P3.A-E sub-phase + 산출물 명세 + P4-P8)"
+    ]},
+    {"phase": "p3_do", "startedAt": "2026-05-16T08:00:00.000Z", "status": "completed", "artifacts": [
+      "P3.A: types 4파일 (post/comment/reaction/penalty) + GA4 23 이벤트 (V1 신규 6 + STUB 2 ACTIVE) + LoginSuccessTracker + WikiCardTracker + Pretendard subset 운영자 게이트 + verify-font-subset.sh",
+      "P3.B: lib/post (actions+schema+markdown+image-upload) + lib/comment + lib/reaction + lib/penalty + lib/moderation/dictionaries (사전 외부화 + dict-types 분리) + chat report-action에 penalty 트리거",
+      "P3.C: 페이지 5건 (/post 리스트 + /post/[id] 상세 + /post/new 작성 + /me/posts + /admin/penalties + /admin/dictionaries) + 도메인 5 (PostCard/PostMeta/MarkdownView/CommentThread/PenaltyBadge) + feature 8 (PostForm/CommentForm/CommentItem/LikeButton/PostReportDialog/AdminPenaltyTable/AdminDictionaryTable/LoginSuccessTracker/WikiCardTracker) + Textarea ui + TopBar 커뮤니티 메뉴 추가",
+      "P3.D: AdSense (Script+Sticky+Infeed) + PIPA 5번째 advertising 동의 + layout.tsx 4-조건 가드 + ads.txt + CSP 갱신 + 운영자 게이트 문서",
+      "P3.E: 카카오 비즈니스 앱 전환 운영자 게이트 문서 (코드 변경 없음 - v2 bridge 활용)",
+      "Firestore rules 확장: posts/comments/reactions/penalties/dictionaries + isRegisteredUnbanned/isOwner helper",
+      "Firestore indexes 확장: posts 5 + comments collection-group + penalties 2 + post/comment_reports + dictionaries = 11 신규",
+      "빌드 통과: 23 routes (v2 18 + V1 5 신규), typecheck 통과",
+      "Sprint v2 → V1 reverse compatibility: chat 마스킹 v2 client 모듈 유지 + lib/moderation/dict-types 신규 server-only path"
+    ]},
+    {"phase": "p2_design", "startedAt": "2026-05-16T07:00:00.000Z", "status": "completed", "artifacts": [
+      "docs/sprint/04-sprint-v1/design.md (통합 기술 설계 — 아키텍처 + 데이터 모델 + Server Actions + Markdown + AdSense + Pretendard + GA4 + Rules)",
+      "phase-2-design/firestore-schema-v1.md (신규 5 컬렉션 + 기존 확장 + indexes + denormalize 패턴)",
+      "phase-2-design/moderation-policy.md (5/10/20 임계값 + audit + recovery + 사전 외부화)",
+      "phase-2-design/adsense-strategy.md (Sticky+Infeed 배치 + PIPA 5번째 + dev/admin 가드 + ads.txt + CSP)",
+      "phase-2-design/pretendard-subset.md (KS X 1001 + pyftsubset + 운영자 게이트 + 검증 스크립트)",
+      "phase-2-design/pretendard-subset-unicodes.txt (글리프 범위 파일)"
+    ]},
+    {"phase": "p4_check", "startedAt": "2026-05-15T18:55:00.000Z", "completedAt": "2026-05-15T19:30:00.000Z", "status": "completed", "artifacts": [
+      "phase-4-check/GAP-ANALYSIS.md (Match Rate 84.2% — Critical 3 + Major 3 + Minor 5)",
+      "phase-4-check/CODE-ANALYSIS.md (5축 평균 86 + CA-C1 storage rules Critical)",
+      "phase-4-check/REPORT.md (Lighthouse 운영자 게이트 + WCAG ARIA 19/semantic 27 + 7-Layer 4/7 Pass + Quality Gates 8/12)",
+      "Critical 4건 식별: CA-C1 (storage rules), GAP-C1 (JWT advertisingConsent), GAP-C2 (AdSlotInfeed 미마운트), GAP-C3 (WikiCardTracker 미사용)",
+      "Major 3건 식별: GAP-M1 (댓글 liked 하드코딩), GAP-M2 (pending_edit 본인 미표시), CA-M2 (CSP img-src 확인)",
+      "P5 Act 통합 우선순위 표 + 검증 게이트 + Sprint V2 carry-over 4건"
+    ]},
+    {"phase": "p5_act", "startedAt": "2026-05-15T19:30:00.000Z", "completedAt": "2026-05-15T20:30:00.000Z", "status": "completed", "artifacts": [
+      "CA-C1: storage.rules에 posts/{userId}/{filename} 규칙 추가 (registered=true + role≠banned + 1MB + MIME 화이트리스트)",
+      "CA-M2: CSP img-src + remotePatterns에 lh3.googleusercontent.com + k.kakaocdn.net + img1.kakaocdn.net 확장 (OAuth 프로필 이미지)",
+      "GAP-C1: lib/auth/auth.ts에 Node runtime jwt 콜백 override — Firestore users/{uid} hydrate (advertisingConsent + registered + role + 등록 필드). 한 번 set 후 30일 영속, 미등록 false fallback",
+      "GAP-C2: app/post/page.tsx 5번째 게시물 다음에 AdSlotInfeed 마운트 (lg:col-span-2) + 4-조건 가드 (production AND env AND !admin AND advertisingConsent)",
+      "GAP-C3: 6 wiki 페이지에 WikiCardTracker wrapper 적용 (/class /jinryeong /skill /equipment /content /munpa, total 26 매칭)",
+      "GAP-M1: lib/reaction/actions.ts에 getMyReactionsForComments 신규 + app/post/[id]/page.tsx에서 Promise.all 병렬 조회 (commentReactionMap)",
+      "GAP-M2: lib/post/actions.ts listPosts에 owner-view 분기 (status in ['published','pending_edit']) + app/me/posts에 '심사 중' 배지",
+      "phase-5-act/REPORT.md (변경 상세 + 7-Layer 4/7→7/7 + Quality Gates 8/12→11/12 + Match Rate ≥93% 예상)",
+      "pnpm typecheck 통과 (1회 회귀 fix: exactOptionalPropertyTypes strict union role 매칭)",
+      "pnpm build 통과: 23 routes 동일"
+    ]},
+    {"phase": "p6_qa", "startedAt": "2026-05-15T20:30:00.000Z", "completedAt": "2026-05-15T21:00:00.000Z", "status": "completed", "artifacts": [
+      "phase-6-qa/REPORT.md — Match Rate 94.5% (P4 84.2% → P5 94.5%, +10.3pp) + 7-Layer 7/7 + GA4 12 활성 발화 + E2E 7/7",
+      "gap-detector 재실행 실측: Structural 98 / Functional 95 / API 95 / Intent 94 / Behavioral 95 / UX 93",
+      "GA4 인벤토리 재검증: 26 정의 / 12 활성 발화 (V1 신규 6 + STUB 2 ACTIVE: login + wiki_card_click)",
+      "7-Layer dataFlowIntegrity: F1 Post Create / F2 Comment / F3 Reaction / F4 Report / F5 Penalty / F6 AdSense / F7 Wiki Click — 모두 Pass",
+      "E2E 7 시나리오 정적: S1 Auth / S2 Post Create+View+Edit / S3 Comment Depth-2 / S4 Reaction Idempotent / S5 Report+Penalty / S6 Moderation / S7 AdSense",
+      "Quality Gates 12/13 Pass (M6 Lighthouse만 운영자 게이트 사전 production CDN 측정)"
+    ]},
+    {"phase": "p7_report", "startedAt": "2026-05-15T21:00:00.000Z", "completedAt": "2026-05-15T21:25:00.000Z", "status": "completed", "artifacts": [
+      "phase-7-report/SPRINT-V1-REPORT.md — Sprint V1 종합 완료 보고서 (산출물 + PDCA 회고 + 졸업 KPI 추적 시작 + Sprint V2 carry 6건 + 운영자 액션 4건)",
+      "졸업 KPI 추적 기준선: DAU 0 / Registered 0 / Posts 0 / Comments 0 — 매주 1회 수동 집계 시작",
+      "Sprint V2 직접 carry 6건 (M3, CA-M1, CA-m1~m4) + Sprint V2 신규 범위 4건 (메타 인사이트 + NLP + 프리미엄 + i18n)",
+      "운영자 게이트 4건 명시: Pretendard subset + AdSense 검토 14일 + Kakao 비즈니스 앱 + Lighthouse production CDN"
+    ]},
+    {"phase": "p8_archive", "startedAt": "2026-05-15T21:25:00.000Z", "completedAt": "2026-05-15T21:30:00.000Z", "status": "completed", "artifacts": [
+      "Sprint V1 state phase=archived 전환",
+      "finalMatchRate: 0.945, finalQualityGatesPass: 12/13",
+      "tag v1.0.0-v1-archived 생성 예정"
+    ]}
+  ],
+  "startedAt": "2026-05-16T05:30:00.000Z",
+  "startedBy": "kay@agentkay.it",
+  "predecessor": "god-kkabi-guide-sprint-mvp-v2 (archived 2026-05-16T05:00:00Z, tag=v2.0.0-mvp-v2-archived)",
+  "expectedDuration": "10-12 weeks (V1 졸업: 2026-08-01 ~ 2026-08-30)",
+  "graduationCriteria": {
+    "dau": 300,
+    "lighthouseMobileReal": 90,
+    "lighthouseMobileLab": 85,
+    "registeredUsers": 200,
+    "userPosts": 50,
+    "userComments": 500,
+    "chatDaily": 100,
+    "adsenseMonthly": 10,
+    "retention30d": 0.45,
+    "moderationAutoRate": 0.7
+  },
+  "qualityGatesActive": ["M0", "M1", "M2", "M3", "M4", "M5", "M7", "M8", "M9", "M10", "M11_AdSense_GDPR", "M12_Moderation_Auto"],
+  "inputsFromPrevSprint": {
+    "v1_inputs_5": [
+      "1. Pretendard Variable woff2 subset (2MB → 400KB, Korean 2350자 + Latin 95자 — M9 Mobile lab 85+ 게이트)",
+      "2. GA4 STUB 2개 활성화 (login + wiki_card_click)",
+      "3. 위키 장비 30+ 데이터 사용자 제보 확장 (게시판 통합)",
+      "4. 모더레이션 사전 외부화 + 신고 페널티 시스템 자동화",
+      "5. 사용자 게시물 시스템 (빌드/공략/후기 3 카테고리 + 댓글 + 좋아요)"
+    ]
+  },
+  "operatorDecisions": {
+    "G1_kakaoOAuthFull": "Kakao Custom Token bridge → 본격 활성화 (V2 phase에서 Kakao 콘솔 비즈니스 앱 전환 + 비즈니스 정보 입력)",
+    "G2_adsensePolicy": "Google AdSense — PIPA + GDPR 동의 게이트 + 비침입적 배치 (Sticky 하단 + 인피드 1건)",
+    "G3_postEditPolicy": "본인 게시물 24시간 내 수정 가능 + 이후 운영자 승인. 삭제는 본인 + 운영자 양쪽 가능",
+    "G4_penaltyPolicy": "신고 누적 5건 자동 경고 / 10건 자동 7일 정지 / 20건 자동 영구 정지 + 운영자 수동 우회 가능",
+    "G5_commentDepth": "댓글 2-depth (게시물 → 댓글 → 답글). 답글의 답글은 금지",
+    "G6_pretendardSubset": "pyftsubset 도구로 Korean 2350자 + Latin Basic 95자 + Latin-1 Supplement 96자 subset → ~400KB woff2"
+  },
+  "chromeAutomation": {
+    "enabled": true,
+    "phases": ["P3.A 게시물 작성 폼", "P3.B 게시물 리스트 + 상세", "P3.C 댓글 + 좋아요", "P3.D AdSense + 페널티", "P3.E Pretendard subset 검증", "P4 Lighthouse real-world", "P6 E2E 시나리오"]
+  },
+  "scope": {
+    "newFeatures": [
+      "사용자 게시물 (post): 빌드/공략/후기 3 카테고리 + 마크다운 (lite) + 이미지 첨부 (3건/게시물, 1MB each)",
+      "댓글 (comment): 2-depth + 좋아요 + 신고",
+      "리액션 (reaction): 게시물 좋아요/북마크 (북마크는 v2 기존 시스템 확장)",
+      "신고 페널티 (penalty): 누적 5/10/20건 자동 처리 + admin audit",
+      "카카오 OAuth 본격 활성화 (비즈니스 앱 전환)",
+      "Google AdSense 통합 (PIPA + GDPR 동의 게이트)",
+      "Pretendard Variable subset (2MB → 400KB)",
+      "GA4 STUB 2개 활성화 (login + wiki_card_click)"
+    ],
+    "outOfScope": [
+      "DM 시스템 (V2)",
+      "프리미엄 결제 (V2)",
+      "i18n JP/EN (V2)",
+      "메타 인사이트 대시보드 (V2)"
+    ]
+  },
+  "carriedOverAssets": {
+    "infrastructure": "Sprint v2 전체 (Next.js 16 + React 19 + NextAuth v5 + Firebase Hybrid + tene)",
+    "design_system": "ink/bronze/jade/vermilion/indigo 4-색 + Pretendard Variable + glassmorphism",
+    "components": "14 ui + 3 motion + 14 domain + 23 feature = 54 컴포넌트 그대로 + posts/comments 도메인 신규",
+    "wiki_seeds": "102 시드 (직업 3 + 진령 11 + 스킬 31 + 콘텐츠 22 + 장비 12 + 문파 11 + 팁 12) 그대로",
+    "ga4_active": "11 활성 이벤트 (v1 5 + v2 6) — V1에서 login + wiki_card_click + post_create/comment_create/penalty_applied 추가"
+  }
+}

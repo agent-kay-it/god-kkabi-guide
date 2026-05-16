@@ -1,0 +1,92 @@
+{
+  "sprintId": "god-kkabi-guide-sprint-v2",
+  "name": "Sprint V2 — 인사이트 + 구독 + 다국어 (빌드 시뮬레이터 + NLP + 프리미엄 + JP/EN) + V1 carry",
+  "version": "v2.0",
+  "trustLevel": 4,
+  "trustLevelLabel": "L4 Aggressive (자동) — 코드 인프라 완성 + 외부 의존성은 운영자 게이트 분리",
+  "phase": "p5_act",
+  "phaseHistory": [
+    {"phase": "p0_pre+p1_plan+p2_design", "completedAt": "2026-05-15T22:00:00Z", "artifacts": ["sprint-v2.json state + prd.md §11-§12 carry+L4 노트 + phase-2-design/v2-design-details.md (carry policy + F3.1-F3.7 spec + 9 신규 컬렉션 + 6 indexes + GA4 8 + Quality Gates M13-M15 + 7-Layer F8-F15)"]},
+    {"phase": "p3_do", "completedAt": "2026-05-15T23:30:00Z", "artifacts": [
+      "P3.A Carry-over 6건: CA-m1 (주석) + CA-M1 (valid-ids-cache + validateTagMembership + actions 통합) + CA-m2 부분 (post/reaction) + CA-m3 (chunk 30) + CA-m4 (rehype 외부 이미지 차단) + GAP-M3 (admin-pending + AdminPendingTable)",
+      "P3.B F3.1 시뮬레이터 + F3.2 진령 채용률: synergy-matrix 10 시드 + SimulatorCanvas + jinryeong-rate aggregation + recharts + cron",
+      "P3.C F3.3 PvP 트렌드 + F3.4 쿠폰: pvp-trend aggregation + 쿠폰 제보/검증/투표 + admin-coupon-table",
+      "P3.D F3.5 NLP: 26 키워드 사전 + extractor + 주간 aggregation + admin 인사이트 (LLM 미사용 비용 회피)",
+      "P3.E F3.6 프리미엄: Toss Payments 통합 + subscriptions/payment_history + webhook signature + isPremium + shouldShowAds",
+      "P3.F F3.7 i18n: next-intl 인프라 + ko/ja/en messages + LocaleSwitcher (페이지 마이그레이션 운영자 게이트)",
+      "GA4 8 신규 정의 + 검증: pnpm typecheck + build 38 routes"
+    ]},
+    {"phase": "p4_check", "completedAt": "2026-05-15T23:50:00Z", "artifacts": [
+      "phase-4-check/REPORT.md — Match Rate 87.5% (Gap MAJ 2) + Code 5축 평균 85.4 (Critical 3 결제 멱등성 + Important 9 + Minor 11)",
+      "Quality Gates 9/15 Pass + M13 Payment PCI 미충족 (CA2-C1~C3) → P5 Act 필수",
+      "P5 통합 우선순위 8건 (Critical 3 + Major 1 + Important 4) ~3h"
+    ]}
+  ],
+  "startedAt": "2026-05-15T21:40:00.000Z",
+  "startedBy": "kay@agentkay.it",
+  "predecessor": "god-kkabi-guide-sprint-v1 (archived 2026-05-15T21:30:00Z, tag=v1.0.0-v1-archived, finalMatchRate=0.945)",
+  "expectedDuration": "24주 (M10-M15, 2027-02-08~2027-08-08) — 단일 세션 L4 자동 모드 압축 실행",
+  "graduationCriteria": {
+    "dau": 5000,
+    "buildSimulatorSessions": 10000,
+    "premiumSubscriptions": 100,
+    "premiumMrr": 700000,
+    "jpEnTraffic": 0.05,
+    "lighthouseMobileReal": 90,
+    "nlpClusters": 20,
+    "couponAutoValidationRate": 0.8,
+    "retention30d": 0.5,
+    "moderationAutoRate": 0.75
+  },
+  "qualityGatesActive": ["M0", "M1", "M2", "M3", "M4", "M5", "M7", "M8", "M9", "M10", "M11", "M12", "M13_Payment_PCI", "M14_i18n_Coverage", "M15_NLP_Cost"],
+  "inputsFromPrevSprint": {
+    "v1_outputs_finalized": [
+      "Match Rate 94.5% + 7-Layer 7/7 + Quality Gates 12/13",
+      "23 routes + Firestore 17 컬렉션 + 18 indexes + Storage rules posts/chat + AdSense 4-가드 + PIPA 5번째 동의 + GA4 26 정의 (12 활성)"
+    ],
+    "v2_carry_over_6": [
+      "GAP-M3: /admin/posts/pending approve/reject 큐 페이지 + Server Action",
+      "CA-M1: 태그 멤버십 실시간 검증 (Zod refine + wiki seed cross-check)",
+      "CA-m1: lib/post/schema.ts 헤더 주석 정리 (misleading 'use server' 인용)",
+      "CA-m2: Server Action catch 블록 console.error 표준화 (8 모듈)",
+      "CA-m3: getMyReactionsForPosts 30 in 쿼리 chunk 분할 사전 방어",
+      "CA-m4: Body Markdown 외부 이미지 정책 (rehype-sanitize allowedDomains)"
+    ]
+  },
+  "operatorDecisions": {
+    "G1_premiumBilling": "Toss Payments 우선 (KR 표준, 사업자 등록 + 가입 검토 5-10일) — Iamport는 대안",
+    "G2_i18nProvider": "next-intl 사용 (next.js v15 App Router 호환) — 번역 데이터는 운영자 작성",
+    "G3_nlpApproach": "정규식 + 빈도 분석 우선 (NLP API 비용 폭증 회피) — KR 도메인 키워드 사전",
+    "G4_buildSimulator": "클라이언트 사이드 시너지 매트릭스 (Firestore 시드 데이터 기반) — 실시간 시각화",
+    "G5_couponValidation": "사용자 제보 → admin 승인 워크플로 (실 게임 쿠폰 자동 호출 X — TOS 위반 회피)",
+    "G6_chartLib": "recharts (이미 React 19 호환) — visx는 추후 검토"
+  },
+  "scope": {
+    "v1_carry_over": [
+      "GAP-M3 admin pending 큐",
+      "CA-M1 태그 멤버십 + Zod refine",
+      "CA-m1~m4 minor 4건 (주석 / console.error / chunk / 외부 이미지 정책)"
+    ],
+    "newFeatures_F3": [
+      "F3.1 빌드 시뮬레이터 (진령 3선택 시너지 시각화)",
+      "F3.2 진령 채용률 차트 (Firestore aggregation + recharts)",
+      "F3.3 결투장 빌드 트렌드 시각화",
+      "F3.4 쿠폰 유효성 자동 검증 (커뮤니티 제보 + admin 승인)",
+      "F3.5 Pain Point NLP 클러스터링 (정규식 + 빈도 기반, KR 키워드 사전)",
+      "F3.6 프리미엄 구독 결제 (Toss Payments + Firestore subscriptions, ₩4,900/월)",
+      "F3.7 다국어 JP/EN (next-intl + locale routing)"
+    ],
+    "outOfScope": [
+      "DM 시스템 (V3+)",
+      "메타 인사이트 자동 대시보드 (KPI 자동 집계는 별도 cron — V3 carry)",
+      "LLM 기반 NLP (비용 회피)"
+    ]
+  },
+  "carriedOverAssets": {
+    "infrastructure": "Sprint V1 + V0/v2 전체 (Next.js 16 + React 19 + NextAuth v5 + Firebase Hybrid + tene + AdSense 4-가드 + PIPA 5)",
+    "design_system": "ink/bronze/jade/vermilion/indigo 4-색 + Pretendard + glassmorphism + shadcn new-york + cva variants",
+    "components": "5 domain + 25+ feature + 15 ui + 3 motion = 48+ 컴포넌트 + V2 신규 (시뮬레이터/차트/구독/i18n switcher)",
+    "wiki_seeds": "102 시드 (직업 3 + 진령 11 + 스킬 31 + 콘텐츠 22 + 장비 12 + 문파 11 + 팁 12) — F3.1/F3.2 데이터 소스",
+    "ga4_events": "26 정의 + V2 신규 (premium_subscribe / simulator_run / nlp_topic_click / locale_switch / coupon_submit)"
+  }
+}

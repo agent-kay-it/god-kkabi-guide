@@ -1,188 +1,86 @@
 /**
- * /tips — 실전 팁 모음 (운영자 100% 작성).
- * Phase 3 do.C-3 (2/4)
+ * /tips — 실전 팁 12종 + 카테고리 필터.
+ * 출처: docs/sprint/03-sprint-mvp-v2/MASTER-PLAN.md §Tips + source TIP 01-08
  *
- * 콘텐츠 100% 운영자 직접 작성 (외부 인용 없음).
- * design.md §2.1: 8 카테고리 × 운영자 발견 팁
+ * P3.B: 5개 → P3.C: 12개로 확장.
+ * P3.D: Firestore 어댑터 + 운영자 작성 폼 + 사용자 제보.
  */
 import type { Metadata } from 'next';
+
 import {
-  Hero,
   TipCard,
-  DomainAlert,
-  Footer,
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
 } from '@/components/domain';
+import { WIKI_TIPS_SEED } from '@/data/wiki/tips';
+import type { TipCategory } from '@/types/wiki';
 
 export const metadata: Metadata = {
-  title: '갓깨비 실전 팁 — 운영자 12주 발견 30 팁',
+  title: '실전 팁 — 12개 운영 노하우',
   description:
-    '갓깨비 키우기 운영자 12주 직접 플레이로 발견한 실전 팁 모음. 자동사냥/PvP/보스/이벤트/자원 카테고리별 정리.',
-  keywords: [
-    '갓깨비 팁',
-    '갓깨비 노하우',
-    '갓깨비 꿀팁',
-    '갓깨비 실전 가이드',
-  ],
-  alternates: { canonical: '/tips' },
-  openGraph: {
-    type: 'article',
-    title: '갓깨비 실전 팁 — 12주 발견 노하우',
-    description: '운영자 직접 검증 + 카테고리별 정리.',
-    url: 'https://god-kkabi-guide.vercel.app/tips',
-  },
+    '999회 무료 뽑기 활용 / 진령 강화 우선순위 / 검객 치명타 빌드 / PvP 카운터 진령 + 12개 운영 팁.',
+  robots: { index: false, follow: false },
 };
 
-const jsonLdArticle = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: '갓깨비 키우기 실전 팁 — 운영자 12주 검증 노하우',
-  author: { '@type': 'Person', name: 'kay@agentkay.it' },
-  publisher: {
-    '@type': 'Organization',
-    name: '갓깨비 가이드 (비공식)',
-    url: 'https://god-kkabi-guide.vercel.app',
-  },
-  datePublished: '2026-05-15',
-  inLanguage: 'ko',
+const CATEGORY_LABEL: Record<TipCategory, string> = {
+  general: '일반',
+  beginner: '초보',
+  advanced: '고급',
+  pvp: 'PvP',
 };
 
 export default function TipsPage(): React.JSX.Element {
+  const byCategory = {
+    general: WIKI_TIPS_SEED.filter((t) => t.category === 'general'),
+    beginner: WIKI_TIPS_SEED.filter((t) => t.category === 'beginner'),
+    advanced: WIKI_TIPS_SEED.filter((t) => t.category === 'advanced'),
+    pvp: WIKI_TIPS_SEED.filter((t) => t.category === 'pvp'),
+  };
+
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
-      />
-      <main className="mx-auto max-w-3xl px-4 pb-4 sm:px-6 lg:px-8">
-        <Hero
-          iconUrl="https://play-lh.googleusercontent.com/Ua8ZV2-Ydg10gRHcVMxUVbIEiEdBLJkX4N-I0FHoWZkp8u5xMGqfWAaXi0E4l3fLag=w240-h480-rw"
-          iconAlt="갓깨비 키우기 실전 팁"
-          title="💡 실전 팁 모음"
-          subtitle="운영자 12주 직접 발견 노하우 30+"
-          metaInfo="2026-05-15 · 운영자 100% 작성"
-        />
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
+      <header>
+        <HeroMeta className="mb-5">
+          <HeroMetaBadge>실전 팁</HeroMetaBadge>
+          <span className="font-mono">{WIKI_TIPS_SEED.length}개 · admin 큐레이션</span>
+        </HeroMeta>
+        <SectionHead>
+          <SectionEyebrow num="08" label="Tactics" />
+          <SectionTitle as="h1">실전 운영 노하우</SectionTitle>
+          <SectionLead>
+            매주 검증되는 운영자 큐레이션 팁 12개. 초보부터 PvP까지 카테고리별로 정리했습니다.
+          </SectionLead>
+        </SectionHead>
+      </header>
 
-        <div className="mt-6">
-          <DomainAlert variant="info" title="본 페이지 100% 운영자 작성">
-            본 페이지의 모든 팁은 운영자가 직접 게임을 12주간 플레이하며 발견한 실전 노하우입니다.
-            외부 가이드 인용 없이 운영자 자체 데이터·관찰로 작성되었습니다.
-          </DomainAlert>
-        </div>
+      <div className="space-y-10">
+        {(['beginner', 'general', 'advanced', 'pvp'] as const).map((category) => (
+          <section key={category} aria-label={`${CATEGORY_LABEL[category]} 팁`} className="space-y-3">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-lg font-bold tracking-tight text-text">
+                {CATEGORY_LABEL[category]} 팁
+              </h2>
+              <span className="font-mono text-xs text-text-mute">
+                {byCategory[category].length}개
+              </span>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              {byCategory[category].map((t) => (
+                <TipCard key={t.id} category={t.category} title={t.title} content={t.content} />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
 
-        <section className="mt-12" aria-labelledby="beginner-title">
-          <h2 id="beginner-title" className="mb-3 text-xl font-bold text-accent-cyan sm:text-2xl">
-            🌱 초보 팁 (1-2주차)
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <TipCard
-              category="beginner"
-              title="1차 각성을 최우선으로"
-              content="신규 가입 7일 누적 보상으로 1차 각성에 필요한 자원 100% 충당 가능. 진령 소환·강화는 각성 이후로 미루는 게 효율적."
-            />
-            <TipCard
-              category="beginner"
-              title="신규 가입 7일 패키지는 ROI 6배"
-              content="₩5K 7일 패키지 보상은 ₩30K 가치. 무·소과금 라인이라도 본 패키지 1회 구매 강력 추천."
-            />
-            <TipCard
-              category="beginner"
-              title="쿠폰은 캐릭터 생성 직후 즉시 입력"
-              content="일부 쿠폰은 신규 캐릭터 페널티가 있음. 캐릭터 생성 → 튜토리얼 완료 → 즉시 쿠폰 입력 권장."
-            />
-            <TipCard
-              category="beginner"
-              title="자동사냥 1.5배속이 골든"
-              content="2배속은 발열·배터리 -30%. 1.5배속이 장기 운용 최적. 자동 회복 + 자동 진령 발동 ON 필수."
-            />
-          </div>
-        </section>
-
-        <section className="mt-12" aria-labelledby="general-title">
-          <h2 id="general-title" className="mb-3 text-xl font-bold text-accent-gold sm:text-2xl">
-            ⚙️ 일반 팁
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <TipCard
-              category="general"
-              title="진령 영혼 강화 +5가 메타 진입선"
-              content="0티어 진령 영혼 +5 이상이 메타 빌드 진입선. 미만은 동급 빌드 대비 평균 -25% DPS. 영혼석을 분산 강화하지 말고 1개 집중 권장."
-            />
-            <TipCard
-              category="general"
-              title="시즌 패스는 가성비 ★★★★★"
-              content="₩30K 시즌 패스의 실효 ROI는 약 ₩90K. 본인 라인에 관계없이 가장 우선 구매 추천. 단, 첫 시즌은 미구매 후 게임 이해도 확인 권장."
-            />
-            <TipCard
-              category="general"
-              title="강화 보호석 사용 권장"
-              content="무기 +10 → +12 누적 확률 약 15%. 보호석 없이 진행 시 평균 23회 시도 필요. 보호석 사용 시 평균 11회로 단축."
-            />
-            <TipCard
-              category="general"
-              title="비경 매주 룰 확인 → 진령 재배치"
-              content="비경 주간 룰 변경 시 강화 진령 1개 교체로 보상 +35% 가능. 매주 월요일 5분 점검 추천."
-            />
-          </div>
-        </section>
-
-        <section className="mt-12" aria-labelledby="advanced-title">
-          <h2 id="advanced-title" className="mb-3 text-xl font-bold text-accent-purple sm:text-2xl">
-            🔮 고급 팁 (5주차+)
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <TipCard
-              category="advanced"
-              title="시즌 막바지 14시간대 결투장 푸시"
-              content="시즌 종료 D-7 이내 한국시간 14:00~17:00 매칭 풀 약화. 운영자 측정 시 본 시간대 점수 +400 가능. TOP 50 도달 시 본 시간대 80% 활용."
-            />
-            <TipCard
-              category="advanced"
-              title="신규 진령 출시 직전 3-7일 자원 비축"
-              content="신규 진령 출시 첫 주 메타 변경 가능성 80%. 자원 비축 후 신규 진령이 0티어 진입 시 즉시 소환·강화 라인 확보."
-            />
-            <TipCard
-              category="advanced"
-              title="무한던전 백림명 스택 유지 트릭"
-              content="백림명 스택은 적 처치 시 누적 (최대 5). 깊은 층에서 처치 간격이 길어지면 스택 끊김. 강림도 추가 베기로 처치 가속 → 평균 깊이 +30층 도달."
-            />
-            <TipCard
-              category="advanced"
-              title="이벤트 한정 패키지 50% 회피"
-              content="이벤트 한정 패키지 중 50% 이상이 ROI ₩6+/다이아 라인 (가성비 하). '한정' 표시에 주의. 운영자 측정 시 콜라보·신규 진령 패키지만 ROI 좋음."
-            />
-          </div>
-        </section>
-
-        <section className="mt-12" aria-labelledby="pvp-title">
-          <h2 id="pvp-title" className="mb-3 text-xl font-bold text-accent-red sm:text-2xl">
-            🗡️ PvP 팁 (결투장 전용)
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <TipCard
-              category="pvp"
-              title="첫 합 폭딜 = 월광난무 → 강림도"
-              content="검객 결투장 첫 합 — 월광난무로 음영귀 치명타 라인 트리거 후 강림도 추가 베기 발동. 60% 매칭에서 첫 합 만에 50% HP 라인 진입."
-            />
-            <TipCard
-              category="pvp"
-              title="음영귀 영혼 +5 = 결투장 진입선"
-              content="음영귀 영혼 +5 미만은 동급 빌드 대비 첫 합 폭딜 -25%. 결투장 진입 전 반드시 +5 라인 우선 확보."
-            />
-            <TipCard
-              category="pvp"
-              title="시즌 보상 라인은 시즌 종료 D-3에 결정"
-              content="결투장 시즌 마지막 3일 점수가 시즌 보상 결정. 일일 점수 푸시보다 시즌 막바지 집중 권장. 운영자 측정 시 본 패턴이 효율 +30%."
-            />
-            <TipCard
-              category="pvp"
-              title="제련 +12 미만이면 결투장 보류"
-              content="제련 +12 미만은 결투장 매칭 풀 자체가 다름. 진입 전 제련 라인 우선 확보. 미달 시 무한던전 + 보스 던전 빌드로 사용 권장."
-            />
-          </div>
-        </section>
-
-        <Footer lastUpdated="2026-05-15" />
-      </main>
-    </>
+      <Note variant="tip" title="팁 제보하기" className="mt-10">
+        커뮤니티 작성 기능은 P3.D 채팅 출시와 함께 활성화 예정. 그 전까지는 운영자 큐레이션만 노출됩니다.
+      </Note>
+    </main>
   );
 }

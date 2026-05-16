@@ -1,52 +1,50 @@
 /**
- * sitemap.xml 자동 생성.
- * 출처: docs/sprint/02-sprint-mvp/design.md §2.4
- *       docs/sprint/02-sprint-mvp/phase-1-plan/seo-keyword-50.md
+ * sitemap.xml — Sprint V6 P3.E.
  *
- * Phase 3 do.C-1 + do.C-2 완료 시점: 13 페이지 등록.
- * do.C-3에서 supplementary 4 페이지 추가 예정.
+ * 사용자 도달 가능 정적 라우트 일괄 등록.
+ * robots: index:false (1인 운영 정책) 이지만 sitemap은 내부 navigation graph로 유지.
+ *
+ * Wiki entity (직업/진령/스킬 등 ~100항목)는 anchor `#id` 단위라 별도 등록 안 함 —
+ * 검색 엔진은 페이지 자체 인덱스 (현재 disabled) 후 본문 anchor를 자동 탐지.
  */
 import type { MetadataRoute } from 'next';
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://god-kkabi-guide.vercel.app';
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.vercel.app';
 
-interface SitemapEntry {
+/** 변경 빈도 + 우선순위는 운영자 큐레이션 페이지일수록 높게 설정 */
+const STATIC_ROUTES: ReadonlyArray<{
   path: string;
+  changeFrequency: 'daily' | 'weekly' | 'monthly';
   priority: number;
-  changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
-}
-
-const ENTRIES: readonly SitemapEntry[] = [
-  // Beachhead + 홈
-  { path: '/', priority: 1.0, changeFrequency: 'weekly' },
-  { path: '/coupon', priority: 0.95, changeFrequency: 'weekly' },
-  { path: '/builds/meta-swordsman', priority: 0.9, changeFrequency: 'monthly' },
-  { path: '/class-quiz', priority: 0.85, changeFrequency: 'monthly' },
-
-  // Content (P3.C-2)
-  { path: '/class', priority: 0.8, changeFrequency: 'monthly' },
-  { path: '/class/warrior', priority: 0.7, changeFrequency: 'monthly' },
-  { path: '/class/swordsman', priority: 0.7, changeFrequency: 'monthly' },
-  { path: '/class/medium', priority: 0.7, changeFrequency: 'monthly' },
-  { path: '/jinryeong', priority: 0.9, changeFrequency: 'weekly' },
-  { path: '/skill-equip', priority: 0.7, changeFrequency: 'monthly' },
-  { path: '/dungeon', priority: 0.7, changeFrequency: 'monthly' },
-  { path: '/payment', priority: 0.7, changeFrequency: 'monthly' },
-
-  // Supplementary (P3.C-3)
-  { path: '/event', priority: 0.8, changeFrequency: 'weekly' },
-  { path: '/tips', priority: 0.75, changeFrequency: 'monthly' },
-  { path: '/sources', priority: 0.5, changeFrequency: 'monthly' },
-  { path: '/intro', priority: 0.6, changeFrequency: 'monthly' },
+}> = [
+  { path: '', changeFrequency: 'weekly', priority: 1.0 }, // 홈
+  // V2~V3 위키
+  { path: '/class', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/jinryeong', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/skill', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/equipment', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/content', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/munpa', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/tips', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/coupon', changeFrequency: 'daily', priority: 0.7 },
+  // V4 신규
+  { path: '/payment', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/event', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/advanced', changeFrequency: 'monthly', priority: 0.7 },
+  // V6 신규
+  { path: '/search', changeFrequency: 'monthly', priority: 0.6 },
+  // 도구
+  { path: '/simulator', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/class-quiz', changeFrequency: 'monthly', priority: 0.5 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
-  return ENTRIES.map((entry) => ({
-    url: `${SITE_URL}${entry.path}`,
-    lastModified,
-    changeFrequency: entry.changeFrequency,
-    priority: entry.priority,
+  const now = new Date();
+  return STATIC_ROUTES.map((r) => ({
+    url: `${SITE_URL}${r.path}`,
+    lastModified: now,
+    changeFrequency: r.changeFrequency,
+    priority: r.priority,
   }));
 }

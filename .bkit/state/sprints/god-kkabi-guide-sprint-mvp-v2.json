@@ -1,0 +1,158 @@
+{
+  "sprintId": "god-kkabi-guide-sprint-mvp-v2",
+  "name": "Sprint MVP v2 — 갓깨비 키우기 커뮤니티 위키 (Auth + 채팅 + UGC + 북마크)",
+  "version": "v2.0",
+  "trustLevel": 4,
+  "trustLevelLabel": "L4 Aggressive (자동) + Chrome MCP 시각 검증",
+  "phase": "archived",
+  "completedAt": "2026-05-16T05:00:00.000Z",
+  "archivedAt": "2026-05-16T05:00:00.000Z",
+  "phaseHistory": [
+    {"phase": "p0_pre", "startedAt": "2026-05-15T15:30:00.000Z", "status": "completed"},
+    {"phase": "p1_plan", "startedAt": "2026-05-15T16:00:00.000Z", "status": "completed", "artifacts": ["MASTER-PLAN.md", "SCOPE-CHANGE.md", "prd.md", "design.md", "plan.md"]},
+    {"phase": "p2_design", "startedAt": "2026-05-15T17:30:00.000Z", "status": "completed", "artifacts": ["phase-2-design/firestore-schema.md", "phase-2-design/auth-flow.md", "phase-2-design/design-tokens-v2.json", "phase-2-design/component-inventory-v2.md"]},
+    {"phase": "p8_archive", "startedAt": "2026-05-16T05:00:00.000Z", "status": "completed", "artifacts": [
+      "Sprint state phase=archived 전환 + archivedAt 타임스탬프",
+      "운영자 게이트 사전 작업 PENDING (사용자 1인 작업): Firebase Console + Vercel env + 첫 deploy",
+      "production deploy 후 자동 재실행 예정: 라이브 E2E 5 시나리오 + Lighthouse Mobile real-world 재측정 + GA4 DebugView 11 이벤트 검증",
+      "staging → main 머지 PR 권장: 코드 측면 준비 완료 (18 routes 빌드 통과 + typecheck 통과 + 4 commits: P4 aa89f26 / P5 a7f2e79 / P6 54e5905 / P7+P8 본 commit)",
+      "다음 sprint: Sprint V1 (사용자 게시물 + 카카오 OAuth 확장 + AdSense + 댓글 + 신고 페널티) — DAU 100+ 도달 후 진입"
+    ]},
+    {"phase": "p7_report", "startedAt": "2026-05-16T04:00:00.000Z", "status": "completed", "artifacts": [
+      "Sprint v2 완료 종합 보고서: docs/sprint/03-sprint-mvp-v2/phase-7-report/SPRINT-REPORT.md",
+      "코드 인벤토리: 25 lib 모듈 + 54 컴포넌트 + 13 페이지 + 18 routes / 102 시드 항목",
+      "Quality Gates 최종: M0/M1/M2/M3/M4/M5/M7/M8/M9-Desktop/M10 PASS + M9-Mobile은 production CDN 재측정 게이트",
+      "M3 졸업 KPI 추적 시작: DAU 100 / Mobile 85 / 등록 30 / 채팅 200 / 북마크 평균 3 / 위키 80 (현재 102 ✅) / 30일 retention 30%",
+      "운영자 게이트 4단계: Firebase Console (RTDB/Storage/Auth/role=admin) + Vercel env 14건 + 도메인 G4 + 첫 production deploy",
+      "V1 인풋 5건: Pretendard subset / GA4 STUB 2 (login + wiki_card_click) / 위키 장비 30+ 확장 / 모더레이션 강화 / 사용자 게시물 시스템",
+      "학습 사항: Lab vs Field metric / Server Action 5종 패턴 / Firebase lazy init / Clean Arch slot prop / exactOptionalPropertyTypes 조건부 spread"
+    ]},
+    {"phase": "p6_qa", "startedAt": "2026-05-16T03:00:00.000Z", "status": "completed", "artifacts": [
+      "GA4 17 이벤트 인벤토리: types/ga4.ts 정의 12 → 17 확장 (v2 신규 8: login/register_complete/chat_send/chat_image_upload/chat_report/bookmark_add/bookmark_remove/wiki_card_click)",
+      "GA4 활성 11개: v1 5 (page_view/class_diagnose_complete/external_link_click/scroll_depth_75/dwell_60) + v2 6 (register_complete/chat_send/chat_image_upload/chat_report/bookmark_add/bookmark_remove)",
+      "GA4 STUB 2개: login (V1 NextAuth callback 트래커) + wiki_card_click (V1 카드 클릭 트래커)",
+      "GA4 primitive 제약 처리: chat_report.reasons readonly string[] → string (comma-join)",
+      "7-Layer dataFlowIntegrity 4 feature 매트릭스 PASS: Auth (4-table 트랜잭션) / Chat (RTDB live + 마스킹) / Bookmark (denormalize 카운터) / Wiki (Firestore + seed fallback)",
+      "E2E 5 시나리오 정적 검증 PASS: S1 Google → 등록 / S2 Kakao + Custom Token / S3 채팅 전체 + 마스킹 / S4 북마크 토글 + 200 한도 / S5 신고 3건 자동 hidden + admin 처리",
+      "운영자 게이트 명시: Firebase Console (RTDB/Storage/Auth/role=admin claim) + Vercel env 14건 + 도메인 G4 + first production deploy",
+      "라이브 E2E + Lighthouse Mobile production 재측정은 P8 archive 직전 운영자 게이트 사전 작업 후 자동 재실행"
+    ]},
+    {"phase": "p5_act", "startedAt": "2026-05-16T02:00:00.000Z", "status": "completed", "artifacts": [
+      "C1 Critical 해소: domain→feature 역방향 의존 → slot prop 패턴 (bookmarkSlot?: ReactNode) 4 카드 + 4 페이지",
+      "M1 database.rules.json: auth.token.registered=true claim 추가 + setUserClaims registered 시그너처 확장 + register.ts claim 설정",
+      "M2 lib/auth/auth.ts: createAdapter() 2회 호출 → 변수 캐시 (firestoreAdapter)",
+      "M3 register-form.tsx: |any 제거 → UseFormReturn<RegisterFormInput> 명시 + eslint-disable 제거",
+      "M4 lib/bookmark/actions.ts: users.bookmarkCount denormalize (addBookmark/removeBookmark 트랜잭션 + FieldValue.increment ±1)",
+      "Performance: ChatWidget dynamic import (chat-widget-loader.tsx wrapper, ssr:false) + Hero image LCP 해소 (priority 제거, lazy + quality=70)",
+      "next/image 변환: chat-message + admin-moderation-table 2건 + next.config.ts firebasestorage remotePattern + CSP img-src 추가",
+      "Minor: m1 EMPTY_CHANNEL_FALLBACK_MS 상수화 / m4 types/next-auth.d.ts accessToken augment + config.ts 캐스트 제거 / m5 의도 유지",
+      "Lighthouse 재측정: Desktop 84→89 ✅ M9 PASS / Mobile 75 (LCP 14.3→12.5s, simulate=mobileSlow4G + Pretendard 2MB woff2 lab 한계)",
+      "Quality Gates M1/M2/M4/M9-Desktop/M10 추가 PASS / M9-Mobile-lab은 V1 게이트 (Pretendard subset)로 이관"
+    ]},
+    {"phase": "p4_check", "startedAt": "2026-05-16T01:00:00.000Z", "status": "completed", "artifacts": [
+      "Gap Analysis: 96% match rate (7 영역 평균) — Auth 95 / Firestore 100 / RTDB 100 / 북마크 100 / 모더레이션 100 / 위키 95 / 디자인토큰 100 / 컴포넌트 95",
+      "Code Analysis: 87/100 (목표 85 PASS) — Critical 1 (domain→feature 역방향) + Major 4 (rules registered claim / createAdapter / register-form any / bookmark count) + Minor 5",
+      "Lighthouse Mobile 3페이지 (홈/class/jinryeong): Performance 75 ⚠️ FAIL / Accessibility 96-100 ✅ / Best Practices 92 ✅ / SEO 66-69 (의도된 noindex)",
+      "Performance 75 원인: LCP 14.3s (Pretendard 2MB woff2 preload + Firebase client SDK 168KB unused + localhost 4G simulate)",
+      "WCAG AA: 12 토큰 콘트라스트 AAA 8 / AA 3 / Decoration 1 + ARIA 속성 70+ 위치 + 시맨틱 HTML 70 + role=log/dialog/tablist/progressbar/meter 정확 사용",
+      "Auth E2E 정적: registerUser 4-table Firestore 트랜잭션 무결성 + READS 병렬 + WRITES merge + custom claims setup ✅",
+      "Chat E2E 정적: useChannel cleanup off(q) + 3종 구독 + 5s fallback + Admin 모드 hidden 필터 + reportChatMessage 중복 차단 + 3건 자동 hidden ✅",
+      "Quality Gates: M0/M2/M3/M4/M5/M7/M8/M10 PASS / M1 Critical 1건 / M9 FAIL (Performance 75 < 85)",
+      "결론: P5 Act iterate 진입 — ChatWidget dynamic + Pretendard subset + Firebase 트리셰이킹 + next/image"
+    ]},
+    {"phase": "p3_d_chat_moderation", "startedAt": "2026-05-15T23:30:00.000Z", "status": "completed", "artifacts": [
+      "RTDB 채팅: types/chat.ts + lib/firebase/realtime-db.ts + lib/chat/{masking, use-channel, send-message, image-upload, report-action}",
+      "채팅 UI 5: ChatMessage / ChatReportDialog / ChatInput / ChatChannel / ChatWidget (플로팅 3 탭)",
+      "모더레이션 + admin: lib/moderation/actions.ts (ban/unban/reset/resolve + audit log) + AdminModerationTable + /admin (role=admin guard)",
+      "보안 규칙 4: database.rules.json + firestore.rules + storage.rules + firebase.json + firestore.indexes.json (10 composite)",
+      "이미지 업로드: 1MB 압축 + JPG/PNG/WebP 화이트리스트 + browser-image-compression",
+      "운영자 게이트 문서 P3.D-OPERATOR-GATES.md (RTDB/Storage 활성화 + role=admin + Vercel env 14건 + 도메인 G4)"
+    ]},
+    {"phase": "p3_c_wiki_expansion", "startedAt": "2026-05-15T22:00:00.000Z", "status": "completed", "artifacts": [
+      "types/wiki.ts 확장 + 시드 (skills 31 + contents 22 + equipment 12 + munpa-guide 11 + tips 5→12)",
+      "어댑터: lib/wiki/{skill,content,equipment}-adapter.ts (Firestore + seed fallback)",
+      "도메인 컴포넌트 4 신규: SkillCard / ContentCard / EquipmentCard / MunpaCard",
+      "위키 페이지 5: /skill (탭) / /equipment (PriorityFlow + 4 섹션) / /content (5 탭) / /munpa / /tips 확장",
+      "TopBar nav 7 메뉴로 확장 (6 위키 카테고리 + 팁)",
+      "categories.ts: 6 카테고리 모두 active (itemCount 동적)"
+    ]},
+    {"phase": "p3_b_wiki_core", "startedAt": "2026-05-15T20:30:00.000Z", "status": "completed", "artifacts": [
+      "시드 데이터: data/wiki/{classes.ts, jinryeong.ts, tips.ts, categories.ts} + types/wiki.ts + types/bookmark.ts",
+      "어댑터: lib/wiki/{classes-adapter.ts, jinryeong-adapter.ts} (Firestore + seed fallback)",
+      "도메인 컴포넌트 6 신규: HeroMeta/HeroMetaBadge / StatCell / Note / TierStripe / ClassCard / JinryeongCard",
+      "위키 페이지: /class (3 직업) / /jinryeong (11 진령 + 티어 + 진영 + 표 + featured) / /tips / /class-quiz",
+      "신규 홈: Hero + 6 카테고리 그리드 (2 active + 4 coming soon) + Tips preview + 디스클레이머 Note",
+      "북마크 시스템: lib/bookmark/actions.ts + BookmarkButton (낙관적 업데이트) + BookmarkList + /me/bookmarks",
+      "직업 진단 v2: 7문항 + /register?prefilledClass= 매칭 + 잘못된 진령 이름 교정"
+    ]},
+    {"phase": "p3_a_scaffolding", "startedAt": "2026-05-15T19:00:00.000Z", "status": "completed", "artifacts": [
+      "디자인 토큰 v2 + Pretendard/JetBrains Mono",
+      "shadcn 8 신규 + GlassCard/Pill 커스텀 + cva 4-색 variants",
+      "NextAuth.js v5 + Firebase Admin SDK (lazy) + proxy.ts (Next.js 16+)",
+      "Kakao Custom Token bridge + /api/auth/kakao-exchange",
+      "등록 폼 + Zod + PIPA 4 + Firestore 트랜잭션 (users/servers/munpas/chat_channels)",
+      "TopBar + UserMenu + AuthButtons + /login + /register placeholder",
+      "tene AUTH_SECRET 자동 생성",
+      "운영자 게이트 문서 P3.A-OPERATOR-GATES.md"
+    ]}
+  ],
+  "startedAt": "2026-05-15T15:30:00.000Z",
+  "startedBy": "kay@agentkay.it",
+  "predecessor": "god-kkabi-guide-sprint-mvp (archived)",
+  "expectedDuration": "6-8 weeks (M3 졸업: 2026-07-01 ~ 2026-07-15)",
+  "graduationCriteria": {
+    "dau": 100,
+    "lighthouseMobile": 85,
+    "registeredUsers": 30,
+    "chatMessages": 200,
+    "avgBookmarks": 3,
+    "wikiEntities": 80,
+    "retention30d": 0.30
+  },
+  "qualityGatesActive": ["M0", "M1", "M2", "M3", "M4", "M5", "M7", "M8", "M9", "M10"],
+  "operatorDecisions": {
+    "G1_authProvider": "Google + Kakao (NextAuth.js v5 + Firebase Adapter + Kakao Custom Token bridge)",
+    "G2_chatBackend": "Hybrid — Realtime DB (chat_messages) + Firestore (나머지)",
+    "G3_imageModeration": "사용자 신고 3회 자동 숨김 + 운영자 유지/삭제/리셋 + korean-bad-words 마스킹 + PIPA 동의",
+    "G3_imagePolicy": "1MB / JPG/PNG/WebP / browser-image-compression 자동 압축",
+    "G4_domain": "TBD (P3.D 결정 게이트)",
+    "G5_blazePlan": "M3 시점 DAU 200+ 도달 시 재평가"
+  },
+  "chromeAutomation": {
+    "enabled": true,
+    "phases": ["P3.A 등록 폼", "P3.B wiki 시각 검증", "P3.D 채팅 동작 검증", "P4 Lighthouse", "P6 E2E 5 시나리오"]
+  },
+  "inputs": {
+    "sourceReference": "source/godkkabi-guide/index.html (2495 lines) + images/ (11 webp)",
+    "masterPlan": "docs/sprint/03-sprint-mvp-v2/MASTER-PLAN.md (318 lines)",
+    "scopeChange": "docs/sprint/03-sprint-mvp-v2/SCOPE-CHANGE.md (219 lines)",
+    "prd": "docs/sprint/03-sprint-mvp-v2/prd.md (451 lines)",
+    "design": "docs/sprint/03-sprint-mvp-v2/design.md (1284 lines)",
+    "plan": "docs/sprint/03-sprint-mvp-v2/plan.md (296 lines)",
+    "v1Archive": "archive/v1-static-guide 브랜치 + v1.0.0-mvp-archived 태그"
+  },
+  "carriedOverAssets": {
+    "infrastructure": ["package.json", "tsconfig", "eslint.config", "prettier", "postcss", "next.config", "vercel.json"],
+    "libs": ["lib/firebase/{client,firestore,analytics,index}.ts", "lib/utils.ts"],
+    "components": {
+      "ui_shadcn": 6,
+      "motion_magicui": 3,
+      "domain_reusable": ["TOC", "Alert", "EventCard", "PayTier", "TipCard", "PriorityFlow", "BuildTagBadge", "ScreenshotStrip", "Footer"],
+      "feature_reusable": ["ClassQuiz (확장)", "PageEngagementTracker", "ExternalLink"]
+    },
+    "types": ["ga4 9 events (8 더 확장 예정)"],
+    "config": "components.json + app/layout.tsx + app/sitemap.ts + app/robots.ts"
+  },
+  "deletedAssets": {
+    "pages_v1": 16,
+    "domain_components_v1": ["Hero", "ClassCard", "JinryeongCard", "TierList", "CouponCode", "ComboCard"],
+    "feature_components_v1": ["MetaBuildDwellTracker"],
+    "firestore_adapters_v1": ["lib/firestore/coupons.ts"]
+  },
+  "designSystemReference": {
+    "tokens": "ink-base #07070b + bronze #c89968 + jade #7eb6a8 + vermilion #c87870 + indigo #8b8bc5",
+    "fonts": "Pretendard Variable + JetBrains Mono",
+    "philosophy": "glassmorphism (rgba layers + backdrop-filter) + editorial 타이포 (letter-spacing tight) + 4-색 액센트 시스템",
+    "components": "shadcn/ui new-york 베이스 + bronze/jade/vermilion/indigo 토큰 오버라이드"
+  }
+}

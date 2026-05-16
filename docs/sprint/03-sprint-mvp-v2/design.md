@@ -119,7 +119,40 @@ app/
 
 ---
 
-## 3. 디자인 시스템 (Tailwind v4 @theme)
+## 3. 디자인 시스템 (Tailwind v4 @theme + shadcn/ui 커스텀)
+
+### 3.0 디자인 철학 (source/godkkabi-guide 정밀 분석)
+
+운영자가 source/godkkabi-guide/index.html에 구축한 완성된 디자인을 정밀 매핑.
+
+**핵심 원칙**:
+1. **Glassmorphism** — 모든 카드는 `rgba(*, 0.55~0.78)` 반투명 + `backdrop-filter: blur(10-20px) saturate(180%)`
+2. **Layered radial gradients** — 배경에 bronze + jade + indigo 3종 radial gradient overlay (낮은 opacity)
+3. **Editorial typography** — 한국어 본문은 `letter-spacing: -0.01em` (tight), 라벨은 `letter-spacing: 0.04-0.08em + uppercase` (wide)
+4. **Mono for data** — 수치/코드는 JetBrains Mono (시각적 hierarchy + 가독성)
+5. **No emojis** — 1-letter 아이콘 (`i`, `↻`) 또는 lucide-react SVG만 사용
+6. **Class accent system** — warrior=vermilion / swordsman=bronze / mage=indigo (3px 좌측 stripe)
+7. **Subtle micro-interactions** — `transform: translateY(-1px)` + `transition var(--dur-fast)`
+
+### 3.0.1 shadcn/ui 베이스 + 커스텀 매핑 전략
+
+| 요소 | 베이스 | 커스텀 |
+|------|--------|--------|
+| Button | shadcn `Button` (cva variants) | bronze 메인 / vermilion danger / jade success / indigo info |
+| Card | shadcn `Card` (CardHeader/Title/Content) | rgba glass + backdrop-filter + bronze hover stripe |
+| Badge | shadcn `Badge` | tier별 (vermilion/bronze/indigo) + class별 + 11 BuildTag enum |
+| Alert | shadcn `Alert` (Alert, AlertTitle, AlertDescription) | jade/vermilion/bronze/indigo 4 variant + 좌측 4px stripe |
+| Separator | shadcn | bronze gradient option |
+| Sonner Toast | shadcn `Sonner` | dark theme + bronze accent |
+| Dialog | shadcn | glassmorphism + backdrop blur |
+| Tabs | shadcn | 채널 스위처 (global/server/munpa) |
+| Popover | shadcn | 사용자 메뉴 + 신고 메뉴 |
+| Tooltip | shadcn | 진령 시너지 미리보기 |
+| **Avatar** (신규 추가) | shadcn `Avatar` | photoURL + nickname 이니셜 fallback + classBadge overlay |
+| **Form/Input** (신규) | shadcn `Form` (RHF + Zod) | 등록 폼 5 필드 |
+| **Checkbox/Switch** (신규) | shadcn | PIPA 4 동의 |
+
+**근거**: shadcn은 copy-paste 방식이므로 우리가 100% 소유 + 자유 커스텀. cva 패턴으로 variant 무제한 확장.
 
 ### 3.1 색상 토큰 (`app/globals.css`)
 
@@ -184,32 +217,289 @@ body {
 }
 ```
 
-### 3.3 폰트 로드 (Pretendard Variable)
+### 3.3 폰트 로드 (Pretendard Variable + JetBrains Mono)
 
 ```typescript
 // app/layout.tsx
 import localFont from 'next/font/local';
+import { JetBrains_Mono } from 'next/font/google';
 
 const pretendard = localFont({
-  src: [
-    {
-      path: '../public/fonts/PretendardVariable.woff2',
-      style: 'normal',
-      weight: '45 920', // Variable font
-    },
-  ],
+  src: '../public/fonts/PretendardVariable.woff2',
   display: 'swap',
   variable: '--font-pretendard',
+  weight: '45 920',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  display: 'swap',
+  variable: '--font-mono',
 });
 ```
 
-또는 CDN 방식 (간단):
+운영자 다운로드: `wget https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/woff2/PretendardVariable.woff2 -O public/fonts/PretendardVariable.woff2`
+
+### 3.4 디자인 패턴 카탈로그 (source/godkkabi-guide 정밀 매핑)
+
+#### 3.4.1 TopBar (scroll-aware glassmorphism)
 ```typescript
-const pretendard = localFont({
-  src: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/woff2/PretendardVariable.woff2',
-  // ...
-});
+// components/feature/top-bar.tsx
+'use client';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+
+export function TopBar() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <nav
+      className={cn(
+        'fixed inset-x-0 top-0 z-50 border-b border-transparent transition-all duration-300',
+        scrolled && 'border-ink-line bg-[rgba(7,7,11,0.72)] backdrop-blur-[20px] backdrop-saturate-[180%]',
+      )}
+    >
+      <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-4 px-5 py-3.5 sm:px-[5vw]">
+        <Link href="/" className="flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-tight text-text">
+          <Image src="/images/app-icon.webp" alt="갓깨비 키우기" width={26} height={26} className="rounded-[7px]" />
+          <span>깨비지기</span>
+        </Link>
+        {/* nav items */}
+      </div>
+    </nav>
+  );
+}
 ```
+
+#### 3.4.2 HeroMeta (pill badge with backdrop)
+```typescript
+// components/domain/hero-meta.tsx
+export function HeroMeta({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-ink-line-strong bg-[rgba(14,14,21,0.6)] py-1.5 pl-2 pr-3.5 text-[0.78rem] tracking-wide text-text-soft backdrop-blur-[10px]"
+    >
+      {children}
+    </div>
+  );
+}
+
+// Inner badge (chip 내부 강조)
+export function HeroMetaBadge({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full bg-bronze/15 px-2 py-0.5 text-[0.72rem] font-semibold text-bronze-soft">
+      {children}
+    </span>
+  );
+}
+```
+
+#### 3.4.3 GlassCard (재사용 기본 카드)
+```typescript
+// components/ui/glass-card.tsx (shadcn Card 확장)
+import { cn } from '@/lib/utils';
+
+export function GlassCard({ className, children, accent }: {
+  className?: string;
+  children: React.ReactNode;
+  accent?: 'warrior' | 'swordsman' | 'mage' | 'pve' | 'pvp';
+}) {
+  const accentColor = {
+    warrior: 'before:bg-vermilion',
+    swordsman: 'before:bg-bronze',
+    mage: 'before:bg-indigo',
+    pve: 'before:bg-jade',
+    pvp: 'before:bg-vermilion',
+  };
+  return (
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-2xl border border-ink-line bg-ink-card backdrop-blur-md',
+        accent && 'before:absolute before:left-0 before:top-0 before:h-full before:w-[3px] before:content-[""]',
+        accent && accentColor[accent],
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+```
+
+#### 3.4.4 StatCell (라벨 + 값 + 비율)
+```typescript
+// components/domain/stat-cell.tsx
+interface StatCellProps {
+  label: string;
+  value: string;
+  rate?: string;        // 'JetBrains Mono'로 숫자 강조
+}
+
+export function StatCell({ label, value, rate }: StatCellProps) {
+  return (
+    <div className="bg-ink-elev/55 p-3.5 transition-colors hover:bg-ink-card-strong">
+      <div className="mb-0.5 text-[0.7rem] uppercase tracking-wider text-text-mute">
+        {label}
+      </div>
+      <div className="text-[0.95rem] font-semibold text-text">
+        {rate && (
+          <span className="mr-1 font-mono text-[0.85rem] text-accent">{rate}</span>
+        )}
+        {value}
+      </div>
+    </div>
+  );
+}
+```
+
+#### 3.4.5 Note (tip/warn variant — info box)
+```typescript
+// components/domain/note.tsx
+import { Info, AlertTriangle } from 'lucide-react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
+
+const noteVariants = cva(
+  'flex gap-3 rounded-xl border bg-ink-card p-4 backdrop-blur-md',
+  {
+    variants: {
+      variant: {
+        tip: 'border-indigo/30',
+        warn: 'border-vermilion/30',
+        success: 'border-jade/30',
+        info: 'border-ink-line',
+      },
+    },
+    defaultVariants: { variant: 'tip' },
+  },
+);
+
+const iconVariants = cva('flex h-7 w-7 shrink-0 items-center justify-center rounded-full', {
+  variants: {
+    variant: {
+      tip: 'bg-indigo/15 text-indigo',
+      warn: 'bg-vermilion/15 text-vermilion',
+      success: 'bg-jade/15 text-jade',
+      info: 'bg-ink-line-strong text-text-soft',
+    },
+  },
+  defaultVariants: { variant: 'tip' },
+});
+
+interface NoteProps extends VariantProps<typeof noteVariants> {
+  variant: 'tip' | 'warn' | 'success' | 'info';
+  title?: string;
+  children: React.ReactNode;
+}
+
+export function Note({ variant, title, children }: NoteProps) {
+  const Icon = variant === 'tip' ? Info : AlertTriangle;
+  return (
+    <div className={cn(noteVariants({ variant }))}>
+      <div className={cn(iconVariants({ variant }))}>
+        <Icon className="h-3.5 w-3.5" />
+      </div>
+      <div className="flex-1">
+        {title ? (
+          <div className={cn('mb-1 font-semibold', `text-${variant === 'tip' ? 'indigo' : variant === 'warn' ? 'vermilion' : 'text'}`)}>
+            {title}
+          </div>
+        ) : null}
+        <div className="text-sm text-text-soft">{children}</div>
+      </div>
+    </div>
+  );
+}
+```
+
+#### 3.4.6 TierStripe (수직 라벨 + 그라데이션)
+```typescript
+// 0/1/2 티어 행의 좌측 64px 컬럼
+export function TierStripe({ tier }: { tier: 0 | 1 | 2 }) {
+  const colors = {
+    0: 'before:bg-vermilion text-vermilion',
+    1: 'before:bg-bronze text-bronze',
+    2: 'before:bg-indigo text-indigo',
+  };
+  return (
+    <div
+      className={cn(
+        'relative grid h-full place-items-center font-mono text-sm uppercase tracking-widest',
+        'before:absolute before:left-0 before:top-[10%] before:h-[80%] before:w-0.5 before:content-[""]',
+        colors[tier],
+      )}
+    >
+      <span>티어 {tier}</span>
+    </div>
+  );
+}
+```
+
+#### 3.4.7 Body Background (radial gradients)
+```css
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(200, 153, 104, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(126, 182, 168, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 50%, rgba(139, 139, 197, 0.04) 0%, transparent 50%),
+    var(--color-ink-base);
+}
+```
+
+#### 3.4.8 Hero Background (앙상블 — banner-korean-carry 또는 다른 배너)
+```typescript
+<section className="relative grid min-h-screen content-center">
+  {/* Banner image as backdrop */}
+  <Image
+    src="/images/banner-korean-carry.webp"
+    alt=""
+    fill
+    priority
+    className="object-cover opacity-30"
+  />
+  {/* Gradient overlay */}
+  <div
+    className="absolute inset-0"
+    style={{
+      background: 'radial-gradient(ellipse 75% 55% at 50% 45%, rgba(7,7,11,0.3) 0%, rgba(7,7,11,0.7) 55%, rgba(7,7,11,0.93) 100%), linear-gradient(180deg, rgba(7,7,11,0.3) 0%, rgba(7,7,11,0.35) 50%, var(--color-ink-base) 100%)',
+    }}
+  />
+  {/* Content */}
+  <div className="relative z-10 ...">
+    <HeroMeta>...</HeroMeta>
+    <h1 className="text-5xl font-bold tracking-tight text-text">...</h1>
+  </div>
+</section>
+```
+
+### 3.5 Editorial Typography 규칙
+
+| 요소 | 스타일 |
+|------|--------|
+| h1 (Hero) | font-bold `clamp(2.5rem, 6vw, 4rem)` letter-spacing -0.02em text-text |
+| h2 (Section) | font-bold text-2xl letter-spacing -0.01em text-text |
+| h3 (Subsection) | font-semibold text-lg letter-spacing 0.04em uppercase text-bronze-soft |
+| Body | font-normal text-base leading-[1.65] text-text-soft |
+| Label (uppercase) | font-mono text-xs letter-spacing 0.08em uppercase text-text-mute |
+| Numeric (data) | font-mono font-medium text-bronze |
+
+### 3.6 마이크로 인터랙션
+
+| 인터랙션 | 적용 컴포넌트 | 효과 |
+|---------|----------|------|
+| Card hover | GlassCard | `translateY(-1px)` + border 강조 |
+| Class banner hover | ClassCard | `image scale(1.04) + transition 300ms` |
+| Stat cell hover | StatCell | `bg-ink-card-strong` 농도 증가 |
+| Button hover | shadcn Button (default) | `bg → bronze-soft` |
+| Link hover | global | `color: bronze → bronze-soft + underline-offset 4` |
+| Scroll → topbar | TopBar | `bg blur(20px) + saturate(180%) 트랜지션` |
 
 ---
 

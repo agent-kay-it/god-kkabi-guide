@@ -1,153 +1,152 @@
 /**
- * /event — 이벤트 정보 페이지.
- * Phase 3 do.C-3 (1/4)
+ * /event — 이벤트 · 쿠폰 종합 가이드.
+ * Sprint V4 P3.E NEW page — source/godkkabi-guide/index.html §07 Events 이식.
  *
- * 콘텐츠 70/30:
- *  70% 운영자 — 이벤트 검증·우선순위 분석
- *  30% 인용 — 공식 공지 출처
+ * Server Component. 6 종류 이벤트 카테고리 grid + 쿠폰 코드 입력 가이드.
+ *
+ * 디자인:
+ *  - HeroMeta + SectionHead (eyebrow num="07" label="Events")
+ *  - 6 event card grid (상시/정기/한정/콜라보/시즌/일일)
+ *  - 각 카드: 태그(badge) + 제목 + 본문
+ *  - 쿠폰 입력 경로 Note
+ *
+ * 출처: docs/sprint/06-sprint-v4/MASTER-PLAN.md §5.4.5
  */
 import type { Metadata } from 'next';
+import Link from 'next/link';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { GlassCard } from '@/components/ui/glass-card';
 import {
-  Hero,
-  EventCard,
-  TipCard,
-  DomainAlert,
-  Footer,
+  HeroMeta,
+  HeroMetaBadge,
+  Note,
+  SectionEyebrow,
+  SectionHead,
+  SectionLead,
+  SectionTitle,
 } from '@/components/domain';
+import { Reveal } from '@/components/feature/reveal';
 
 export const metadata: Metadata = {
-  title: '갓깨비 이벤트 — 현재 진행 이벤트 + 보상 분석',
+  title: '이벤트 · 쿠폰 — 갓깨비 키우기 가이드',
   description:
-    '갓깨비 키우기 진행 중 이벤트 + 보상 분석 + 우선순위. 운영자 매주 검증.',
-  keywords: [
-    '갓깨비 이벤트',
-    '갓깨비 보상',
-    '갓깨비 콜라보',
-    '갓깨비 카카오프렌즈',
-    '갓깨비 한정 이벤트',
-  ],
+    '갓깨비 키우기 이벤트 6종 (상시·정기·한정·콜라보·시즌·일일) 대응 전략. 누적 소비 이벤트, 홍길동 확정 라인, 쿠폰 코드 입력 경로 가이드.',
+  robots: { index: false, follow: false },
   alternates: { canonical: '/event' },
-  openGraph: {
-    type: 'article',
-    title: '갓깨비 이벤트 — 진행 이벤트 + 보상 분석',
-    description: '운영자 매주 검증한 진행 이벤트.',
-    url: 'https://god-kkabi-guide.vercel.app/event',
-  },
 };
 
-const jsonLdArticle = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: '갓깨비 키우기 이벤트 — 진행 이벤트 분석 (2026.05)',
-  author: { '@type': 'Person', name: 'kay@agentkay.it' },
-  publisher: {
-    '@type': 'Organization',
-    name: '갓깨비 가이드 (비공식)',
-    url: 'https://god-kkabi-guide.vercel.app',
+interface EventItem {
+  readonly tag: '상시' | '정기' | '한정' | '콜라보' | '시즌' | '일일';
+  readonly name: string;
+  readonly desc: string;
+  readonly emphasis?: string;
+  readonly variant: 'bronze' | 'jade' | 'indigo' | 'vermilion' | 'muted';
+}
+
+const EVENTS: readonly EventItem[] = [
+  {
+    tag: '상시',
+    name: '출석 이벤트',
+    desc: '매일 접속만 해도 다이아 · 뽑기권 · 재화 누적. 7일 · 14일 · 30일 누적 시 대형 보상(SSR 포함). 절대 빠뜨리지 말 것.',
+    variant: 'jade',
   },
-  datePublished: '2026-05-15',
-  inLanguage: 'ko',
-};
+  {
+    tag: '정기',
+    name: '누적 소비 이벤트',
+    desc: '다이아 누적 사용량에 따른 보상. 홍길동 확정 라인이 여기 포함되므로 결제 · 재화 사용은 이 기간에 맞출 것.',
+    emphasis: '홍길동 확정 라인',
+    variant: 'bronze',
+  },
+  {
+    tag: '한정',
+    name: '확률업 뽑기',
+    desc: '특정 SSR 진령/장비 확률 일시 상승. 999뽑기 무료권은 이 이벤트에 몰아서 사용.',
+    variant: 'vermilion',
+  },
+  {
+    tag: '콜라보',
+    name: '카카오프렌즈 콜라보',
+    desc: '어피치 · 라이언 등 카카오 콜라보 진령 등장 (대체 활용). 쿠폰 KAKAOFRIENDS로 관련 보상 획득.',
+    emphasis: 'KAKAOFRIENDS',
+    variant: 'indigo',
+  },
+  {
+    tag: '시즌',
+    name: '시즌 한정',
+    desc: '신년 · 발렌타인 · 어버이날 · 추석 · 할로윈 · 크리스마스 등. 한정 진령 · 코스튬은 재발매 안 됨.',
+    variant: 'muted',
+  },
+  {
+    tag: '일일',
+    name: '일일 보스 / 진령 던전',
+    desc: '매일 초기화. 오전 시간대 우선 클리어 시 누적 보상 + 방치 수익률 상승 동시 효과.',
+    variant: 'bronze',
+  },
+];
 
 export default function EventPage(): React.JSX.Element {
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
-      />
-      <main className="mx-auto max-w-3xl px-4 pb-4 sm:px-6 lg:px-8">
-        <Hero
-          iconUrl="https://play-lh.googleusercontent.com/Ua8ZV2-Ydg10gRHcVMxUVbIEiEdBLJkX4N-I0FHoWZkp8u5xMGqfWAaXi0E4l3fLag=w240-h480-rw"
-          iconAlt="갓깨비 키우기 이벤트"
-          title="🎉 진행 이벤트"
-          subtitle="운영자 매주 검증 · 보상 + 우선순위 분석"
-          metaInfo="최종 갱신 2026-05-15"
-        />
+    <main className="mx-auto max-w-screen-2xl px-5 pb-24 pt-8 sm:px-[5vw]">
+      <Reveal>
+        <header className="mb-12">
+          <HeroMeta className="mb-5">
+            <HeroMetaBadge>가이드 / 이벤트</HeroMetaBadge>
+            <span className="font-mono">6종 카테고리 · 2026.05</span>
+          </HeroMeta>
+          <SectionHead>
+            <SectionEyebrow num="07" label="Events" />
+            <SectionTitle as="h1">이벤트 · 쿠폰</SectionTitle>
+            <SectionLead>
+              이벤트마다 보상 라인과 대응 전략이 다르다. 999뽑기·결제 타이밍을 이벤트 일정에
+              맞추는 것만으로 효율이 배가 된다.
+            </SectionLead>
+          </SectionHead>
+        </header>
+      </Reveal>
 
-        <div className="mt-6">
-          <DomainAlert variant="info" title="이벤트 갱신 안내">
-            본 페이지는 운영자가 매주 게임 내 공지를 확인하여 직접 검증·갱신합니다. 공식 발표
-            이벤트만 게시하며, 만료된 이벤트는 일간 정리됩니다.
-          </DomainAlert>
-        </div>
+      <section
+        aria-labelledby="event-list"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        <h2 id="event-list" className="sr-only">
+          이벤트 카테고리 6종
+        </h2>
+        {EVENTS.map((ev, i) => (
+          <Reveal key={ev.name} delay={(((i % 3) + 1) as 1 | 2 | 3)}>
+            <GlassCard interactive className="flex h-full flex-col gap-3 p-6">
+              <div>
+                <Badge variant={ev.variant} className="text-[0.7rem]">
+                  {ev.tag}
+                </Badge>
+              </div>
+              <h3 className="text-[1.05rem] font-bold text-text">{ev.name}</h3>
+              <p className="flex-1 text-sm leading-[1.65] text-text-soft">
+                {ev.desc}
+              </p>
+            </GlassCard>
+          </Reveal>
+        ))}
+      </section>
 
-        <section className="mt-12" aria-labelledby="active-title">
-          <h2 id="active-title" className="mb-3 text-xl font-bold text-accent-gold sm:text-2xl">
-            1. 진행 중 이벤트
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <EventCard
-              type="limited"
-              title="5월 신규 진령 출시 기념"
-              period={{ start: new Date('2026-05-01'), end: new Date('2026-05-31') }}
-              rewards={[
-                '다이아 5000 (누적 7일 출석)',
-                '진령 소환권 30장',
-                '5월 한정 칭호 "오월의 신령"',
-              ]}
-              notes="운영자 검증: 일일 보상 누적 시 SSR 소환 1회 확정 라인 도달"
-            />
-            <EventCard
-              type="permanent"
-              title="일일 출석 보상"
-              period={{ start: new Date('2025-04-18') }}
-              rewards={[
-                '7일 누적 시 SSR 진령 소환권 1장 (월간)',
-                '14일 누적 시 다이아 1500',
-                '28일 누적 시 강화석 200',
-              ]}
-              notes="무·소과금 핵심 자원 수급처. 7-14-28일 라인 절대 미달 금지."
-            />
-            <EventCard
-              type="collab"
-              title="카카오프렌즈 콜라보"
-              period={{ start: new Date('2026-06-01'), end: new Date('2026-07-15') }}
-              rewards={[
-                '콜라보 한정 스킨 4종 (라이언/어피치/네오/무지)',
-                '한정 진령 "황금토끼" 소환권 5장',
-                '콜라보 칭호 + 프로필 액자',
-              ]}
-              notes="공식 발표 후 운영자가 추가 분석 갱신. 카카오프렌즈 IP 콜라보로 인기 예상."
-            />
+      <Reveal>
+        <Note variant="info" title="쿠폰 코드는 별도 채널에서" className="mt-10">
+          <p>
+            최신 쿠폰 코드는 만료·교체 주기가 짧아 본 문서에서 제외합니다.
+            공식 카카오톡 채널, 네이버 공식 카페, 디시 갓깨비키우기 갤러리에서 확인 후{' '}
+            <strong className="text-text">
+              좌측 상단 캐릭터 초상화 → 설정 → 교환 코드
+            </strong>
+            에서 입력하세요.
+          </p>
+          <div className="mt-3">
+            <Button asChild variant="bronze" size="sm">
+              <Link href="/coupon">사용자가 검증한 쿠폰 보기 →</Link>
+            </Button>
           </div>
-        </section>
-
-        <section className="mt-12" aria-labelledby="tips-title">
-          <h2 id="tips-title" className="mb-3 text-xl font-bold text-accent-gold sm:text-2xl">
-            2. 이벤트 운영 팁
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <TipCard
-              category="general"
-              title="누적 소비 이벤트 = 결투장 진입선 트리거"
-              content="누적 ₩50K 소비 라인이 SSR 진령 확정 보상. 결투장 TOP 500 진입 목표라면 본 라인 필수. 무·소과금 라인은 보류 권장 (ROI 낮음)."
-            />
-            <TipCard
-              category="beginner"
-              title="신규 진령 출시 이벤트 최우선"
-              content="신규 SSR 진령 출시 첫 주 한정 패키지가 가성비 최상. 시즌 패스 + 7일 패키지 + 누적 소환권 합산 시 SSR 확정 1개 보장 라인 도달 가능."
-            />
-            <TipCard
-              category="advanced"
-              title="콜라보 이벤트 = 평소 안 사는 패키지 1회 추천"
-              content="콜라보는 IP 사용 라이센스가 게임사 재정에 큰 부담이라 평소 대비 ROI 1.5배 패키지 출시 비율 높음. 운영자 측정 시 콜라보 패키지 70%가 ROI ★★★★ 이상."
-            />
-            <TipCard
-              category="general"
-              title="이벤트 종료 D-3 자원 정산"
-              content="이벤트 한정 통화는 종료 후 소멸. D-3 기준 잔여 통화 100% 소진 권장. 운영자가 매주 일요일 본 라인 점검."
-            />
-          </div>
-        </section>
-
-        <Footer
-          lastUpdated="2026-05-15"
-          sources={[
-            { label: 'Google Play — 갓깨비 키우기 공식', href: 'https://play.google.com/store/apps/details?id=com.joynicegames.gokkaebi' },
-          ]}
-        />
-      </main>
-    </>
+        </Note>
+      </Reveal>
+    </main>
   );
 }

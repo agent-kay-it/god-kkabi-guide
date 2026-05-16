@@ -3,5 +3,27 @@
   "framework": "nextjs",
   "buildCommand": "pnpm vercel-build",
   "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "crons": [
+    {
+      "path": "/api/cron/aggregate-jinryeong",
+      "schedule": "0 15 * * 0"
+    },
+    {
+      "path": "/api/cron/aggregate-pvp",
+      "schedule": "5 15 * * 0"
+    },
+    {
+      "path": "/api/cron/aggregate-pain-topics",
+      "schedule": "10 15 * * 0"
+    },
+    {
+      "path": "/api/cron/retry-user-claims",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/etl-external-signals",
+      "schedule": "0 18 * * *"
+    }
+  ]
 }

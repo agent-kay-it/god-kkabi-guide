@@ -1,95 +1,119 @@
 /**
- * <JinryeongCard> — 진령 카드 (11종, 0/1/2 티어별 보더 색상).
- * 출처: docs/sprint/02-sprint-mvp/design.md §3.4
+ * <JinryeongCard> — 진령 1종 카드 (이름 + 등급 + 진영 + 효과 + 추천).
+ * 출처: docs/sprint/03-sprint-mvp-v2/design.md §3.0.1 + source line 1612-1623
+ *
+ * 데이터 어댑터: WikiJinryeongData (Firestore DocSnap)을 props로 수신.
  */
-import { cva, type VariantProps } from 'class-variance-authority';
+import { Sparkles } from 'lucide-react';
+
+import { GlassCard } from '@/components/ui/glass-card';
+import { Badge } from '@/components/ui/badge';
+import {
+  FACTION_LABEL,
+  ROLE_LABEL,
+  RARITY_LABEL,
+  type WikiJinryeongDoc,
+} from '@/types/wiki';
 import { cn } from '@/lib/utils';
-import type { ClassId, JinryeongTier } from '@/types';
 
-const jinryeongVariants = cva(
-  'group relative flex h-full flex-col gap-2 rounded-card border bg-bg-card p-4 transition-card hover:bg-bg-card-hover',
-  {
-    variants: {
-      tier: {
-        0: 'border-accent-gold shadow-glow',
-        1: 'border-accent-cyan',
-        2: 'border-accent-green',
-      },
-    },
-    defaultVariants: { tier: 1 },
-  },
-);
+type WikiJinryeongData = Omit<WikiJinryeongDoc, 'updatedAt'>;
 
-const rarityBadgeVariants = cva(
-  'absolute right-3 top-3 rounded-pill px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
-  {
-    variants: {
-      rarity: {
-        SSR: 'bg-accent-gold text-bg-primary',
-        SR: 'bg-text-muted text-bg-primary',
-      },
-    },
-    defaultVariants: { rarity: 'SR' },
-  },
-);
+const FACTION_VARIANT: Record<WikiJinryeongData['faction'], 'indigo' | 'jade' | 'bronze'> = {
+  sin: 'indigo',
+  yo: 'jade',
+  in: 'bronze',
+};
 
-export type JinryeongRarity = 'SSR' | 'SR';
+const TIER_ACCENT: Record<0 | 1 | 2, 'warrior' | 'swordsman' | 'mage'> = {
+  0: 'warrior',
+  1: 'swordsman',
+  2: 'mage',
+};
 
-export interface JinryeongCardProps extends VariantProps<typeof jinryeongVariants> {
-  id: string;
-  nameKo: string;
-  rarity: JinryeongRarity;
-  tier: JinryeongTier;
-  recommendedClass: readonly ClassId[];
-  coreSkill: string;
-  lastUpdated: string;
+export interface JinryeongCardProps {
+  data: WikiJinryeongData;
+  /** 컴팩트 모드 — 표 행 대체용 (효과 짧게 / strengths 숨김) */
+  compact?: boolean;
+  /** feature 레이어 컴포넌트(BookmarkButton 등) 슬롯 */
+  bookmarkSlot?: React.ReactNode;
   className?: string;
 }
 
-const CLASS_LABEL: Record<ClassId, string> = {
-  warrior: '전사',
-  swordsman: '검객',
-  medium: '영매',
-};
-
 export function JinryeongCard({
-  nameKo,
-  rarity,
-  tier,
-  recommendedClass,
-  coreSkill,
-  lastUpdated,
+  data,
+  compact = false,
+  bookmarkSlot,
   className,
 }: JinryeongCardProps): React.JSX.Element {
-  return (
-    <article
-      className={cn(jinryeongVariants({ tier }), className)}
-      aria-label={`${nameKo} 진령 (${rarity} ${tier}티어)`}
-    >
-      <span className={rarityBadgeVariants({ rarity })}>{rarity}</span>
+  const accent = TIER_ACCENT[data.tier];
+  const factionVariant = FACTION_VARIANT[data.faction];
 
-      <header>
-        <h3 className="text-base font-bold text-text-primary">{nameKo}</h3>
-        <p className="mt-0.5 text-xs text-text-muted">{tier}티어</p>
+  return (
+    <GlassCard
+      accent={accent}
+      className={cn(
+        'flex flex-col gap-3 p-4',
+        data.featured && 'shadow-glow-bronze ring-1 ring-bronze/40',
+        className,
+      )}
+    >
+      <header className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <h3 className="text-base font-bold text-text">{data.name}</h3>
+            {data.featured ? (
+              <Sparkles aria-hidden className="h-3.5 w-3.5 text-bronze-soft" />
+            ) : null}
+          </div>
+          <p className="mt-0.5 text-xs text-text-soft">{data.effectShort}</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Badge variant={`tier-${data.tier}` as 'tier-0' | 'tier-1' | 'tier-2'}>
+            T{data.tier}
+          </Badge>
+          {bookmarkSlot}
+        </div>
       </header>
 
-      <p className="flex-1 text-xs leading-relaxed text-text-secondary">{coreSkill}</p>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Badge
+          variant={data.rarity === 'rare_ssr' ? 'vermilion' : 'bronze'}
+          className="text-[0.7rem]"
+        >
+          {RARITY_LABEL[data.rarity]}
+        </Badge>
+        <Badge variant={factionVariant} className="text-[0.7rem]">
+          {FACTION_LABEL[data.faction]}
+        </Badge>
+        <Badge variant="outline" className="text-[0.7rem]">
+          {ROLE_LABEL[data.role]}
+        </Badge>
+      </div>
 
-      <footer className="mt-2 flex items-center justify-between gap-2 text-[11px]">
-        <ul className="flex flex-wrap gap-1">
-          {recommendedClass.map((c) => (
-            <li
-              key={c}
-              className="rounded-pill bg-bg-secondary px-1.5 py-0.5 text-text-secondary"
-            >
-              {CLASS_LABEL[c]}
-            </li>
-          ))}
-        </ul>
-        <time dateTime={lastUpdated} className="text-text-muted">
-          {lastUpdated}
-        </time>
-      </footer>
-    </article>
+      {!compact ? (
+        <p className="text-sm leading-relaxed text-text-soft">{data.effectLong}</p>
+      ) : null}
+
+      {!compact && data.recommendedFor.length > 0 ? (
+        <section
+          aria-label={`${data.name} 추천 상황`}
+          className="rounded-md bg-ink-elev/55 p-2.5"
+        >
+          <h4 className="mb-1 text-[0.65rem] font-semibold uppercase tracking-wider text-text-mute">
+            추천 상황
+          </h4>
+          <ul className="flex flex-wrap gap-1.5">
+            {data.recommendedFor.map((r) => (
+              <li
+                key={r}
+                className="rounded-full bg-ink-card-strong px-2 py-0.5 text-[0.7rem] text-text-soft"
+              >
+                {r}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+    </GlassCard>
   );
 }

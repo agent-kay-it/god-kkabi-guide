@@ -1,19 +1,15 @@
 /**
- * 도메인 컴포넌트 barrel — 갓깨비 키우기 가이드 15종.
- * 외부에서는 본 파일을 통해 import (`import { Hero, TOC } from '@/components/domain'`).
+ * 도메인 컴포넌트 barrel — 갓깨비 키우기 가이드 v2.
+ * 출처: docs/sprint/03-sprint-mvp-v2/phase-2-design/component-inventory-v2.md §3
+ *
+ * v1 → v2:
+ *  - 재사용 (토큰 swap): TOC / PriorityFlow / PayTier / ScreenshotStrip / Footer
+ *  - 재작성 (Firestore 어댑터 P3.C): EventCard / TipCard
+ *  - 폐기: DomainAlert / BuildTagBadge
+ *  - 신규 (P3.B): HeroMeta / HeroMetaBadge / StatCell / Note / TierStripe / ClassCard / JinryeongCard
+ *  - 신규 (P3.C 예정): EquipmentCard / SkillCard
  */
-export { Hero, type HeroProps } from './hero';
 export { TOC, type TOCProps, type TOCItem } from './toc';
-export { ClassCard, type ClassCardProps } from './class-card';
-export {
-  JinryeongCard,
-  type JinryeongCardProps,
-  type JinryeongRarity,
-} from './jinryeong-card';
-export { TierList, type TierListProps, type TierRow } from './tier-list';
-export { ComboCard, type ComboCardProps, type ComboType } from './combo-card';
-export { CouponCode, type CouponCodeProps } from './coupon-code';
-export { Alert as DomainAlert, type AlertProps, type AlertVariant } from './alert';
 export {
   PriorityFlow,
   type PriorityFlowProps,
@@ -28,4 +24,61 @@ export {
   type ScreenshotItem,
 } from './screenshot-strip';
 export { Footer, type FooterProps, type FooterSource } from './footer';
-export { BuildTagBadge, type BuildTagBadgeProps } from './build-tag-badge';
+
+// v2 신규 — P3.B
+export { HeroMeta, HeroMetaBadge } from './hero-meta';
+export { StatCell, type StatCellProps } from './stat-cell';
+export { Note, type NoteProps } from './note';
+export { TierStripe, type TierStripeProps } from './tier-stripe';
+export { ClassCard, type ClassCardProps } from './class-card';
+export { JinryeongCard, type JinryeongCardProps } from './jinryeong-card';
+
+// v2 신규 — P3.C
+export { SkillCard, type SkillCardProps } from './skill-card';
+export { ContentCard, type ContentCardProps } from './content-card';
+export { EquipmentCard, type EquipmentCardProps } from './equipment-card';
+export { MunpaCard, type MunpaCardProps } from './munpa-card';
+
+// V1 신규 — Sprint V1 P3.C (UGC)
+export { PostCard, type PostCardProps } from './post-card';
+export { PostMeta, type PostMetaProps } from './post-meta';
+export { MarkdownView, type MarkdownViewProps } from './markdown-view';
+export { CommentThread, type CommentThreadProps } from './comment-thread';
+export { PenaltyBadge, type PenaltyBadgeProps } from './penalty-badge';
+
+// V4 신규 — Sprint V4 P3.C (Hero + Section)
+export { HeroBackdrop, type HeroBackdropProps } from './hero-backdrop';
+export { HeroAppBlock, type HeroAppBlockProps } from './hero-app-block';
+export {
+  HeroStats,
+  type HeroStatsProps,
+  type HeroStatItem,
+} from './hero-stats';
+export {
+  SectionHead,
+  SectionEyebrow,
+  SectionTitle,
+  SectionLead,
+  type SectionHeadProps,
+  type SectionEyebrowProps,
+  type SectionTitleProps,
+  type SectionLeadProps,
+} from './section-head';
+
+// V4 신규 — Sprint V4 P3.D (Featured + Tier composites)
+export {
+  FeaturedJinryeong,
+  type FeaturedJinryeongProps,
+} from './featured-jinryeong';
+export {
+  TierStack,
+  type TierStackProps,
+  type TierStackItem,
+} from './tier-stack';
+
+// V7 신규 — Sprint V7 P3.B (Related cross-references)
+export {
+  RelatedItems,
+  type RelatedItemsProps,
+  type RelatedItem,
+} from './related-items';

@@ -13,6 +13,27 @@ const nextConfig: NextConfig = {
         hostname: 'is1-ssl.mzstatic.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        pathname: '/**',
+      },
+      // OAuth 프로필 이미지 (Sprint V1 — CA-M2)
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'k.kakaocdn.net',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img1.kakaocdn.net',
+        pathname: '/**',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
@@ -26,12 +47,12 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
-              "img-src 'self' https://play-lh.googleusercontent.com https://is1-ssl.mzstatic.com data: blob:",
-              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
+              "img-src 'self' https://play-lh.googleusercontent.com https://lh3.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com https://k.kakaocdn.net https://img1.kakaocdn.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net data: blob:",
+              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://pagead2.googlesyndication.com",
               "font-src 'self' https://fonts.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "frame-src 'none'",
+              "frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
             ].join('; '),
           },
           {

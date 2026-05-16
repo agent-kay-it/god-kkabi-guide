@@ -17,8 +17,10 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { logEvent } from '@/lib/firebase/analytics';
 import type { ClassId } from '@/types';
+import { CLASS_ICON_URL } from '@/types/wiki';
 
 // ─────────────────────────────────────────────────────────────────
 // 문항 데이터 (운영자 8주 플레이 데이터 기반 설계)
@@ -114,14 +116,13 @@ const QUESTIONS: QuizQuestion[] = [
 
 interface ClassResult {
   id: ClassId;
+  /** @deprecated V7 P5: 결과 화면은 CLASS_ICON_URL 사용. emoji는 backward-compat용. */
   emoji: string;
   name: string;
   tag: string;
   summary: string;
   strengths: string[];
   recommendedJinryeong: string[];
-  buildLinkHref?: string;
-  buildLinkLabel?: string;
 }
 
 const CLASS_RESULTS: Record<ClassId, ClassResult> = {
@@ -153,9 +154,7 @@ const CLASS_RESULTS: Record<ClassId, ClassResult> = {
       '결투장 메타 상위권 직업',
       '스킬 연출이 가장 화려한 직업군',
     ],
-    recommendedJinryeong: ['음영귀', '강림도', '백림명'],
-    buildLinkHref: '/builds/meta-swordsman',
-    buildLinkLabel: '검객 메타 빌드 보기',
+    recommendedJinryeong: ['홍길동', '서해용왕', '음영귀'],
   },
   medium: {
     id: 'medium',
@@ -266,7 +265,7 @@ export function ClassQuiz(): React.JSX.Element {
     >
       {/* 진행 표시 */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-text-muted">
+        <div className="flex items-center justify-between text-xs text-text-mute">
           <span>진단 진행 중</span>
           <span>
             {currentQ + 1} / {totalQuestions}
@@ -278,21 +277,21 @@ export function ClassQuiz(): React.JSX.Element {
           aria-valuemin={1}
           aria-valuemax={totalQuestions}
           aria-label="진단 진행률"
-          className="h-1.5 w-full overflow-hidden rounded-full bg-bg-secondary"
+          className="h-1.5 w-full overflow-hidden rounded-full bg-ink-elev"
         >
           <div
-            className="h-full rounded-full bg-accent-gold transition-all duration-300"
+            className="h-full rounded-full bg-bronze transition-all duration-300"
             style={{ width: `${progressPct}%` }}
           />
         </div>
       </div>
 
       {/* 문항 */}
-      <div className="rounded-card border border-border-gold bg-bg-card p-5 sm:p-6">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-accent-gold">
+      <div className="rounded-[var(--radius-card)] border border-bronze/30 bg-ink-card p-5 sm:p-6">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-bronze">
           Q{question.id}
         </p>
-        <h2 className="mb-5 text-lg font-bold leading-snug text-text-primary sm:text-xl">
+        <h2 className="mb-5 text-lg font-bold leading-snug text-text sm:text-xl">
           {question.question}
         </h2>
 
@@ -308,10 +307,10 @@ export function ClassQuiz(): React.JSX.Element {
                   aria-pressed={isSelected}
                   aria-label={`선택지 ${String.fromCharCode(65 + idx)}: ${choice.label}`}
                   className={[
-                    'w-full rounded-lg border px-4 py-3 text-left text-sm font-medium transition-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2',
+                    'w-full rounded-lg border px-4 py-3 text-left text-sm font-medium transition-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2',
                     isSelected
-                      ? 'border-accent-gold bg-accent-gold/15 text-accent-gold'
-                      : 'border-border-soft bg-bg-secondary text-text-primary hover:border-accent-gold/50 hover:bg-bg-card-hover',
+                      ? 'border-bronze bg-bronze/15 text-bronze'
+                      : 'border-ink-line bg-ink-elev text-text hover:border-bronze/50 hover:bg-ink-card-strong',
                     selectedIdx !== null && !isSelected
                       ? 'cursor-not-allowed opacity-50'
                       : 'cursor-pointer',
@@ -321,7 +320,7 @@ export function ClassQuiz(): React.JSX.Element {
                 >
                   <span
                     aria-hidden="true"
-                    className="mr-2 inline-block w-5 text-center text-text-muted"
+                    className="mr-2 inline-block w-5 text-center text-text-mute"
                   >
                     {String.fromCharCode(65 + idx)}.
                   </span>
@@ -351,33 +350,44 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
 
   return (
     <section aria-label="직업 진단 결과" className="space-y-6">
-      <div className="rounded-card border border-accent-gold bg-bg-card p-5 sm:p-6">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-accent-gold">
+      <div className="rounded-[var(--radius-card)] border border-bronze bg-ink-card p-5 sm:p-6">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-bronze">
           진단 결과
         </p>
-        <div className="mb-4 flex items-center gap-3">
-          <span className="text-5xl" aria-hidden="true">
-            {result.emoji}
+        <div className="mb-4 flex items-center gap-4">
+          {/* V7 P5: emoji → 직업 아이콘 (rounded box) */}
+          <span
+            aria-hidden
+            className="block h-16 w-16 shrink-0 overflow-hidden rounded-[14px] ring-1 ring-bronze/40 sm:h-20 sm:w-20"
+          >
+            <Image
+              src={CLASS_ICON_URL[result.id]}
+              alt=""
+              width={160}
+              height={160}
+              className="h-full w-full object-cover"
+              priority
+            />
           </span>
           <div>
-            <h2 className="text-2xl font-black text-accent-gold">{result.name}</h2>
-            <span className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+            <h2 className="text-2xl font-black text-bronze sm:text-3xl">{result.name}</h2>
+            <span className="text-xs font-semibold uppercase tracking-wide text-text-mute">
               {result.tag}
             </span>
           </div>
         </div>
 
-        <p className="mb-5 text-sm leading-relaxed text-text-secondary">{result.summary}</p>
+        <p className="mb-5 text-sm leading-relaxed text-text-soft">{result.summary}</p>
 
         {/* 핵심 강점 */}
         <div className="mb-4">
-          <h3 className="mb-2 text-sm font-semibold text-text-secondary">핵심 강점</h3>
+          <h3 className="mb-2 text-sm font-semibold text-text-soft">핵심 강점</h3>
           <ul className="space-y-1.5">
             {result.strengths.map((s) => (
-              <li key={s} className="flex items-start gap-2 text-sm text-text-primary">
+              <li key={s} className="flex items-start gap-2 text-sm text-text">
                 <span
                   aria-hidden="true"
-                  className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-accent-gold"
+                  className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-bronze"
                 />
                 {s}
               </li>
@@ -387,12 +397,12 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
 
         {/* 추천 진령 */}
         <div className="mb-5">
-          <h3 className="mb-2 text-sm font-semibold text-text-secondary">추천 진령 조합</h3>
+          <h3 className="mb-2 text-sm font-semibold text-text-soft">추천 진령 조합</h3>
           <ul className="flex flex-wrap gap-2">
             {result.recommendedJinryeong.map((j) => (
               <li
                 key={j}
-                className="rounded-pill bg-bg-secondary px-3 py-1 text-xs font-semibold text-text-primary"
+                className="rounded-full bg-ink-elev px-3 py-1 text-xs font-semibold text-text"
               >
                 {j}
               </li>
@@ -401,28 +411,26 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
         </div>
 
         {/* 점수 분포 */}
-        <div className="mb-5 rounded-lg bg-bg-secondary p-3">
-          <h3 className="mb-2 text-xs font-semibold text-text-muted">점수 분포</h3>
+        <div className="mb-5 rounded-lg bg-ink-elev p-3">
+          <h3 className="mb-2 text-xs font-semibold text-text-mute">점수 분포</h3>
           <div className="space-y-1.5">
             {(
               [
-                { id: 'warrior' as ClassId, label: '전사', emoji: '⚔️' },
-                { id: 'swordsman' as ClassId, label: '검객', emoji: '🗡️' },
-                { id: 'medium' as ClassId, label: '영매', emoji: '🔮' },
+                { id: 'warrior' as ClassId, label: '전사' },
+                { id: 'swordsman' as ClassId, label: '검객' },
+                { id: 'medium' as ClassId, label: '영매' },
               ] as const
-            ).map(({ id, label, emoji }) => {
+            ).map(({ id, label }) => {
               const pct = totalScore > 0 ? Math.round((scores[id] / totalScore) * 100) : 0;
               return (
                 <div key={id} className="flex items-center gap-2 text-xs">
-                  <span aria-hidden="true" className="w-4 text-center">
-                    {emoji}
-                  </span>
-                  <span className="w-10 text-text-secondary">{label}</span>
-                  <div className="flex-1 overflow-hidden rounded-full bg-bg-card">
+                  {/* V7 P5: 점수 분포는 작은 영역 → emoji/아이콘 없이 텍스트만 */}
+                  <span className="w-12 text-text-soft">{label}</span>
+                  <div className="flex-1 overflow-hidden rounded-full bg-ink-card">
                     <div
                       className={[
                         'h-1.5 rounded-full',
-                        id === result.id ? 'bg-accent-gold' : 'bg-border-soft',
+                        id === result.id ? 'bg-bronze' : 'bg-ink-line',
                       ].join(' ')}
                       style={{ width: `${pct}%` }}
                       role="meter"
@@ -432,7 +440,7 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
                       aria-valuemax={100}
                     />
                   </div>
-                  <span className="w-7 text-right text-text-muted">{pct}%</span>
+                  <span className="w-7 text-right text-text-mute">{pct}%</span>
                 </div>
               );
             })}
@@ -441,20 +449,18 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
 
         {/* CTA */}
         <div className="flex flex-col gap-3 sm:flex-row">
-          {result.buildLinkHref ? (
-            <Link
-              href={result.buildLinkHref}
-              className="flex-1 rounded-lg bg-accent-gold px-4 py-3 text-center text-sm font-bold text-bg-primary transition-card hover:bg-accent-gold-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2"
-              aria-label={result.buildLinkLabel}
-            >
-              {result.buildLinkLabel ?? '메타 빌드 보기'}
-            </Link>
-          ) : null}
           <Link
-            href="/jinryeong"
-            className="flex-1 rounded-lg border border-border-gold px-4 py-3 text-center text-sm font-semibold text-accent-gold transition-card hover:bg-bg-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold focus-visible:ring-offset-2"
+            href={`/register?prefilledClass=${result.id}`}
+            className="flex-1 rounded-lg bg-bronze px-4 py-3 text-center text-sm font-bold text-ink-base transition-card hover:bg-bronze-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
+            aria-label={`${result.name}로 등록 시작하기`}
           >
-            진령 티어 확인하기
+            이 직업으로 등록하기
+          </Link>
+          <Link
+            href="/class"
+            className="flex-1 rounded-lg border border-bronze/30 px-4 py-3 text-center text-sm font-semibold text-bronze transition-card hover:bg-ink-card-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
+          >
+            직업 가이드 상세
           </Link>
         </div>
       </div>
@@ -462,7 +468,7 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
       <button
         type="button"
         onClick={onReset}
-        className="w-full rounded-lg border border-border-soft px-4 py-2.5 text-sm font-medium text-text-muted transition-card hover:border-border-gold hover:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-gold focus-visible:ring-offset-2"
+        className="w-full rounded-lg border border-ink-line px-4 py-2.5 text-sm font-medium text-text-mute transition-card hover:border-bronze hover:text-text-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2"
         aria-label="직업 진단 다시 하기"
       >
         다시 진단하기

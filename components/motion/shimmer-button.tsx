@@ -2,8 +2,8 @@
  * ShimmerButton — Magic UI 모션 컴포넌트 (CSS animation + framer-motion 기반).
  * 출처: https://magicui.design/docs/components/shimmer-button
  *
+ * v2: bronze rgba shimmer + ink-card background.
  * 버튼 위를 흐르는 shimmer 광택 효과.
- * MVP에서는 CouponCode 복사 버튼 V1+ 교체용으로 준비.
  * prefers-reduced-motion: shimmer 비활성화.
  */
 'use client';
@@ -13,9 +13,9 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 interface ShimmerButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** shimmer 색상 (기본 골드 rgba) */
+  /** shimmer 색상 (기본 bronze rgba) */
   shimmerColor?: string;
-  /** shimmer 크기 (기본 100%) */
+  /** shimmer 크기 */
   shimmerSize?: string;
   /** shimmer 속도 (초) */
   shimmerDuration?: string;
@@ -28,7 +28,7 @@ interface ShimmerButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 /**
- * ShimmerButton — 광택이 흐르는 버튼.
+ * ShimmerButton — 광택이 흐르는 버튼. v2 bronze 토큰 매핑.
  *
  * @example
  * <ShimmerButton onClick={handleCopy}>
@@ -37,11 +37,11 @@ interface ShimmerButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * </ShimmerButton>
  */
 export function ShimmerButton({
-  shimmerColor = 'rgba(232, 184, 96, 0.5)',
+  shimmerColor = 'rgba(232, 199, 154, 0.5)',
   shimmerSize = '0.1em',
   shimmerDuration = '2s',
   borderRadius = '14px',
-  background = 'var(--color-bg-card)',
+  background = 'var(--color-ink-card-strong)',
   className,
   children,
   ...props
@@ -50,17 +50,16 @@ export function ShimmerButton({
     <button
       className={cn(
         'group relative cursor-pointer overflow-hidden px-6 py-3',
-        'text-sm font-semibold text-[var(--color-text-primary)]',
-        'border border-[var(--color-border-gold)]',
-        'transition-all duration-300 hover:border-[var(--color-accent-gold)]',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-gold)]',
+        'text-sm font-semibold text-text',
+        'border border-bronze/30',
+        'transition-all duration-300 hover:border-bronze',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze',
         'disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       style={{ borderRadius, background }}
       {...props}
     >
-      {/* shimmer overlay */}
       <span
         aria-hidden="true"
         className="absolute inset-0 overflow-hidden"
@@ -84,7 +83,6 @@ export function ShimmerButton({
           .shimmer-element { animation: none !important; }
         }
       `}</style>
-      {/* content */}
       <span className="relative z-10 flex items-center justify-center gap-2">{children}</span>
     </button>
   );

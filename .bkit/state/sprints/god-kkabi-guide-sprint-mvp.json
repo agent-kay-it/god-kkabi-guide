@@ -1,71 +1,14 @@
 {
   "sprintId": "god-kkabi-guide-sprint-mvp",
-  "name": "Sprint MVP — 정적 가이드 사이트 Next.js 16 이식 + Beachhead 침투",
+  "name": "Sprint MVP v1 — 정적 가이드 16 페이지 (ARCHIVED)",
   "version": "v1.0",
-  "trustLevel": 4,
-  "trustLevelLabel": "L4 Aggressive (자동) + Chrome 시각 검증",
-  "phase": "archive",
-  "status": "completed",
-  "phaseHistory": [
-    {"phase": "plan", "startedAt": "2026-05-15T00:00:00.000Z", "completedAt": "2026-05-15T03:34:00.000Z", "status": "completed"},
-    {"phase": "design", "startedAt": "2026-05-15T03:34:00.000Z", "completedAt": "2026-05-15T03:37:00.000Z", "status": "completed"},
-    {"phase": "do.A", "startedAt": "2026-05-15T03:37:00.000Z", "completedAt": "2026-05-15T03:50:00.000Z", "status": "completed", "commit": "4cbe95b"},
-    {"phase": "do.B", "startedAt": "2026-05-15T03:50:00.000Z", "completedAt": "2026-05-15T04:00:00.000Z", "status": "completed", "commit": "ef72f93"},
-    {"phase": "do.C", "startedAt": "2026-05-15T04:00:00.000Z", "completedAt": "2026-05-15T04:45:00.000Z", "status": "completed", "commits": ["5eae940", "2075fce", "905c8cd"]},
-    {"phase": "do.D", "startedAt": "2026-05-15T04:45:00.000Z", "completedAt": "2026-05-15T04:52:00.000Z", "status": "completed", "deployment": "dpl_91E2Mmrr5QQUZHZic6NRk1sfkxpp", "url": "https://god-kkabi-guide.vercel.app"},
-    {"phase": "check", "startedAt": "2026-05-15T04:52:00.000Z", "completedAt": "2026-05-15T04:53:00.000Z", "status": "completed", "lighthouse": {"performance": 68, "accessibility": 92, "bestPractices": 92, "seo": 100}},
-    {"phase": "act", "startedAt": "2026-05-15T04:53:00.000Z", "completedAt": "2026-05-15T04:55:00.000Z", "status": "completed", "iterateChanges": "preconnect CDN + analytics idle defer", "lighthouseAfter": {"performance": 94, "accessibility": 92, "bestPractices": 92, "seo": 100}},
-    {"phase": "qa", "startedAt": "2026-05-15T04:55:00.000Z", "completedAt": "2026-05-15T04:56:00.000Z", "status": "completed", "e2eScenarios": ["home", "coupon", "meta-swordsman"]},
-    {"phase": "report", "startedAt": "2026-05-15T04:56:00.000Z", "completedAt": "2026-05-15T04:57:00.000Z", "status": "completed", "artifact": "docs/sprint/02-sprint-mvp/report.md"},
-    {"phase": "archive", "startedAt": "2026-05-15T04:57:00.000Z", "completedAt": "2026-05-15T04:58:00.000Z", "status": "completed"}
-  ],
-  "startedAt": "2026-05-15T00:00:00.000Z",
-  "completedAt": "2026-05-15T04:58:00.000Z",
-  "startedBy": "kay@agentkay.it",
-  "completedBy": "kay@agentkay.it",
-  "graduationCriteria": {
-    "dau": {"target": 100, "measureBy": "M+30", "status": "tracking_started"},
-    "lighthouseMobile": {"target": 90, "actual": 94, "status": "passed"},
-    "serpRanking": {"target": "갓깨비 키우기 공략 상위 30위", "measureBy": "M+90", "status": "tracking_started"},
-    "couponPageCumulativePV": {"target": 500, "measureBy": "M+90", "status": "tracking_started"}
-  },
-  "qualityGatesActive": ["M1", "M2", "M3", "M4", "M5", "M7", "M8", "M9", "M10"],
-  "qualityGatesResults": {
-    "M1": "passed (6 plan 산출물)",
-    "M2": "passed (3 design 산출물)",
-    "M3": "passed (Lighthouse + Production 배포)",
-    "M4": "passed (Lighthouse Mobile Performance 94)",
-    "M5": "passed (Accessibility 92, WCAG AA)",
-    "M7": "passed (TS strict, any 0개)",
-    "M8": "passed (iterate 후 ≥90)",
-    "M9": "passed (report.md 작성)",
-    "M10": "passed (Sprint archive)"
-  },
-  "lighthouseResults": {
-    "beforeIterate": {"performance": 68, "accessibility": 92, "bestPractices": 92, "seo": 100, "lcp": "7.0s", "fcp": "2.5s", "cls": "0", "tbt": "20ms"},
-    "afterIterate": {"performance": 94, "accessibility": 92, "bestPractices": 92, "seo": 100, "lcp": "2.9s", "fcp": "1.5s", "cls": "0", "tbt": "10ms"},
-    "improvements": "LCP -58%, FCP -40%, Performance +26"
-  },
-  "production": {
-    "url": "https://god-kkabi-guide.vercel.app",
-    "deploymentId": "dpl_91E2Mmrr5QQUZHZic6NRk1sfkxpp",
-    "vercelProjectId": "prj_4g0diSvSe4atumw7y0tsNyl2edAG",
-    "vercelTeam": "agent-kay-project",
-    "totalRoutes": 21,
-    "contentPages": 16,
-    "isr12hPages": ["/coupon"],
-    "deployedAt": "2026-05-15T04:52:00.000Z"
-  },
-  "v1Inputs": {
-    "schemaReady": ["users", "builds", "tier_votes", "pain_topics"],
-    "adminSeed": {"buildId": "meta-swordsman-v1", "uid": "__admin_seed__", "tags": ["meta", "pvp", "결투장", "고수"]},
-    "components": 24,
-    "domainComponents": 15,
-    "featureComponents": 4,
-    "decisionPoint": "DAU 100+ @ M+30 (2026-06-14) → V1 진입"
-  },
-  "abandonTriggers": {
-    "M4.5_dau_under_100": "톤 피벗 또는 콘텐츠 깊이 강화",
-    "M6_dau_under_200": "프로젝트 폐기, 후속작 도메인 재활용"
+  "status": "archived",
+  "archivedAt": "2026-05-15T15:30:00.000Z",
+  "archivedReason": "v2 (위키 + 커뮤니티 + 채팅) 전면 재설계로 폐기. 코드는 archive/v1-static-guide 브랜치 + v1.0.0-mvp-archived 태그에 보존.",
+  "supersededBy": "god-kkabi-guide-sprint-mvp-v2",
+  "originalCompletion": "PASS (M3 졸업 조건 통과). Public 미배포 상태에서 폐기.",
+  "previousResults": {
+    "lighthouse": {"performance": 94, "accessibility": 92, "bestPractices": 92, "seo": 100},
+    "production": "https://god-kkabi-guide.vercel.app (v2 배포 전까지 v1 유지)"
   }
 }
