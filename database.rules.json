@@ -4,22 +4,41 @@
       "messages": {
         "$channelId": {
           ".indexOn": ["createdAt"],
-          ".read": "auth != null && auth.token.role != 'banned'",
+          ".read": "auth != null && auth.token.role != 'banned' && ($channelId == 'global' || (auth.token.serverId != null && $channelId == 'server-' + auth.token.serverId) || (auth.token.munpaId != null && $channelId == 'munpa-' + auth.token.munpaId))",
           "$messageId": {
-            ".write": "auth != null && auth.token.role != 'banned' && ((!data.exists() && auth.token.registered == true && newData.child('authorUid').val() == auth.uid && newData.child('content').isString() && newData.child('content').val().length <= 500 && newData.child('createdAt').val() == now) || (auth.token.role == 'admin'))",
+            ".write": "auth != null && auth.token.role != 'banned' && ((!data.exists() && auth.token.registered == true && newData.child('authorUid').val() == auth.uid && newData.child('channelId').val() == $channelId && newData.child('content').isString() && newData.child('content').val().length <= 500 && newData.child('createdAt').val() == now && ($channelId == 'global' || (auth.token.serverId != null && $channelId == 'server-' + auth.token.serverId) || (auth.token.munpaId != null && $channelId == 'munpa-' + auth.token.munpaId))) || (auth.token.role == 'admin'))",
             ".validate": "newData.hasChildren(['channelId', 'authorUid', 'authorNickname', 'content', 'createdAt'])",
             "channelId": { ".validate": "newData.val() == $channelId" },
             "authorUid": { ".validate": "newData.val() == auth.uid || auth.token.role == 'admin'" },
             "authorNickname": { ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 12" },
             "authorClassId": { ".validate": "newData.val() == 'warrior' || newData.val() == 'swordsman' || newData.val() == 'medium'" },
             "authorRole": { ".validate": "newData.val() == 'admin' || newData.val() == 'user'" },
+            "authorServerId": { ".validate": "!newData.exists() || newData.isString()" },
+            "authorMunpaId": { ".validate": "!newData.exists() || newData.isString()" },
             "content": { ".validate": "newData.isString() && newData.val().length <= 500" },
-            "imageUrl": { ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^https:\\/\\/firebasestorage\\.googleapis\\.com\\//) )" },
+            "imageUrl": { ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^https:\\/\\/firebasestorage\\.googleapis\\.com\\//))" },
+            "linkPreview": {
+              "url": { ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\//) && newData.val().length <= 2048" },
+              "title": { ".validate": "newData.isString() && newData.val().length <= 200" },
+              "description": { ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 500)" },
+              "image": { ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^https:\\/\\//))" },
+              "domain": { ".validate": "newData.isString() && newData.val().length <= 100" },
+              "$other": { ".validate": false }
+            },
             "createdAt": { ".validate": "newData.isNumber()" },
             "hidden": { ".validate": "newData.isBoolean()" },
             "keptByOperator": { ".validate": "auth.token.role == 'admin' && newData.isBoolean()" },
             "deletedByOperator": { ".validate": "auth.token.role == 'admin' && newData.isBoolean()" },
             "$other": { ".validate": false }
+          }
+        }
+      },
+      "presence": {
+        "$channelId": {
+          ".read": "auth != null && auth.token.role != 'banned'",
+          "$uid": {
+            ".write": "auth != null && auth.uid == $uid && auth.token.role != 'banned'",
+            ".validate": "newData.hasChildren(['lastSeen']) && newData.child('lastSeen').isNumber()"
           }
         }
       }
