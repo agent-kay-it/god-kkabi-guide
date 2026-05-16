@@ -1,8 +1,10 @@
 /**
- * Auth Buttons — Google / Kakao 로그인 (NextAuth signIn Server Action).
- * 출처: docs/sprint/03-sprint-mvp-v2/design.md §4 + auth-flow.md §3
+ * Auth Buttons — Google sign-in 단일 (NextAuth signIn Server Action).
+ * 출처: docs/sprint/10-sprint-launch/design.md §2 (Auth flow v3)
+ *      + docs/sprint/10-sprint-launch/prd.md §2.F1.1
  *
  * Server Action (signIn)을 form action으로 사용하여 JS 미사용 환경에서도 동작.
+ * Sprint 10에서 Kakao 버튼 제거 — 모든 사용자가 Google 1-tap 흐름.
  */
 import { signIn } from '@/lib/auth/auth';
 import { Button } from '@/components/ui/button';
@@ -15,14 +17,11 @@ interface AuthButtonsProps {
 
 /**
  * callbackUrl에 GA4 login 이벤트 발화용 search param을 합성한다.
- * LoginSuccessTracker가 ?login=success&method=... 을 감지하여 logEvent('login') 발화.
+ * LoginSuccessTracker가 ?login=success&method=google 을 감지하여 logEvent('login') 발화.
  */
-function withLoginSuccessParam(
-  base: string,
-  method: 'google' | 'kakao',
-): string {
+function withLoginSuccessParam(base: string): string {
   const sep = base.includes('?') ? '&' : '?';
-  return `${base}${sep}login=success&method=${method}`;
+  return `${base}${sep}login=success&method=google`;
 }
 
 export function AuthButtons({
@@ -35,7 +34,7 @@ export function AuthButtons({
         action={async () => {
           'use server';
           await signIn('google', {
-            redirectTo: withLoginSuccessParam(callbackUrl, 'google'),
+            redirectTo: withLoginSuccessParam(callbackUrl),
           });
         }}
       >
@@ -47,24 +46,6 @@ export function AuthButtons({
         >
           <GoogleIcon />
           Google로 시작하기
-        </Button>
-      </form>
-
-      <form
-        action={async () => {
-          'use server';
-          await signIn('kakao', {
-            redirectTo: withLoginSuccessParam(callbackUrl, 'kakao'),
-          });
-        }}
-      >
-        <Button
-          type="submit"
-          size="lg"
-          className="w-full justify-center gap-3 bg-[#fee500] font-semibold text-[#191919] hover:bg-[#fdd835]"
-        >
-          <KakaoIcon />
-          카카오로 시작하기
         </Button>
       </form>
 
@@ -103,21 +84,6 @@ function GoogleIcon(): React.JSX.Element {
         d="M12 5.51c1.601 0 3.037.55 4.169 1.629l3.126-3.126C17.398 2.246 14.936 1 12 1 7.768 1 4.083 3.418 2.273 7.007l3.633 2.815C6.764 7.423 9.164 5.51 12 5.51z"
         fill="#EA4335"
       />
-    </svg>
-  );
-}
-
-function KakaoIcon(): React.JSX.Element {
-  return (
-    <svg
-      aria-hidden="true"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M12 3C6.477 3 2 6.477 2 10.768c0 2.793 1.866 5.247 4.677 6.622l-.99 3.621c-.087.318.253.575.539.39l4.328-2.86c.479.064.969.099 1.446.099 5.523 0 10-3.477 10-7.872C22 6.477 17.523 3 12 3z" />
     </svg>
   );
 }

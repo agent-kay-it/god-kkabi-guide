@@ -16,7 +16,7 @@ export type GA4EventName =
   | 'scroll_depth_75'        // 75% 스크롤 도달
   | 'dwell_60'               // 60초 이상 체류
   // ─── v2 신규 8개 ───
-  | 'login'                  // Google/Kakao 로그인 성공 (V1에서 STUB → ACTIVE)
+  | 'login'                  // Google 로그인 성공 (V1에서 STUB → ACTIVE, Sprint 10에서 Kakao 제거)
   | 'register_complete'      // 등록 폼 완료 (PIPA 4 동의 + 5필드)
   | 'chat_send'              // 채팅 메시지 전송 (마스킹 후)
   | 'chat_image_upload'      // 채팅 이미지 첨부 업로드 (압축 후)
@@ -109,7 +109,7 @@ export interface GA4EventParams {
     build_id: string;
   };
   signup: {
-    method: 'google' | 'kakao';
+    method: 'google';
   };
   page_view: {
     page_title?: string;
@@ -117,7 +117,7 @@ export interface GA4EventParams {
     page_path?: string;
   };
   login: {
-    method: 'google' | 'kakao';
+    method: 'google';
   };
   register_complete: {
     class_id: 'warrior' | 'swordsman' | 'medium';

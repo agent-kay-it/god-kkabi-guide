@@ -140,7 +140,7 @@ export async function registerUser(
           email: session.user?.email ?? null,
           displayName: session.user?.name ?? null,
           photoURL: session.user?.image ?? null,
-          authProvider: session.accessToken ? 'kakao' : 'google',
+          authProvider: 'google',
           serverId: input.serverId,
           gameUid: input.gameUid,
           munpa: input.munpa,

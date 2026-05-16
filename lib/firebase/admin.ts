@@ -4,7 +4,7 @@
  *
  * 책임:
  *  - Firebase Admin App 1회 초기화 (Node.js runtime 한정, lazy init)
- *  - createCustomToken (Kakao bridge용)
+ *  - createCustomToken (Google sign-in bridge용 — Sprint 10 / Phase B에서 NextAuth session.user.id → Firebase Auth uid)
  *  - Firestore Admin (Server Action 트랜잭션용)
  *  - Auth Admin (사용자 정지/리셋, custom claims)
  *
@@ -114,13 +114,16 @@ export function getAdminDatabase(): Database {
 }
 
 /**
- * Kakao OAuth 사용자에 대한 Firebase Custom Token 발급.
+ * Firebase Custom Token 발급 (NextAuth ↔ Firebase Auth bridge).
  *
- * @param uid Kakao 사용자 ID 기반 고유 식별자 (예: `kakao:${kakaoId}`)
- * @param claims 선택적 추가 custom claims (예: provider, kakaoNickname)
+ * Sprint 10 / Phase B: NextAuth Google sign-in 후 session.user.id를 그대로 Firebase Auth uid로 사용.
+ * client에서 signInWithCustomToken으로 Firebase 세션 활성화 → Firestore/RTDB/Storage 접근 가능.
+ *
+ * @param uid Firebase Auth uid (NextAuth session.user.id와 동일)
+ * @param claims 선택적 추가 custom claims (예: role, registered, serverId, munpaId)
  * @returns Firebase Auth에 signInWithCustomToken으로 전달할 JWT
  *
- * 사용 시점: NextAuth Kakao provider callback → /api/auth/kakao-exchange → client signInWithCustomToken
+ * 사용 시점: client POST /api/auth/google-bridge → 서버에서 본 함수 호출 → 응답 token으로 signInWithCustomToken
  */
 export async function createFirebaseCustomToken(
   uid: string,

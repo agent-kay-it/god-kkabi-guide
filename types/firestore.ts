@@ -141,7 +141,7 @@ export interface BuildDoc {
 // V1+ 활성 컬렉션 (MVP는 스키마만)
 // ─────────────────────────────────────────────────────────────────
 
-export type SignupVia = 'google' | 'kakao' | 'anonymous';
+export type SignupVia = 'google' | 'anonymous';
 
 /** `users` 컬렉션 (V1+ 활성) — design.md §5.4 */
 export interface UserDoc {
