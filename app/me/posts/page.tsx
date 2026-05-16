@@ -26,7 +26,7 @@ export default async function MyPostsPage(): Promise<React.JSX.Element> {
   const { items } = await listPosts({ authorUid: session.user.id, sort: 'latest' });
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <HeroMeta className="mb-4">

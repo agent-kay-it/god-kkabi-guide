@@ -1,10 +1,10 @@
 /**
- * <MobileNav> — Sprint V7 P3.E.
+ * <MobileNav> — Sprint V7 P3.E (+ P5 patch).
  *
- * 모바일 (< sm) 햄버거 메뉴 + 좌→우 슬라이드 drawer.
+ * 모바일/태블릿 (< md = <768px) 햄버거 메뉴 + 좌→우 슬라이드 drawer.
  * Radix Dialog primitives 사용 (focus trap, ESC, scroll lock 자동).
  *
- * - 햄버거 버튼: sm:hidden로 모바일만 노출
+ * - 햄버거 버튼: md:hidden로 모바일/태블릿만 노출 (이전 sm:hidden은 좁은 태블릿에 inline 메뉴가 잘려 표시되던 문제)
  * - drawer 내부에 8 NAV_ITEMS 세로 리스트 + 검색 단축 + 사용자 메뉴 안내
  * - 메뉴 항목 클릭 시 자동 닫힘 (Link click → router navigation → Dialog close)
  *
@@ -41,7 +41,7 @@ export function MobileNav({ items }: MobileNavProps): React.JSX.Element {
           type="button"
           aria-label="메뉴 열기"
           className={cn(
-            'inline-flex h-9 w-9 items-center justify-center rounded-md text-text-soft sm:hidden',
+            'inline-flex h-9 w-9 items-center justify-center rounded-md text-text-soft md:hidden',
             'transition-colors hover:bg-ink-elev hover:text-text',
             'focus-visible:outline-2 focus-visible:outline-bronze focus-visible:outline-offset-2',
           )}

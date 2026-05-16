@@ -145,7 +145,7 @@ const SKILL_TABLE: readonly SkillRow[] = [
 
 export default function AdvancedPage(): React.JSX.Element {
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-24 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-24 pt-8 sm:px-[5vw]">
       <Reveal>
         <header className="mb-12">
           <HeroMeta className="mb-5">

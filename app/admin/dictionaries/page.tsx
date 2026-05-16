@@ -29,7 +29,7 @@ export default async function AdminDictionariesPage(): Promise<React.JSX.Element
   const initial = await listDictionariesForAdmin();
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>Admin / 사전</HeroMetaBadge>

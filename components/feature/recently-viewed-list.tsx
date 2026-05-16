@@ -11,6 +11,7 @@
  */
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Clock } from 'lucide-react';
 
@@ -61,7 +62,20 @@ export function RecentlyViewedList({
                 interactive
                 className="flex items-center gap-3 p-3 transition-card hover:border-bronze/40"
               >
-                {entry.emoji ? (
+                {entry.iconUrl ? (
+                  <span
+                    aria-hidden
+                    className="block h-9 w-9 shrink-0 overflow-hidden rounded-[10px] ring-1 ring-bronze/30"
+                  >
+                    <Image
+                      src={entry.iconUrl}
+                      alt=""
+                      width={72}
+                      height={72}
+                      className="h-full w-full object-cover"
+                    />
+                  </span>
+                ) : entry.emoji ? (
                   <span aria-hidden className="text-xl">
                     {entry.emoji}
                   </span>

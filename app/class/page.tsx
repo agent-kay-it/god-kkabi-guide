@@ -24,7 +24,7 @@ import {
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { Button } from '@/components/ui/button';
-import type { WikiClassDoc } from '@/types/wiki';
+import { CLASS_ICON_URL, type WikiClassDoc } from '@/types/wiki';
 
 export const metadata: Metadata = {
   title: '직업 가이드 — 전사 · 검객 · 영매',
@@ -32,6 +32,29 @@ export const metadata: Metadata = {
     '갓깨비 키우기 3 직업 비교. 전사(도깨비) / 검객(무당) / 영매(저승사자). 추천 진령 조합 + 강점/약점 + 메타 티어.',
   robots: { index: false, follow: false },
 };
+
+// V7 P5: 캐릭터 이미지 좌/우 배치 + 성별이 페이지 새로고침마다 랜덤 변경되어야 하므로
+// SSR 결과를 캐시하지 않도록 dynamic 강제.
+export const dynamic = 'force-dynamic';
+
+/**
+ * V7 P5: 페이지 렌더링 시 카드별 좌/우 배치 + 성별 분포를 한 번에 결정.
+ * React 19 react-hooks/purity 규칙으로 Server Component render 함수 안에서는 Math.random() 직접 호출 불가 →
+ * 모든 randomness를 헬퍼로 격리. 동일 성별 케이스도 함께 회피 (n=3에서 1/4 단조 분포 제거).
+ */
+function pickClassLayoutRandomness(n: number): {
+  flipFirst: boolean;
+  genders: ReadonlyArray<'male' | 'female'>;
+} {
+  const flipFirst = Math.random() < 0.5;
+  const list: Array<'male' | 'female'> = Array.from({ length: n }, () =>
+    Math.random() < 0.5 ? 'male' : 'female',
+  );
+  if (n >= 2 && list.every((g) => g === list[0])) {
+    list[list.length - 1] = list[0] === 'male' ? 'female' : 'male';
+  }
+  return { flipFirst, genders: list };
+}
 
 /** 직업 카드별 통계 그리드 (난이도/자동사냥/광역기/스타일) — source line 1367-1478 */
 const CLASS_STATS: Record<
@@ -64,8 +87,13 @@ export default async function ClassPage(): Promise<React.JSX.Element> {
   const isRegistered = Boolean(session?.user?.registered);
   const canBookmark = isRegistered;
 
+  // V7 P5: 카드별 좌/우 이미지 배치 + 성별 랜덤 결정 (Math.random은 헬퍼에서 격리).
+  //   - flipFirst: 페이지 새로고침마다 첫 카드가 좌 시작인지 우 시작인지 랜덤 → alternating 패턴은 유지
+  //   - genders: 3개 카드 성별 랜덤 분포 (모두 같은 성별 회피)
+  const { flipFirst, genders } = pickClassLayoutRandomness(classes.length);
+
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 직업</HeroMetaBadge>
@@ -80,35 +108,49 @@ export default async function ClassPage(): Promise<React.JSX.Element> {
         </SectionHead>
       </header>
 
-      <div className="mb-12 grid gap-6 lg:grid-cols-3">
-        {classes.map((c) => (
-          <WikiCardTracker
-            key={c.id}
-            category="class"
-            targetId={c.id}
-            recentlyViewed={{
-              title: `${c.name} · ${c.subName}`,
-              href: `/class#${c.id}`,
-              emoji: c.emoji,
-            }}
-          >
-            <ClassCard
-              data={c}
-              stats={CLASS_STATS[c.id]}
-              relatedJinryeong={buildRelatedJinryeongForClass(c)}
-              bookmarkSlot={
-                <BookmarkButton
-                  targetType="class"
-                  targetId={c.id}
-                  title={`${c.name} (${c.subName})`}
-                  href={`/class#${c.id}`}
-                  emoji={c.emoji}
-                  canBookmark={canBookmark}
-                />
-              }
-            />
-          </WikiCardTracker>
-        ))}
+      {/* V7 P5: 3 직업 카드 1열 3행 (PC/모바일 공통).
+          데스크톱 카드는 [캐릭터|설명] 또는 [설명|캐릭터] 좌우 분할 — flipFirst + 인덱스로 alternating.
+          모바일 카드는 캐릭터(상) → 설명(하) stack. */}
+      <div className="mb-12 grid gap-6">
+        {classes.map((c, i) => {
+          // alternating: 인덱스 짝수 = left, 홀수 = right (flipFirst가 true면 반전)
+          const baseLeft = i % 2 === 0;
+          const orientation: 'left' | 'right' = (baseLeft ? !flipFirst : flipFirst) ? 'left' : 'right';
+          const gender = genders[i] ?? 'male';
+          return (
+            <WikiCardTracker
+              key={c.id}
+              category="class"
+              targetId={c.id}
+              recentlyViewed={{
+                title: `${c.name} · ${c.subName}`,
+                href: `/class#${c.id}`,
+                iconUrl: CLASS_ICON_URL[c.id],
+                emoji: c.emoji,
+              }}
+            >
+              <ClassCard
+                data={c}
+                stats={CLASS_STATS[c.id]}
+                relatedJinryeong={buildRelatedJinryeongForClass(c)}
+                imageOrientation={orientation}
+                characterGender={gender}
+                // V7 P5: 첫 카드 캐릭터 이미지는 LCP 후보 → priority 부여 (eager + preload)
+                priority={i === 0}
+                bookmarkSlot={
+                  <BookmarkButton
+                    targetType="class"
+                    targetId={c.id}
+                    title={`${c.name} (${c.subName})`}
+                    href={`/class#${c.id}`}
+                    emoji={c.emoji}
+                    canBookmark={canBookmark}
+                  />
+                }
+              />
+            </WikiCardTracker>
+          );
+        })}
       </div>
 
       <section className="mb-10 grid gap-4 md:grid-cols-2">

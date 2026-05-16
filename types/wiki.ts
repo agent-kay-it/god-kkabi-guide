@@ -21,6 +21,35 @@ export const CLASS_ACCENT: Record<WikiClassId, 'warrior' | 'swordsman' | 'mage'>
   medium: 'mage',
 };
 
+/**
+ * V7 P5: 직업 메뉴/카드 아이콘 (webp, 220×220) — 모든 emoji 사용처 대체.
+ * 작은 inline 영역 (탭 트리거, Select item, 점수 분포)에서는 사용하지 않음 — 텍스트만.
+ */
+export const CLASS_ICON_URL: Record<WikiClassId, string> = {
+  warrior: '/images/wiki/class/warrior.webp',
+  swordsman: '/images/wiki/class/swordsman.webp',
+  medium: '/images/wiki/class/medium.webp',
+};
+
+/**
+ * V7 P5: 직업 캐릭터 일러스트 (webp, 730×1214) — /class 페이지 카드 좌/우 표시용.
+ * 페이지 새로고침마다 male/female 랜덤, 카드별 좌/우 배치 alternating.
+ */
+export const CLASS_CHARACTER_IMAGE_URL: Record<WikiClassId, { male: string; female: string }> = {
+  warrior: {
+    male: '/images/wiki/class/warrior-male.webp',
+    female: '/images/wiki/class/warrior-female.webp',
+  },
+  swordsman: {
+    male: '/images/wiki/class/swordsman-male.webp',
+    female: '/images/wiki/class/swordsman-female.webp',
+  },
+  medium: {
+    male: '/images/wiki/class/medium-male.webp',
+    female: '/images/wiki/class/medium-female.webp',
+  },
+};
+
 /** 직업 한국어 이름 + 부직업 (도깨비/무당/저승사자) */
 export interface WikiClassDoc {
   id: WikiClassId;
@@ -281,7 +310,10 @@ export interface WikiCategoryMeta {
   label: string;
   description: string;
   href: string;
+  /** 폴백 이모지 — iconUrl 미제공 시 사용 */
   emoji: string;
+  /** Sprint V7 P5: 메뉴 아이콘 (webp). 128×128 권장 — public/images/wiki/menu/*.webp */
+  iconUrl?: string;
   accent: 'bronze' | 'jade' | 'vermilion' | 'indigo';
   itemCount: number; // 현재 시드/Firestore 카운트
   active: boolean; // false = P3.C/D에서 활성

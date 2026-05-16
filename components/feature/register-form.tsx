@@ -48,14 +48,14 @@ import {
 import { GlassCard } from '@/components/ui/glass-card';
 import { cn } from '@/lib/utils';
 
+// V7 P5: Select dropdown은 작은 inline 영역 → emoji 제거, 텍스트만.
 const CLASS_OPTIONS: ReadonlyArray<{
   value: 'warrior' | 'swordsman' | 'medium';
   label: string;
-  emoji: string;
 }> = [
-  { value: 'warrior', label: '전사', emoji: '⚔️' },
-  { value: 'swordsman', label: '검객', emoji: '🗡️' },
-  { value: 'medium', label: '영매', emoji: '🔮' },
+  { value: 'warrior', label: '전사 (도깨비)' },
+  { value: 'swordsman', label: '검객 (무당)' },
+  { value: 'medium', label: '영매 (저승사자)' },
 ];
 
 export function RegisterForm(): React.JSX.Element {
@@ -233,7 +233,6 @@ export function RegisterForm(): React.JSX.Element {
                   <SelectContent>
                     {CLASS_OPTIONS.map((c) => (
                       <SelectItem key={c.value} value={c.value}>
-                        <span className="mr-2">{c.emoji}</span>
                         {c.label}
                       </SelectItem>
                     ))}

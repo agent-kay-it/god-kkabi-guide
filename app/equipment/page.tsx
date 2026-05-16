@@ -41,7 +41,7 @@ export default async function EquipmentPage(): Promise<React.JSX.Element> {
   };
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 장비</HeroMetaBadge>
@@ -128,7 +128,8 @@ function EquipmentSection({
         <h2 className="text-lg font-bold tracking-tight text-text">{title}</h2>
         <p className="text-sm text-text-soft">{description}</p>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {/* V7 P5: 모바일/태블릿(<md)은 1열 stack — 시스템/우선순위/강화/뽑기 카드 가독성 보강. md+ 2열, lg+ 3열. */}
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         {equipment.map((e) => (
           <WikiCardTracker key={e.id} category="equipment" targetId={e.id}>
             <EquipmentCard

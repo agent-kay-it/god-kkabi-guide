@@ -43,7 +43,7 @@ export default async function AdminPainPage({
   const topics = await listPainTopics(params.week, category);
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>Admin / NLP</HeroMetaBadge>

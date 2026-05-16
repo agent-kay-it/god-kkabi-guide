@@ -17,8 +17,10 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { logEvent } from '@/lib/firebase/analytics';
 import type { ClassId } from '@/types';
+import { CLASS_ICON_URL } from '@/types/wiki';
 
 // ─────────────────────────────────────────────────────────────────
 // 문항 데이터 (운영자 8주 플레이 데이터 기반 설계)
@@ -114,6 +116,7 @@ const QUESTIONS: QuizQuestion[] = [
 
 interface ClassResult {
   id: ClassId;
+  /** @deprecated V7 P5: 결과 화면은 CLASS_ICON_URL 사용. emoji는 backward-compat용. */
   emoji: string;
   name: string;
   tag: string;
@@ -351,12 +354,23 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
         <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-bronze">
           진단 결과
         </p>
-        <div className="mb-4 flex items-center gap-3">
-          <span className="text-5xl" aria-hidden="true">
-            {result.emoji}
+        <div className="mb-4 flex items-center gap-4">
+          {/* V7 P5: emoji → 직업 아이콘 (rounded box) */}
+          <span
+            aria-hidden
+            className="block h-16 w-16 shrink-0 overflow-hidden rounded-[14px] ring-1 ring-bronze/40 sm:h-20 sm:w-20"
+          >
+            <Image
+              src={CLASS_ICON_URL[result.id]}
+              alt=""
+              width={160}
+              height={160}
+              className="h-full w-full object-cover"
+              priority
+            />
           </span>
           <div>
-            <h2 className="text-2xl font-black text-bronze">{result.name}</h2>
+            <h2 className="text-2xl font-black text-bronze sm:text-3xl">{result.name}</h2>
             <span className="text-xs font-semibold uppercase tracking-wide text-text-mute">
               {result.tag}
             </span>
@@ -402,18 +416,16 @@ function ResultScreen({ result, scores, onReset }: ResultScreenProps): React.JSX
           <div className="space-y-1.5">
             {(
               [
-                { id: 'warrior' as ClassId, label: '전사', emoji: '⚔️' },
-                { id: 'swordsman' as ClassId, label: '검객', emoji: '🗡️' },
-                { id: 'medium' as ClassId, label: '영매', emoji: '🔮' },
+                { id: 'warrior' as ClassId, label: '전사' },
+                { id: 'swordsman' as ClassId, label: '검객' },
+                { id: 'medium' as ClassId, label: '영매' },
               ] as const
-            ).map(({ id, label, emoji }) => {
+            ).map(({ id, label }) => {
               const pct = totalScore > 0 ? Math.round((scores[id] / totalScore) * 100) : 0;
               return (
                 <div key={id} className="flex items-center gap-2 text-xs">
-                  <span aria-hidden="true" className="w-4 text-center">
-                    {emoji}
-                  </span>
-                  <span className="w-10 text-text-soft">{label}</span>
+                  {/* V7 P5: 점수 분포는 작은 영역 → emoji/아이콘 없이 텍스트만 */}
+                  <span className="w-12 text-text-soft">{label}</span>
                   <div className="flex-1 overflow-hidden rounded-full bg-ink-card">
                     <div
                       className={[

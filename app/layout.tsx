@@ -71,6 +71,24 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  // V7 P5: app-icon.webp (89KB)를 favicon + apple-touch-icon으로 직접 지정.
+  // Next.js 파일 기반 metadata는 .webp 미지원 → metadata.icons로 명시.
+  icons: {
+    icon: [
+      {
+        url: '/images/wiki/app-icon.webp',
+        type: 'image/webp',
+        sizes: 'any',
+      },
+    ],
+    apple: [
+      {
+        url: '/images/wiki/app-icon.webp',
+        type: 'image/webp',
+        sizes: '180x180',
+      },
+    ],
+  },
   openGraph: {
     type: 'website',
     locale: 'ko_KR',

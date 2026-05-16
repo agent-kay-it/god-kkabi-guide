@@ -63,7 +63,7 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
   };
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 진령</HeroMetaBadge>
@@ -199,7 +199,9 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
         >
           카드로 보기
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* V7 P5: 모바일/태블릿(<md)은 1열 — 카드 콘텐츠가 풍부해 좁은 폭에서 가독성 저하.
+            md+ 2열, lg+ 3열. */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {allJinryeong.map((j) => (
             <WikiCardTracker
               key={j.id}

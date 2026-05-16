@@ -15,6 +15,7 @@
  */
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -40,15 +41,16 @@ import { cn } from '@/lib/utils';
 const POPULAR_LINKS: ReadonlyArray<{
   href: string;
   label: string;
+  iconUrl?: string;
   emoji: string;
   type: SearchEntryType;
 }> = [
-  { href: '/class', label: '직업 3종', emoji: '⚔️', type: 'class' },
-  { href: '/jinryeong', label: '진령 11종', emoji: '🔮', type: 'jinryeong' },
-  { href: '/skill', label: '스킬 31종', emoji: '✨', type: 'skill' },
-  { href: '/equipment', label: '장비 가이드', emoji: '🛡️', type: 'equipment' },
-  { href: '/content', label: '콘텐츠 22종', emoji: '🎯', type: 'content' },
-  { href: '/tips', label: '실전 팁 12개', emoji: '💡', type: 'tip' },
+  { href: '/class', label: '직업 3종', iconUrl: '/images/wiki/menu/class.webp', emoji: '⚔️', type: 'class' },
+  { href: '/jinryeong', label: '진령 11종', iconUrl: '/images/wiki/menu/jinryeong.webp', emoji: '🔮', type: 'jinryeong' },
+  { href: '/skill', label: '스킬 31종', iconUrl: '/images/wiki/menu/skill.webp', emoji: '✨', type: 'skill' },
+  { href: '/equipment', label: '장비 가이드', iconUrl: '/images/wiki/menu/equipment.webp', emoji: '🛡️', type: 'equipment' },
+  { href: '/content', label: '콘텐츠 22종', iconUrl: '/images/wiki/menu/content.webp', emoji: '🎯', type: 'content' },
+  { href: '/tips', label: '실전 팁 12개', iconUrl: '/images/wiki/menu/tip.webp', emoji: '💡', type: 'tip' },
 ];
 
 export interface SearchResultsProps {
@@ -253,7 +255,8 @@ function PopularSection(): React.JSX.Element {
       >
         인기 카테고리
       </h2>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {/* V7 P5: 모바일/태블릿(<md)은 1열 stack — 인기 카테고리 6개 가독성 보강. md+ 2열, lg+ 3열. */}
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         {POPULAR_LINKS.map((p) => (
           <Link
             key={p.href}
@@ -264,9 +267,24 @@ function PopularSection(): React.JSX.Element {
               interactive
               className="flex items-center gap-3 p-4 transition-card hover:border-bronze/40"
             >
-              <span aria-hidden className="text-2xl">
-                {p.emoji}
-              </span>
+              {p.iconUrl ? (
+                <span
+                  aria-hidden
+                  className="block h-10 w-10 shrink-0 overflow-hidden rounded-[10px] ring-1 ring-bronze/30"
+                >
+                  <Image
+                    src={p.iconUrl}
+                    alt=""
+                    width={80}
+                    height={80}
+                    className="h-full w-full object-cover"
+                  />
+                </span>
+              ) : (
+                <span aria-hidden className="text-2xl">
+                  {p.emoji}
+                </span>
+              )}
               <span className="flex-1">
                 <span className="block text-sm font-semibold text-text group-hover:text-bronze-soft">
                   {p.label}
@@ -362,7 +380,20 @@ function ResultRow({ hit }: { hit: SearchHit }): React.JSX.Element {
       href={entry.href}
       className="group flex items-start gap-3 rounded-[var(--radius-card)] border border-ink-line bg-ink-elev/40 p-4 transition-card hover:-translate-y-0.5 hover:border-bronze/40 hover:bg-ink-card-strong/70 focus-visible:outline-2 focus-visible:outline-bronze focus-visible:outline-offset-2"
     >
-      {entry.emoji ? (
+      {entry.iconUrl ? (
+        <span
+          aria-hidden
+          className="block h-9 w-9 shrink-0 overflow-hidden rounded-[10px] ring-1 ring-bronze/30"
+        >
+          <Image
+            src={entry.iconUrl}
+            alt=""
+            width={72}
+            height={72}
+            className="h-full w-full object-cover"
+          />
+        </span>
+      ) : entry.emoji ? (
         <span aria-hidden className="text-xl">
           {entry.emoji}
         </span>

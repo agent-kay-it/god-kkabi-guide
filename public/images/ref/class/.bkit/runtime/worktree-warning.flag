@@ -1,0 +1,8 @@
+{
+  "detectedAt": "2026-05-16T07:12:57.158Z",
+  "toplevel": "/Users/popup-kay/Documents/GitHub/agentkay/god-kkabi-guide",
+  "gitDir": "/Users/popup-kay/Documents/GitHub/agentkay/god-kkabi-guide/.git",
+  "gitCommonDir": "/Users/popup-kay/.git",
+  "issue": "https://github.com/anthropics/claude-code/issues/46808",
+  "message": "git worktree detected — Claude Code hooks may not fire (issue #46808). Run bkit from the primary repository if hook-driven automation is required."
+}

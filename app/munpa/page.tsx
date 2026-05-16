@@ -34,7 +34,7 @@ export default function MunpaPage(): React.JSX.Element {
   };
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 문파</HeroMetaBadge>

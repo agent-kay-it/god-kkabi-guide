@@ -13,6 +13,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Search as SearchIcon } from 'lucide-react';
 
@@ -75,24 +76,29 @@ export function TopBar({ session, signOutAction }: TopBarProps): React.JSX.Eleme
           'border-ink-line bg-[rgba(7,7,11,0.72)] backdrop-blur-[20px] backdrop-saturate-[180%]',
       )}
     >
-      <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-3 px-5 py-3.5 sm:px-[5vw]">
+      <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-3 px-5 py-3.5 sm:px-[5vw]">
         <div className="flex items-center gap-2">
           <MobileNav items={NAV_ITEMS} />
           <Link
             href="/"
             className="flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-tight text-text"
           >
-            <span
-              aria-hidden
-              className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-bronze/15 text-bronze-soft"
-            >
-              ◑
-            </span>
+            {/* V7 P5: 앱 아이콘 사용 — ring으로 bronze 액센트 유지 */}
+            <Image
+              src="/images/wiki/app-icon.webp"
+              alt=""
+              width={28}
+              height={28}
+              priority
+              className="h-7 w-7 rounded-[8px] ring-1 ring-bronze/30"
+            />
             <span>깨비지기</span>
           </Link>
         </div>
 
-        <div className="hidden items-center gap-1 overflow-x-auto sm:flex">
+        {/* V7 P5: 모바일/태블릿(<md)은 햄버거(MobileNav)만 노출, 데스크톱(md+)부터 inline nav 표시.
+            이전 sm:flex(640+)에서는 좁은 태블릿에서 메뉴가 잘려보였음. */}
+        <div className="hidden items-center gap-1 overflow-x-auto md:flex">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}

@@ -38,7 +38,7 @@ export default async function AdminSaasLayout({
   return (
     <div className="min-h-screen bg-ink" style={themeStyle}>
       <header className="border-b border-ink-line bg-ink-elev/80 backdrop-blur">
-        <div className="mx-auto flex max-w-screen-xl items-center justify-between px-5 py-3 sm:px-[5vw]">
+        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-5 py-3 sm:px-[5vw]">
           <Link href="/tenant" className="flex items-center gap-2">
             {theme?.logoUrl ? (
               <Image
@@ -69,7 +69,7 @@ export default async function AdminSaasLayout({
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+      <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
         <HeroMeta className="mb-4">
           <HeroMetaBadge>{hasCustomTheme ? tenantLabel : 'B2B / Game Insights'}</HeroMetaBadge>
           <span className="font-mono text-xs">

@@ -21,11 +21,14 @@ export interface RecentlyViewedEntry {
   readonly type: SearchEntryType;
   readonly title: string;
   readonly href: string;
+  /** V7 P5: 직업 등 webp 아이콘이 있는 항목 — UI는 iconUrl 우선, 폴백 emoji */
+  readonly iconUrl?: string;
   readonly emoji?: string;
   readonly viewedAtMs: number;
 }
 
-const STORAGE_KEY = 'god-kkabi:recently-viewed:v1';
+// V7 P5: key v1 → v2 — 기존 emoji-only 엔트리 자동 무효화 (iconUrl 도입에 따른 마이그레이션)
+const STORAGE_KEY = 'god-kkabi:recently-viewed:v2';
 const MAX_ENTRIES = 5;
 const EMPTY: readonly RecentlyViewedEntry[] = Object.freeze([]);
 

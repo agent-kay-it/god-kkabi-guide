@@ -97,7 +97,7 @@ export function HeroBackdrop({ className }: HeroBackdropProps): React.JSX.Elemen
  */
 function BannerImg({ src, alt }: BannerImage): React.JSX.Element {
   return (
-    <div className="relative h-[190px] w-auto shrink-0 sm:h-[240px]">
+    <div className="relative h-[190px] shrink-0 sm:h-[240px]" style={{ aspectRatio: '16 / 9' }}>
       <Image
         src={src}
         alt={alt}
@@ -106,7 +106,9 @@ function BannerImg({ src, alt }: BannerImage): React.JSX.Element {
         sizes="420px"
         priority={false}
         loading="lazy"
-        className="h-full w-auto rounded-[14px] object-cover opacity-[0.55] [filter:saturate(1)_brightness(0.8)_contrast(1.02)] shadow-[0_24px_60px_-16px_rgba(0,0,0,0.65)] sm:opacity-60"
+        // V7 P5: width/height auto 명시 — Next/Image aspect ratio 경고 회피.
+        style={{ width: 'auto', height: '100%' }}
+        className="rounded-[14px] object-cover opacity-[0.55] [filter:saturate(1)_brightness(0.8)_contrast(1.02)] shadow-[0_24px_60px_-16px_rgba(0,0,0,0.65)] sm:opacity-60"
       />
     </div>
   );

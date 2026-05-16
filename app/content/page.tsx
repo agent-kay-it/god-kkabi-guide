@@ -19,6 +19,7 @@ import {
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 import { CONTENT_KIND_LABEL } from '@/types/wiki';
 import type { WikiContentDoc } from '@/types/wiki';
 
@@ -61,7 +62,7 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
   };
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 콘텐츠</HeroMetaBadge>
@@ -78,12 +79,38 @@ export default async function ContentPage(): Promise<React.JSX.Element> {
       </header>
 
       <Tabs defaultValue="dungeon" className="space-y-6">
-        <TabsList className="flex w-full flex-wrap gap-1">
+        {/* V7 P5 fix: /skill 페이지와 동일한 button toggle group 패턴.
+            컨테이너 외곽선 제거 → 박스 3개(모바일) / 5개(데스크톱)가 독립 button으로 표시.
+            shadcn TabsTrigger 기본 className 충돌점(h-[calc(100%-1px)], shadow-sm, dark:border-input,
+            dark:bg-input/30, dark:text-foreground) 모두 명시적 무력화. */}
+        <TabsList
+          className={cn(
+            'grid !h-auto w-full grid-cols-3 gap-2 sm:grid-cols-5',
+            'rounded-none border-none bg-transparent p-0',
+          )}
+        >
           {(['dungeon', 'pvp', 'event', 'mechanic', 'meta'] as const).map((kind) => (
-            <TabsTrigger key={kind} value={kind} className="gap-1.5">
-              {CONTENT_KIND_LABEL[kind]}
-              <span className="font-mono text-[0.65rem] text-text-mute">
-                {byKind[kind].length}
+            <TabsTrigger
+              key={kind}
+              value={kind}
+              className={cn(
+                '!h-auto min-h-[56px]',
+                'flex flex-col items-center justify-center gap-1',
+                'rounded-[var(--radius-card)] px-2 py-3',
+                'border border-ink-line-strong bg-ink-elev/50',
+                'text-sm font-semibold text-text-soft transition-colors',
+                'hover:border-bronze/35 hover:bg-ink-card-strong/60 hover:text-text',
+                'dark:text-text-soft dark:hover:text-text',
+                'data-[state=active]:border-bronze/55 data-[state=active]:bg-bronze/15 data-[state=active]:text-bronze-soft',
+                'dark:data-[state=active]:border-bronze/55 dark:data-[state=active]:bg-bronze/15 dark:data-[state=active]:text-bronze-soft',
+                'data-[state=active]:shadow-none',
+                'group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none',
+                'after:hidden',
+              )}
+            >
+              <span className="leading-tight">{CONTENT_KIND_LABEL[kind]}</span>
+              <span className="font-mono text-[0.7rem] tracking-wider opacity-70">
+                {byKind[kind].length}종
               </span>
             </TabsTrigger>
           ))}

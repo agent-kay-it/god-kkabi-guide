@@ -29,6 +29,8 @@ export interface WikiCardTrackerProps {
   readonly recentlyViewed?: {
     readonly title: string;
     readonly href: string;
+    /** V7 P5: 우선순위 — iconUrl이 있으면 webp Image로 렌더, 없으면 emoji 폴백 */
+    readonly iconUrl?: string;
     readonly emoji?: string;
   };
 }
@@ -60,6 +62,7 @@ export function WikiCardTracker({
         type: CATEGORY_TO_SEARCH_TYPE[category],
         title: recentlyViewed.title,
         href: recentlyViewed.href,
+        ...(recentlyViewed.iconUrl !== undefined ? { iconUrl: recentlyViewed.iconUrl } : {}),
         ...(recentlyViewed.emoji !== undefined ? { emoji: recentlyViewed.emoji } : {}),
       });
     }

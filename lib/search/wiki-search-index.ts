@@ -22,6 +22,7 @@ import { WIKI_EQUIPMENT_SEED } from '@/data/wiki/equipment';
 import { WIKI_CONTENTS_SEED } from '@/data/wiki/contents';
 import { WIKI_TIPS_SEED } from '@/data/wiki/tips';
 import { WIKI_MUNPA_GUIDE_SEED } from '@/data/wiki/munpa-guide';
+import { CLASS_ICON_URL } from '@/types/wiki';
 
 export type SearchEntryType =
   | 'class'
@@ -38,6 +39,8 @@ export interface SearchEntry {
   readonly title: string;
   readonly description: string;
   readonly href: string;
+  /** V7 P5: webp 아이콘 — 있으면 emoji보다 우선 렌더 */
+  readonly iconUrl?: string;
   readonly emoji?: string;
   /** 사전 정규화된 검색용 토큰 (lowercase + NFC) */
   readonly tokens: readonly string[];
@@ -81,6 +84,7 @@ function makeEntry(args: {
   title: string;
   description: string;
   href: string;
+  iconUrl?: string;
   emoji?: string;
   extraTokens?: readonly string[];
 }): SearchEntry {
@@ -95,6 +99,7 @@ function makeEntry(args: {
     title: args.title,
     description: args.description,
     href: args.href,
+    ...(args.iconUrl !== undefined ? { iconUrl: args.iconUrl } : {}),
     ...(args.emoji !== undefined ? { emoji: args.emoji } : {}),
     tokens,
   };
@@ -120,6 +125,7 @@ export function getSearchIndex(): readonly SearchEntry[] {
         title: `${c.name} · ${c.subName}`,
         description: c.summary,
         href: `/class#${c.id}`,
+        iconUrl: CLASS_ICON_URL[c.id],
         emoji: c.emoji,
         extraTokens: [c.tagline, c.subName],
       }),

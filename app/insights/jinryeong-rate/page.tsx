@@ -35,7 +35,7 @@ export default async function JinryeongRatePage({
   const rows = await listJinryeongRate(filter, 4);
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header className="mb-8">
         <HeroMeta className="mb-4">
           <HeroMetaBadge>인사이트 / 진령</HeroMetaBadge>

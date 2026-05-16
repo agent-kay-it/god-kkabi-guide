@@ -29,7 +29,7 @@ export default async function CouponPage(): Promise<React.JSX.Element> {
   const coupons = await listCoupons('verified');
 
   return (
-    <main className="mx-auto max-w-screen-xl px-5 pb-20 pt-8 sm:px-[5vw]">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>쿠폰 / 커뮤니티</HeroMetaBadge>
