@@ -61,7 +61,7 @@ export function b2bOk<T>(
   const body: ApiResponseEnvelope<T> = {
     data,
     meta: {
-      source: 'god-kkabi-guide',
+      source: 'kkaebizigi',
       tier: auth.tier,
       rateLimitRemaining: Number.isFinite(auth.remaining) ? auth.remaining : -1,
       rateLimitResetAtMs: auth.resetAtMs,

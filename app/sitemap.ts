@@ -10,7 +10,7 @@
 import type { MetadataRoute } from 'next';
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://god-kkabi-guide.vercel.app';
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.vercel.app';
 
 /** 변경 빈도 + 우선순위는 운영자 큐레이션 페이지일수록 높게 설정 */
 const STATIC_ROUTES: ReadonlyArray<{

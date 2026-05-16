@@ -66,7 +66,7 @@ export interface TenantThemeDoc {
 export interface ApiResponseEnvelope<T> {
   readonly data: T;
   readonly meta: {
-    readonly source: 'god-kkabi-guide';
+    readonly source: 'kkaebizigi';
     readonly tier: ApiTier;
     readonly rateLimitRemaining: number;
     readonly rateLimitResetAtMs: number;
