@@ -18,7 +18,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -60,7 +60,6 @@ const CLASS_OPTIONS: ReadonlyArray<{
 ];
 
 export function RegisterForm(): React.JSX.Element {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -100,8 +99,20 @@ export function RegisterForm(): React.JSX.Element {
           server_id: values.serverId,
           analytics_consent: values.analytics,
         });
-        router.push('/');
-        router.refresh();
+        // JWT 토큰 즉시 갱신 — NextAuth session 엔드포인트로 강제 재-hydrate.
+        // 이를 호출하지 않으면 middleware가 stale token(registered=false)을 보고
+        // /register 로 무한 redirect (Sprint 10 Phase B E2E에서 발견).
+        // SessionProvider 없이도 작동하도록 fetch로 직접 호출.
+        try {
+          await fetch('/api/auth/session?update=true', {
+            method: 'POST',
+            credentials: 'include',
+          });
+        } catch {
+          // 세션 refresh 실패 시 hard-reload로 fallback (쿠키는 재요청 시 검증됨)
+        }
+        // hard-navigation으로 RSC + 미들웨어를 새 JWT로 재검증
+        window.location.href = '/';
         return;
       }
 

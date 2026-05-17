@@ -80,6 +80,33 @@
   --breakpoint-lg: 768px;
   --breakpoint-xl: 1024px;
   --breakpoint-2xl: 1280px;
+
+  /* ─── shadcn/ui slot tokens (Tailwind v4 utility 생성용) ─────────────────
+   * @theme 외부의 `:root` 정의만으론 `bg-background`/`bg-popover` 같은
+   * utility class가 생성되지 않음. shadcn 컴포넌트가 의존하는 슬롯들을
+   * 여기에도 노출해 utility class를 활성화.
+   *
+   * Popover/Card/Dropdown은 SOLID 배경 (텍스트 가독성 우선).
+   * Glass 효과가 필요한 곳은 `--color-ink-card-strong` 직접 사용 (GlassCard 등). */
+  --color-background: #07070b;
+  --color-foreground: #ece7dd;
+  --color-card: #16161e;             /* solid card surface */
+  --color-card-foreground: #ece7dd;
+  --color-popover: #1c1c28;          /* solid popover/dropdown 배경 (불투명) */
+  --color-popover-foreground: #ece7dd;
+  --color-primary: #c89968;
+  --color-primary-foreground: #07070b;
+  --color-secondary: #0e0e15;
+  --color-secondary-foreground: #ece7dd;
+  --color-muted: #0e0e15;
+  --color-muted-foreground: #6e6a64;
+  --color-accent: #e8c79a;
+  --color-accent-foreground: #07070b;
+  --color-destructive: #c87870;
+  --color-destructive-foreground: #ece7dd;
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-input: rgba(255, 255, 255, 0.12);
+  --color-ring: #c89968;
 }
 
 /**
