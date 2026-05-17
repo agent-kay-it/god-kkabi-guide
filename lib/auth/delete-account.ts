@@ -174,8 +174,15 @@ export async function requestAccountDeletion(
       }
     });
 
-    // 4) Firebase Auth claims revoke — RTDB / Firestore rules 에서 즉시 차단
-    await setUserClaimsWithRetry(uid, { role: 'user', registered: false });
+    // 4) Firebase Auth claims revoke — RTDB / Firestore rules 에서 즉시 차단.
+    // Sprint 10 Phase E (Task #23): serverId / munpaId도 빈 문자열로 reset하여
+    // 채널 권한 즉시 박탈 (탈퇴 cooldown 기간 중 채팅 차단).
+    await setUserClaimsWithRetry(uid, {
+      role: 'user',
+      registered: false,
+      serverId: '',
+      munpaId: '',
+    });
 
     // 5) NextAuth signOut (server-side) — JWT cookie 즉시 삭제
     await signOut({ redirect: false });

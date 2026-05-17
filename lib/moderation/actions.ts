@@ -106,13 +106,27 @@ export async function unbanUser(targetUid: string): Promise<ModerationResult> {
 
   try {
     const db = getAdminFirestore();
-    await db.collection('users').doc(targetUid).update({
+    const userRef = db.collection('users').doc(targetUid);
+    const snap = await userRef.get();
+    await userRef.update({
       banned: false,
       banReason: FieldValue.delete(),
       updatedAt: FieldValue.serverTimestamp(),
     });
     // Sprint V3 P3.A (CA2-I11): retry queue로 일시 장애 대비.
-    await setUserClaimsWithRetry(targetUid, { role: 'user' });
+    // Sprint 10 Phase E (Task #23): unban 시 RTDB chat 채널 권한도 복원해야 한다.
+    // banUser가 role='banned'로 덮어쓰면서 다른 claims는 유지되지만, 안전을 위해
+    // Firestore의 최신 serverId/munpa를 다시 읽어 동기화 보장.
+    const data = snap.data() ?? {};
+    const serverId = (data.serverId as string | undefined) ?? '';
+    const munpa = (data.munpa as string | undefined) ?? '';
+    const registered = Boolean(data.registered);
+    await setUserClaimsWithRetry(targetUid, {
+      role: 'user',
+      registered,
+      ...(serverId ? { serverId } : { serverId: '' }),
+      ...(serverId && munpa ? { munpaId: `${serverId}_${munpa}` } : { munpaId: '' }),
+    });
     await logModeration(guard.uid, 'unban', targetUid);
     revalidatePath('/admin');
     return { ok: true };

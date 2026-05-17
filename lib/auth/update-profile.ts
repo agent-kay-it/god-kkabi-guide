@@ -29,6 +29,7 @@ import {
   getAdminFirestore,
   hasAdminCredentials,
 } from '@/lib/firebase/admin';
+import { setUserClaimsWithRetry } from '@/lib/firebase/claims-retry-queue';
 import {
   ProfileEditSchema,
   type ProfileEditInput,
@@ -265,6 +266,18 @@ export async function updateProfile(
         { merge: true },
       );
     });
+
+    // Sprint 10 Phase E (Task #23): 서버/문파 변경 시 Firebase custom claims도
+    // 갱신해야 RTDB chat 채널 권한이 즉시 새 위치로 이동한다. JWT는 다음 session
+    // refresh 시 jwt() 콜백에서 hydrate되지만, Firebase Auth claims는 별도 sync.
+    if (serverChanged || munpaChanged) {
+      await setUserClaimsWithRetry(uid, {
+        role: 'user',
+        registered: true,
+        serverId: input.serverId,
+        munpaId: `${input.serverId}_${input.munpa}`,
+      });
+    }
 
     return { ok: true };
   } catch (err) {

@@ -102,6 +102,7 @@ export const authConfig: NextAuthConfig = {
         if (user.serverId !== undefined) token.serverId = user.serverId;
         if (user.gameUid !== undefined) token.gameUid = user.gameUid;
         if (user.munpa !== undefined) token.munpa = user.munpa;
+        if (user.munpaId !== undefined) token.munpaId = user.munpaId;
         if (user.nickname !== undefined) token.nickname = user.nickname;
         if (user.classId !== undefined) token.classId = user.classId;
       }
@@ -125,6 +126,7 @@ export const authConfig: NextAuthConfig = {
         if (token.serverId !== undefined) session.user.serverId = token.serverId;
         if (token.gameUid !== undefined) session.user.gameUid = token.gameUid;
         if (token.munpa !== undefined) session.user.munpa = token.munpa;
+        if (token.munpaId !== undefined) session.user.munpaId = token.munpaId;
         if (token.nickname !== undefined) session.user.nickname = token.nickname;
         if (token.classId !== undefined) session.user.classId = token.classId;
         // Sprint V1: AdSense 동의 (PIPA 5번째)

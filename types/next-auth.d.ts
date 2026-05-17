@@ -17,6 +17,8 @@ declare module 'next-auth' {
       serverId?: string;
       gameUid?: string;
       munpa?: string;
+      /** Sprint 10 Phase E: RTDB munpa 채널 라우팅용 ID (`${serverId}_${munpa}`). */
+      munpaId?: string;
       nickname?: string;
       classId?: string;
       /** Sprint V1: AdSense 동의 (PIPA 5번째) */
@@ -32,6 +34,7 @@ declare module 'next-auth' {
     serverId?: string;
     gameUid?: string;
     munpa?: string;
+    munpaId?: string;
     nickname?: string;
     classId?: string;
     advertisingConsent?: boolean;
@@ -47,6 +50,8 @@ declare module 'next-auth/jwt' {
     serverId?: string;
     gameUid?: string;
     munpa?: string;
+    /** Sprint 10 Phase E: RTDB munpa 채널 라우팅용 ID (`${serverId}_${munpa}`). */
+    munpaId?: string;
     nickname?: string;
     classId?: string;
     provider?: string;

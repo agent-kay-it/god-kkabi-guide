@@ -101,6 +101,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (data.serverId !== undefined) token.serverId = data.serverId;
           if (data.gameUid !== undefined) token.gameUid = data.gameUid;
           if (data.munpa !== undefined) token.munpa = data.munpa;
+          // Sprint 10 Phase E: RTDB chat 채널 라우팅용 munpaId — Firestore munpa doc ID 패턴.
+          // 기존 사용자는 data.munpaId가 없을 수 있으므로 serverId + munpa로 재구성.
+          if (typeof data.serverId === 'string' && typeof data.munpa === 'string') {
+            token.munpaId = `${data.serverId}_${data.munpa}`;
+          }
           if (data.nickname !== undefined) token.nickname = data.nickname;
           if (data.classId !== undefined) token.classId = data.classId;
         } else if (token.advertisingConsent === undefined) {
