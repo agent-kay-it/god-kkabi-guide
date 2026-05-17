@@ -50,6 +50,7 @@ firestore-debug.log
 # ============================================================
 .bkit/runtime/
 .bkit/audit/
+.bkit/snapshots/
 # .bkit/state/는 commit 허용 (sprint archive 결과 보존)
 # .bkit/checkpoints/는 commit 허용 (rollback 가능)
 
