@@ -1,0 +1,92 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-11-images",
+  "name": "Images — AWS S3 + CloudFront CDN + Upload UI (Posts + Chat)",
+  "createdAt": "2026-05-17T21:05:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto",
+  "automationScope": "full",
+  "stopAfter": "archived",
+  "phase": "design",
+  "currentPhase": "Design",
+  "phaseHistory": [
+    {
+      "phase": "prd",
+      "enteredAt": "2026-05-17T21:05:00.000Z",
+      "exitedAt": "2026-05-17T21:13:00.000Z",
+      "deliverable": "docs/sprint/11-sprint-images/prd.md (431 lines)"
+    },
+    {
+      "phase": "plan",
+      "enteredAt": "2026-05-17T21:13:00.000Z",
+      "exitedAt": "2026-05-17T21:16:00.000Z",
+      "deliverable": "docs/sprint/11-sprint-images/plan.md (831 lines)"
+    },
+    {
+      "phase": "design",
+      "enteredAt": "2026-05-17T21:16:00.000Z",
+      "exitedAt": "2026-05-17T21:22:00.000Z",
+      "deliverable": "docs/sprint/11-sprint-images/design.md (1580 lines)"
+    }
+  ],
+  "phases": {
+    "PRD": { "name": "Product Requirements", "status": "completed", "startedAt": "2026-05-17T21:05:00.000Z", "completedAt": "2026-05-17T21:13:00.000Z", "deliverable": "docs/sprint/11-sprint-images/prd.md" },
+    "Plan": { "name": "Task Breakdown + Timeline", "status": "completed", "startedAt": "2026-05-17T21:13:00.000Z", "completedAt": "2026-05-17T21:16:00.000Z", "deliverable": "docs/sprint/11-sprint-images/plan.md" },
+    "Design": { "name": "System Design (S3 / CloudFront / Upload Flow / Security)", "status": "completed", "startedAt": "2026-05-17T21:16:00.000Z", "completedAt": "2026-05-17T21:22:00.000Z", "deliverable": "docs/sprint/11-sprint-images/design.md" },
+    "A": { "name": "AWS Infrastructure (S3 + CloudFront + IAM)", "status": "pending" },
+    "B": { "name": "Storage Adapter + Server Action + signed URL", "status": "pending" },
+    "C": { "name": "Post Image Upload UI (게시글 폼 통합)", "status": "pending" },
+    "D": { "name": "Chat Image Upload UI (Phase E image variant 활성화)", "status": "pending" },
+    "E": { "name": "Image Optimization + CDN cache", "status": "pending" },
+    "F": { "name": "Quality + Launch (audits, Sentry, Lighthouse, checklist)", "status": "pending" }
+  },
+  "previousSprint": {
+    "id": "sprint-10-launch",
+    "completedAt": "2026-05-17T21:00:00.000Z",
+    "kpi": {
+      "phasesComplete": 7,
+      "phasesTotal": 7,
+      "tasksComplete": 30,
+      "tasksTotal": 30
+    },
+    "carryItems": [
+      "AWS S3 + CloudFront 인프라 (Sprint 11 Phase A)",
+      "이미지 업로드 UI (게시글 + 채팅, Sprint 11 Phase C+D)",
+      "Sentry DSN 설정 (사용자 직접 — Vercel env)",
+      "Lighthouse 실제 최적화 (현재 baseline만)"
+    ]
+  },
+  "qualityGates": {
+    "M1_typecheck": "pending",
+    "M2_lint": "pending",
+    "M3_unit_test": "pending",
+    "M4_match_rate": "pending",
+    "M5_clean_arch": "pending",
+    "M6_design_system": "pending",
+    "M7_e2e_7layer": "pending",
+    "M8_lighthouse": "pending",
+    "M9_security": "pending",
+    "M10_launch_checklist": "pending"
+  },
+  "kpi": {
+    "estimatedDays": 5,
+    "actualDays": null,
+    "phasesComplete": 3,
+    "phasesTotal": 9,
+    "tasksComplete": 0,
+    "tasksTotal": 50,
+    "planningSummary": {
+      "prdLines": 431,
+      "planLines": 831,
+      "designLines": 1580,
+      "totalDocLines": 2842,
+      "identifiedSubPRs": 50,
+      "identifiedRisks": 10,
+      "preMortemScenarios": 5
+    }
+  },
+  "autoPause": {
+    "pauseHistory": [],
+    "triggers": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"]
+  }
+}
