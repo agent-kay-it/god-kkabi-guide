@@ -1,0 +1,82 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-10-launch",
+  "name": "Launch — Custom Domain + Firebase Live + Auth/Posts/Chat Completion",
+  "createdAt": "2026-05-17T00:00:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto",
+  "automationScope": "full",
+  "stopAfter": "archived",
+  "phase": "do",
+  "currentPhase": "B",
+  "phaseHistory": [
+    {
+      "phase": "prd",
+      "enteredAt": "2026-05-16T22:00:00.000Z",
+      "exitedAt": "2026-05-16T22:30:00.000Z",
+      "deliverable": "docs/sprint/10-sprint-launch/prd.md"
+    },
+    {
+      "phase": "plan",
+      "enteredAt": "2026-05-16T22:30:00.000Z",
+      "exitedAt": "2026-05-16T23:00:00.000Z",
+      "deliverable": "docs/sprint/10-sprint-launch/plan.md"
+    },
+    {
+      "phase": "design",
+      "enteredAt": "2026-05-16T23:00:00.000Z",
+      "exitedAt": "2026-05-16T23:45:00.000Z",
+      "deliverable": "docs/sprint/10-sprint-launch/design.md"
+    },
+    {
+      "phase": "do",
+      "enteredAt": "2026-05-17T00:00:00.000Z"
+    }
+  ],
+  "phases": {
+    "A": {
+      "name": "Firebase Backend Activation",
+      "status": "completed",
+      "startedAt": "2026-05-17T00:00:00.000Z",
+      "completedAt": "2026-05-17T01:30:00.000Z",
+      "tasks": [10, 11, 12, 8],
+      "scopeChange": "Task #7 (Storage CORS) moved to Sprint 11 (AWS S3) due to Spark plan limit. Image upload features deferred to Sprint 11.",
+      "blockers": []
+    },
+    "B": { "name": "Auth Migration (Google)", "status": "in_progress", "startedAt": "2026-05-17T02:10:00.000Z", "tasks": [13, 14, 15, 16, 17, 18] },
+    "C": { "name": "Domain Cutover", "status": "completed", "startedAt": "2026-05-17T01:35:00.000Z", "completedAt": "2026-05-17T02:00:00.000Z", "tasks": [1, 2, 3, 4], "verification": "dig + curl 3 도메인 모두 200/308, SSO Protection 해제, SSL 자동 발급" },
+    "D": { "name": "Posts Enrichment (YouTube + Link Preview)", "status": "pending", "tasks": [19, 20, 21, 22] },
+    "E": { "name": "Chat UI (3-tier channels)", "status": "pending", "tasks": [23, 24, 25, 26, 27, 28] },
+    "F": { "name": "Quality / Launch", "status": "pending", "tasks": [9, 29, 30, 31, 32] }
+  },
+  "deliverables": [
+    "docs/sprint/10-sprint-launch/master-plan.md",
+    "docs/sprint/10-sprint-launch/prd.md",
+    "docs/sprint/10-sprint-launch/plan.md",
+    "docs/sprint/10-sprint-launch/design.md"
+  ],
+  "qualityGates": {
+    "M1_typecheck": "pending",
+    "M2_lint": "pending",
+    "M3_unit_test": "pending",
+    "M4_match_rate": "pending",
+    "M5_clean_arch": "pending",
+    "M6_design_system": "pending",
+    "M7_e2e_7layer": "pending",
+    "M8_lighthouse": "pending",
+    "M9_security": "pending",
+    "M10_launch_checklist": "pending"
+  },
+  "kpi": {
+    "estimatedDays": 23,
+    "actualDays": null,
+    "phasesComplete": 2,
+    "phasesTotal": 6,
+    "tasksComplete": 9,
+    "tasksTotal": 30
+  },
+  "autoPause": {
+    "pauseHistory": [],
+    "triggers": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"]
+  }
+}

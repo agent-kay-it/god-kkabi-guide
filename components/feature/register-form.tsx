@@ -1,6 +1,7 @@
 /**
- * 등록 폼 — Google/Kakao 로그인 후 1회 입력하는 5필드 + PIPA 4 동의.
+ * 등록 폼 — Google 로그인 후 1회 입력하는 5필드 + PIPA 4 동의.
  * 출처: docs/sprint/03-sprint-mvp-v2/phase-2-design/auth-flow.md §7
+ *      + docs/sprint/10-sprint-launch/prd.md §2.F1.2 (Sprint 10에서 Kakao 제거)
  *
  * 책임:
  *  - react-hook-form + Zod (lib/auth/register.ts의 RegisterFormSchema 재사용)

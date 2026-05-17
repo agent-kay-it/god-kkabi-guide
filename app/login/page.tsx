@@ -1,6 +1,7 @@
 /**
- * /login — Google + Kakao 로그인 페이지.
+ * /login — Google 로그인 페이지 (Sprint 10에서 Kakao 제거).
  * 출처: docs/sprint/03-sprint-mvp-v2/phase-2-design/auth-flow.md §3
+ *      + docs/sprint/10-sprint-launch/design.md §2 (Auth flow v3, Google sign-in 단일)
  */
 import type { Metadata } from 'next';
 
@@ -10,7 +11,7 @@ import { Pill } from '@/components/ui/pill';
 
 export const metadata: Metadata = {
   title: '로그인',
-  description: 'Google 또는 카카오 계정으로 로그인하세요.',
+  description: 'Google 계정으로 로그인하세요.',
   robots: { index: false, follow: false },
 };
 

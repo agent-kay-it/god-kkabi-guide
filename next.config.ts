@@ -18,20 +18,16 @@ const nextConfig: NextConfig = {
         hostname: 'firebasestorage.googleapis.com',
         pathname: '/**',
       },
-      // OAuth 프로필 이미지 (Sprint V1 — CA-M2)
+      // OAuth 프로필 이미지 (Sprint V1 — CA-M2, Sprint 10 Google 단일)
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
         pathname: '/**',
       },
+      // YouTube 썸네일 (Sprint 10 / Phase D)
       {
         protocol: 'https',
-        hostname: 'k.kakaocdn.net',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'img1.kakaocdn.net',
+        hostname: 'i.ytimg.com',
         pathname: '/**',
       },
     ],
@@ -48,11 +44,11 @@ const nextConfig: NextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
-              "img-src 'self' https://play-lh.googleusercontent.com https://lh3.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com https://k.kakaocdn.net https://img1.kakaocdn.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net data: blob:",
-              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://pagead2.googlesyndication.com",
+              "img-src 'self' https://play-lh.googleusercontent.com https://lh3.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com https://i.ytimg.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net data: blob:",
+              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://*.firebasedatabase.app https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://pagead2.googlesyndication.com",
               "font-src 'self' https://fonts.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
             ].join('; '),
           },
           {

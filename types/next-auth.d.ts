@@ -50,11 +50,6 @@ declare module 'next-auth/jwt' {
     nickname?: string;
     classId?: string;
     provider?: string;
-    /**
-     * Kakao OAuth access_token — Firebase Custom Token 교환에 사용.
-     * /api/auth/kakao-exchange 라우트가 kapi.kakao.com 호출 시 활용.
-     */
-    accessToken?: string;
     /** Sprint V1: AdSense 동의 (PIPA 5번째) */
     advertisingConsent?: boolean;
     /** Sprint V2: 프리미엄 구독 등급 */
@@ -63,8 +58,8 @@ declare module 'next-auth/jwt' {
 }
 
 declare module 'next-auth' {
-  interface Session {
-    /** Kakao 로그인 시 accessToken 노출 (Custom Token bridge 용) */
-    accessToken?: string;
+  interface User {
+    /** Google OAuth provider id ('google'). Sprint 10에서 Kakao 제거 후 단일. */
+    provider?: string;
   }
 }
