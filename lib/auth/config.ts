@@ -65,9 +65,12 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     /**
      * 보호 라우트 판정 (middleware 트리거).
-     *  - /me/* / /admin/* → 로그인 필수
+     *  - /me/* / /admin/* / /chat/* → 로그인 필수
      *  - /admin/* → role=admin 필수
+     *  - /me/* / /chat/* → 등록 필수 (미등록 시 /register redirect)
      *  - /register → 로그인했고 등록 안 한 사용자만
+     *
+     * Sprint 10 Phase E: /chat은 NextAuth session + registered 필수.
      */
     authorized({ auth, request }) {
       const pathname = request.nextUrl.pathname;
@@ -75,7 +78,12 @@ export const authConfig: NextAuthConfig = {
       const isRegistered = Boolean(auth?.user?.registered);
       const isAdmin = auth?.user?.role === 'admin';
 
-      if (pathname.startsWith('/me') || pathname.startsWith('/admin')) {
+      const isProtected =
+        pathname.startsWith('/me') ||
+        pathname.startsWith('/admin') ||
+        pathname.startsWith('/chat');
+
+      if (isProtected) {
         if (!isLoggedIn) return false;
         if (pathname.startsWith('/admin') && !isAdmin) return false;
         if (!isRegistered && pathname !== '/register') {
