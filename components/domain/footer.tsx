@@ -76,13 +76,21 @@ export function Footer({
           © {new Date().getFullYear()} 갓깨비 키우기 비공식 팬 가이드 (1인 개인 프로젝트){' '}
           {lastUpdated ? `· 최종 업데이트 ${lastUpdated}` : null}
         </p>
-        <Link
-          href={`mailto:${contactEmail}`}
-          className="inline-flex items-center gap-1.5 text-bronze underline-offset-4 hover:underline"
-        >
-          <Mail aria-hidden="true" className="h-3.5 w-3.5" />
-          {contactEmail}
-        </Link>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <Link href="/terms" className="hover:text-bronze hover:underline underline-offset-4">
+            이용약관
+          </Link>
+          <Link href="/privacy" className="hover:text-bronze hover:underline underline-offset-4">
+            개인정보처리방침
+          </Link>
+          <Link
+            href={`mailto:${contactEmail}`}
+            className="inline-flex items-center gap-1.5 text-bronze underline-offset-4 hover:underline"
+          >
+            <Mail aria-hidden="true" className="h-3.5 w-3.5" />
+            {contactEmail}
+          </Link>
+        </div>
       </section>
     </footer>
   );

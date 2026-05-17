@@ -24,6 +24,10 @@ export type GA4EventName =
   | 'bookmark_add'           // 북마크 추가
   | 'bookmark_remove'        // 북마크 제거
   | 'wiki_card_click'        // 위키 카드 클릭 (V1에서 STUB → ACTIVE)
+  // ─── Sprint 10 Phase F (회원 CRUD) ───
+  | 'profile_update'         // 프로필 수정 (serverId / munpa / nickname / classId)
+  | 'account_delete_request' // 회원 탈퇴 요청 (30일 cooldown 시작)
+  | 'account_delete_cancel'  // 30일 내 탈퇴 취소 (복구)
   // ─── V1 신규 6개 (UGC) ───
   | 'post_create'            // 게시물 작성 완료
   | 'post_view'              // 게시물 상세 진입 (디바운스)

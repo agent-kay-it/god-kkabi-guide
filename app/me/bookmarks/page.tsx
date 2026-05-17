@@ -27,7 +27,7 @@ export default async function BookmarksPage(): Promise<React.JSX.Element> {
   const bookmarks = await listMyBookmarks();
 
   return (
-    <main className="mx-auto max-w-screen-md px-5 pb-20 pt-8 sm:px-6">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>내 정보</HeroMetaBadge>
