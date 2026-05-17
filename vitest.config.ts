@@ -16,6 +16,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
+      // Next.js의 'server-only' 가드는 client 번들 누출 방지용. 테스트 환경에선 의미가 없으므로 빈 모듈로 stub.
+      'server-only': path.resolve(__dirname, 'lib/__tests__/server-only.stub.ts'),
     },
   },
 });
