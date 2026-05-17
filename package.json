@@ -29,7 +29,9 @@
   "dependencies": {
     "@auth/firebase-adapter": "^2.11.2",
     "@hookform/resolvers": "^5.2.2",
+    "@sentry/nextjs": "^10.53.1",
     "@types/hast": "^3.0.4",
+    "@vercel/speed-insights": "^2.0.0",
     "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
