@@ -16,7 +16,12 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "audit:arch": "node scripts/audit-clean-arch.mjs",
+    "audit:arch:report": "node scripts/audit-clean-arch.mjs --report",
+    "audit:design": "node scripts/audit-design-system.mjs",
+    "audit:design:report": "node scripts/audit-design-system.mjs --report",
+    "audit:all": "pnpm audit:arch && pnpm audit:design"
   },
   "dependencies": {
     "@auth/firebase-adapter": "^2.11.2",
