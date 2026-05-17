@@ -21,7 +21,10 @@
     "audit:arch:report": "node scripts/audit-clean-arch.mjs --report",
     "audit:design": "node scripts/audit-design-system.mjs",
     "audit:design:report": "node scripts/audit-design-system.mjs --report",
-    "audit:all": "pnpm audit:arch && pnpm audit:design"
+    "audit:all": "pnpm audit:arch && pnpm audit:design",
+    "lighthouse": "./scripts/lighthouse-ci.sh",
+    "lighthouse:desktop": "./scripts/lighthouse-ci.sh --desktop",
+    "lighthouse:mobile": "./scripts/lighthouse-ci.sh --mobile"
   },
   "dependencies": {
     "@auth/firebase-adapter": "^2.11.2",
