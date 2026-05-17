@@ -1,22 +1,28 @@
 /**
  * <PostForm> — 게시물 작성/수정 폼.
  * 출처: docs/sprint/04-sprint-v1/design.md §3.1 + plan.md §P3.C.3
+ *      + docs/sprint/10-sprint-launch/design.md §6 (Posts Enrichment — Form UX, Task #22)
  *
  * 책임:
  *  - react-hook-form + zodResolver (PostInputSchema)
- *  - Markdown lite 입력 (textarea — 미리보기는 V1+에서 추가)
- *  - 이미지 첨부 3개 (1MB 자동 압축 + Storage 업로드)
+ *  - Markdown lite 입력 (Sprint 10: + 라이브 프리뷰 + URL 미리보기 + autosave)
+ *  - 이미지 첨부 3개 (Sprint 11에서 AWS S3로 이전 예정 — Spark plan 제한)
  *  - 태그 5개 (사전 정의 화이트리스트)
  *  - 성공 시 router.push(`/post/${postId}`)
+ *
+ * Sprint 10 / Phase D 추가:
+ *  - localStorage autosave (2s debounce, key = `post-draft-{userId}`, create 모드만)
+ *  - 본문 옆 라이브 프리뷰 (md+ split-view, sm 이하 toggle)
+ *  - 단독 URL 줄 감지 → 1s debounce → /api/og-preview → 인라인 미리보기 카드
  */
 'use client';
 
-import { useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ImagePlus, X } from 'lucide-react';
+import { ImagePlus, X, Eye, EyeOff, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { createPost, updatePost } from '@/lib/post/actions';
@@ -44,6 +50,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Note } from '@/components/domain';
+import { useAutosave } from '@/hooks/use-autosave';
+import { LivePreview } from '@/components/feature/post/live-preview';
+import { UrlPreviewInline } from '@/components/feature/post/url-preview-inline';
 
 const CATEGORIES: readonly PostCategory[] = ['build', 'guide', 'review'];
 
@@ -86,6 +95,49 @@ export function PostForm({
   // V5 P3.A: form.watch → useWatch — React Compiler 메모이제이션 호환성 (react-hooks/incompatible-library).
   // useWatch는 subscription을 control 객체로 따로 등록하여 watch()의 비순수 클로저 문제를 회피.
   const imageUrls = useWatch({ control: form.control, name: 'imageUrls' }) ?? [];
+  const bodyValue = useWatch({ control: form.control, name: 'body' }) ?? '';
+
+  // Sprint 10 P-D Task #22 — autosave (create 모드만 활성화)
+  const autosave = useAutosave(
+    { title: form.getValues('title'), body: bodyValue, category: form.getValues('category'), tags: form.getValues('tags') },
+    {
+      key: 'post-draft',
+      userId: authorUid,
+      delayMs: 2000,
+      enabled: mode === 'create',
+    },
+  );
+
+  // 마운트 시 draft 복원 제안 — autosave.hasDraft가 true이고 현재 폼이 빈 상태면 1회 복원 시도
+  // 게시 성공 시 clearDraft()로 정리.
+  const restoredOnceRef = useRef<boolean>(false);
+  useEffect(() => {
+    if (mode !== 'create') return;
+    if (restoredOnceRef.current) return;
+    if (!autosave.hasDraft) return;
+    const draft = autosave.loadDraft<{
+      title: string;
+      body: string;
+      category: PostCategory;
+      tags: string[];
+    }>();
+    if (!draft) return;
+    const current = form.getValues();
+    // 사용자가 이미 입력 시작했다면 덮어쓰지 않음
+    if (current.title || current.body) return;
+    form.reset({
+      title: draft.title ?? '',
+      body: draft.body ?? '',
+      category: (draft.category ?? 'build') as PostCategory,
+      tags: Array.isArray(draft.tags) ? draft.tags : [],
+      imageUrls: [],
+    });
+    restoredOnceRef.current = true;
+    toast.success('이전 작성 중인 글을 복원했습니다');
+  }, [autosave, form, mode]);
+
+  // 라이브 프리뷰 토글 (모바일 — sm 이하). md+ 에서는 항상 split-view.
+  const [previewOpenOnMobile, setPreviewOpenOnMobile] = useState<boolean>(false);
 
   async function handleImageAdd(file: File) {
     const currentCount = imageUrls.length;
@@ -137,6 +189,8 @@ export function PostForm({
       if (result.ok) {
         if (mode === 'create') {
           toast.success('게시물이 작성되었습니다');
+          // Sprint 10 P-D Task #22 — draft 정리
+          autosave.clearDraft();
           void logEvent('post_create', {
             category: values.category,
             tags_count: values.tags.length,
@@ -238,34 +292,68 @@ export function PostForm({
             )}
           />
 
-          {/* 본문 */}
+          {/* 본문 — Sprint 10 P-D Task #22: split-view 라이브 프리뷰 + URL 인라인 미리보기 */}
           <FormField
             control={postControl}
             name="body"
             render={({ field }: { field: { value: string; onChange: (v: string) => void; name: string; onBlur: () => void } }) => (
               <FormItem>
-                <FormLabel htmlFor={field.name} className="text-text">
-                  본문 <span className="text-vermilion">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    id={field.name}
-                    rows={14}
-                    placeholder={`30-5000자 — Markdown lite 지원\n\n## 헤딩\n**강조** 또는 _기울임_\n\`\`\`\n코드 블록\n\`\`\`\n- 리스트\n[링크](https://...)`}
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    maxLength={POST_LIMITS.body.max}
-                    className="font-mono text-sm"
-                  />
-                </FormControl>
+                <div className="flex items-center justify-between">
+                  <FormLabel htmlFor={field.name} className="text-text">
+                    본문 <span className="text-vermilion">*</span>
+                  </FormLabel>
+                  {/* 모바일 프리뷰 토글 (md+ 에서는 split-view 자동) */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPreviewOpenOnMobile((v) => !v)}
+                    className="gap-1.5 md:hidden"
+                    aria-pressed={previewOpenOnMobile}
+                  >
+                    {previewOpenOnMobile ? (
+                      <>
+                        <EyeOff className="h-3.5 w-3.5" />
+                        편집으로
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="h-3.5 w-3.5" />
+                        미리보기
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {/* 작성 textarea — 모바일에서 previewOpenOnMobile이면 숨김 */}
+                  <div className={previewOpenOnMobile ? 'hidden md:block' : 'block'}>
+                    <FormControl>
+                      <Textarea
+                        id={field.name}
+                        rows={14}
+                        placeholder={`30-5000자 — Markdown lite 지원\n\n## 헤딩\n**강조** 또는 _기울임_\n\`\`\`\n코드 블록\n\`\`\`\n- 리스트\n[링크](https://...)\n\n단독 줄에 URL을 붙여넣으면\nYouTube 임베드 또는 링크 미리보기가 자동 생성됩니다.`}
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        maxLength={POST_LIMITS.body.max}
+                        className="font-mono text-sm"
+                      />
+                    </FormControl>
+                  </div>
+                  {/* 라이브 프리뷰 — 모바일에서 previewOpenOnMobile이면 표시 */}
+                  <div className={previewOpenOnMobile ? 'block md:block' : 'hidden md:block'}>
+                    <LivePreview body={field.value} />
+                  </div>
+                </div>
                 <div className="flex justify-between text-xs text-text-mute">
                   <span>Markdown lite: h2/h3, **, _, `code`, &gt;, -, [text](url)</span>
                   <span className="font-mono">
                     {field.value.length} / {POST_LIMITS.body.max}
                   </span>
                 </div>
+                {/* URL 인라인 미리보기 — 단독 URL 줄 감지 + 1s debounce */}
+                <UrlPreviewInline body={field.value} className="mt-3" />
                 <FormMessage />
               </FormItem>
             )}
@@ -338,6 +426,14 @@ export function PostForm({
             <li>금칙어는 자동 마스킹 적용 + 누적 신고 시 페널티</li>
           </ul>
         </Note>
+
+        {/* Sprint 10 P-D Task #22 — autosave 상태 표시 (create 모드 only) */}
+        {mode === 'create' && autosave.lastSavedAt ? (
+          <p className="flex items-center justify-end gap-1.5 text-xs text-text-mute">
+            <Save className="h-3 w-3" aria-hidden="true" />
+            <span>임시 저장됨</span>
+          </p>
+        ) : null}
 
         <Button type="submit" variant="bronze" size="lg" className="w-full" disabled={isPending}>
           {isPending ? '저장 중...' : mode === 'create' ? '게시물 등록' : '수정 사항 저장'}

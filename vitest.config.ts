@@ -1,16 +1,24 @@
 /**
- * Vitest 설정 — Sprint 10 / Phase D 단위 테스트 도입.
+ * Vitest 설정 — Sprint 10 / Phase D 단위 테스트.
  *
- * 환경: node (rehype plugin + SSRF guard + OG parser는 server-only).
- * 추후 React 컴포넌트 테스트 추가 시 environment: 'jsdom'으로 별도 분기.
+ * 환경: node (기본 — rehype plugin + SSRF guard + OG parser).
+ *   - jsdom 필요 파일은 상단에 `// @vitest-environment jsdom` 디렉티브 명시.
+ *   - hooks/use-autosave.test.ts 는 jsdom (localStorage + React state).
  */
 import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 import path from 'node:path';
 
 export default defineConfig({
+  plugins: [react()],
   test: {
     environment: 'node',
-    include: ['lib/**/*.test.ts', 'hooks/**/*.test.ts'],
+    include: [
+      'lib/**/*.test.ts',
+      'hooks/**/*.test.ts',
+      'components/**/*.test.ts',
+      'components/**/*.test.tsx',
+    ],
     exclude: ['node_modules/**', '.next/**'],
   },
   resolve: {
