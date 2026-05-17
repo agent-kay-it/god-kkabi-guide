@@ -42,7 +42,9 @@ export { MunpaCard, type MunpaCardProps } from './munpa-card';
 // V1 신규 — Sprint V1 P3.C (UGC)
 export { PostCard, type PostCardProps } from './post-card';
 export { PostMeta, type PostMetaProps } from './post-meta';
-export { MarkdownView, type MarkdownViewProps } from './markdown-view';
+// NOTE: MarkdownView는 async Server Component (Sprint 10 Phase D) + LinkPreview/og-preview/
+// firebase-admin 의존성으로 인해 Client 번들에 새어나가지 않도록 barrel 노출 제외.
+// 직접 import 필요: import { MarkdownView } from '@/components/domain/markdown-view'
 export { CommentThread, type CommentThreadProps } from './comment-thread';
 export { PenaltyBadge, type PenaltyBadgeProps } from './penalty-badge';
 
