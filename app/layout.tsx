@@ -11,6 +11,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { JetBrains_Mono } from 'next/font/google';
 import { Suspense } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { AnalyticsBootstrap } from '@/components/analytics-bootstrap';
 import { PageEngagementTracker } from '@/components/feature/page-engagement-tracker';
 import { LoginSuccessTracker } from '@/components/feature/login-success-tracker';
@@ -214,6 +215,8 @@ export default async function RootLayout({
             <Toaster />
           </LightboxProvider>
         </TooltipProvider>
+        {/* Vercel Speed Insights — Sprint 10 / Phase F-final Task #32. RUM 데이터 자동 수집. */}
+        <SpeedInsights />
       </body>
     </html>
   );

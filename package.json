@@ -16,12 +16,22 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "audit:arch": "node scripts/audit-clean-arch.mjs",
+    "audit:arch:report": "node scripts/audit-clean-arch.mjs --report",
+    "audit:design": "node scripts/audit-design-system.mjs",
+    "audit:design:report": "node scripts/audit-design-system.mjs --report",
+    "audit:all": "pnpm audit:arch && pnpm audit:design",
+    "lighthouse": "./scripts/lighthouse-ci.sh",
+    "lighthouse:desktop": "./scripts/lighthouse-ci.sh --desktop",
+    "lighthouse:mobile": "./scripts/lighthouse-ci.sh --mobile"
   },
   "dependencies": {
     "@auth/firebase-adapter": "^2.11.2",
     "@hookform/resolvers": "^5.2.2",
+    "@sentry/nextjs": "^10.53.1",
     "@types/hast": "^3.0.4",
+    "@vercel/speed-insights": "^2.0.0",
     "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

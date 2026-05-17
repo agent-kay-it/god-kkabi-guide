@@ -97,3 +97,11 @@ yarn-error.log*
 .temp/
 .tmp/
 .vercel
+
+# ============================================================
+# Lighthouse CI artifacts (Sprint 10 / Phase F-final Task #31)
+# ============================================================
+.lighthouseci/
+.lighthouseci-mobile/
+lhci-*.html
+lhci-*.json
