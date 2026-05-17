@@ -22,6 +22,7 @@ import {
 import { canAccessChannel, accessDenyMessage } from '@/lib/chat/channel-permission';
 import { chatUserFromSession } from '@/lib/chat/session-context';
 import { ChannelHeader } from '@/components/feature/chat/channel-header';
+import { MessageList } from '@/components/feature/chat/message-list';
 
 export const dynamic = 'force-dynamic';
 
@@ -61,13 +62,21 @@ export default async function ChannelPage({ params }: PageProps): Promise<React.
 
   const channels = resolveUserChannels(user);
   const label = channelLabel(parsed);
+  const isAdmin = user.role === 'admin';
+  const canReport = user.role !== 'banned';
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       <ChannelHeader kind={parsed.kind} label={label} channels={channels} />
-      <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-sm text-text-mute">
-        <p>채팅 UI는 Task #25 / #26에서 추가됩니다.</p>
-        <p className="mt-2 font-mono text-xs">channel: {channelId}</p>
+      <MessageList
+        channelId={channelId}
+        currentUid={user.uid}
+        canReport={canReport}
+        isAdmin={isAdmin}
+      />
+      {/* MessageComposer — Task #26에서 추가 */}
+      <div className="border-t border-ink-line bg-ink-card-strong/50 p-3 text-center text-xs text-text-mute">
+        메시지 입력은 Task #26에서 추가됩니다.
       </div>
     </div>
   );
