@@ -8,7 +8,7 @@
   "automationScope": "full",
   "stopAfter": "archived",
   "phase": "do",
-  "currentPhase": "B",
+  "currentPhase": "D",
   "phaseHistory": [
     {
       "phase": "prd",
@@ -43,9 +43,55 @@
       "scopeChange": "Task #7 (Storage CORS) moved to Sprint 11 (AWS S3) due to Spark plan limit. Image upload features deferred to Sprint 11.",
       "blockers": []
     },
-    "B": { "name": "Auth Migration (Google)", "status": "in_progress", "startedAt": "2026-05-17T02:10:00.000Z", "tasks": [13, 14, 15, 16, 17, 18] },
-    "C": { "name": "Domain Cutover", "status": "completed", "startedAt": "2026-05-17T01:35:00.000Z", "completedAt": "2026-05-17T02:00:00.000Z", "tasks": [1, 2, 3, 4], "verification": "dig + curl 3 도메인 모두 200/308, SSO Protection 해제, SSL 자동 발급" },
-    "D": { "name": "Posts Enrichment (YouTube + Link Preview)", "status": "pending", "tasks": [19, 20, 21, 22] },
+    "B": {
+      "name": "Auth Migration (Google)",
+      "status": "completed",
+      "startedAt": "2026-05-17T02:10:00.000Z",
+      "completedAt": "2026-05-17T04:30:00.000Z",
+      "tasks": [13, 14, 15, 16, 17, 18],
+      "verification": "Google sign-in E2E 검증 통과 — kay@agentkay.it 로그인 + /me + 프로필 수정 flow 정상"
+    },
+    "C": {
+      "name": "Domain Cutover",
+      "status": "completed",
+      "startedAt": "2026-05-17T01:35:00.000Z",
+      "completedAt": "2026-05-17T02:00:00.000Z",
+      "tasks": [1, 2, 3, 4],
+      "verification": "dig + curl 3 도메인 모두 200/308, SSO Protection 해제, SSL 자동 발급"
+    },
+    "D": {
+      "name": "Posts Enrichment (YouTube + Link Preview)",
+      "status": "completed",
+      "startedAt": "2026-05-17T16:30:00.000Z",
+      "completedAt": "2026-05-17T17:20:00.000Z",
+      "tasks": [19, 20, 21, 22],
+      "designRef": "docs/sprint/10-sprint-launch/design.md §6",
+      "pr": "https://github.com/agent-kay-it/kkaebizigi/pull/7",
+      "mergeCommit": "b9301809fc7c738fae3b179c4429bcbceb13258f",
+      "commits": [
+        { "sha": "4a485a7", "task": 19, "subject": "rehype YouTube + Link Preview plugins" },
+        { "sha": "eb47488", "task": 20, "subject": "OG preview API + SSRF defense + Firestore cache" },
+        { "sha": "36c7863", "task": 21, "subject": "YoutubeEmbed + LinkPreview components + MarkdownView integration" },
+        { "sha": "6d07bb2", "task": 22, "subject": "post form UX — autosave + live preview + URL preview" }
+      ],
+      "testCoverage": { "files": 7, "tests": 91, "passed": 91, "failed": 0 },
+      "qualityResults": {
+        "M1_typecheck": "pass",
+        "M2_lint": "pass",
+        "M3_unit_test": "pass",
+        "M5_clean_arch": "pass",
+        "M9_security": "pass (SSRF 25 tests + DNS rebinding 방어)"
+      },
+      "verification": "PR #7 머지 (commit b9301809) → Vercel staging 자동 배포 → Chrome E2E (대기 중)"
+    },
+    "F-UI": {
+      "name": "F-UI / F-CRUD / F-Legal / F-UX / F-Verify",
+      "status": "completed",
+      "startedAt": "2026-05-17T13:00:00.000Z",
+      "completedAt": "2026-05-17T16:25:00.000Z",
+      "tasks": [36, 37, 38, 39, 40, 41],
+      "verification": "PR #6 merged → staging 시각 + 기능 E2E 검증 통과 (0 404, 프로필 수정 flow 동작)"
+    },
     "E": { "name": "Chat UI (3-tier channels)", "status": "pending", "tasks": [23, 24, 25, 26, 27, 28] },
     "F": { "name": "Quality / Launch", "status": "pending", "tasks": [9, 29, 30, 31, 32] }
   },
@@ -56,23 +102,23 @@
     "docs/sprint/10-sprint-launch/design.md"
   ],
   "qualityGates": {
-    "M1_typecheck": "pending",
-    "M2_lint": "pending",
-    "M3_unit_test": "pending",
+    "M1_typecheck": "pass",
+    "M2_lint": "pass",
+    "M3_unit_test": "pass (91/91)",
     "M4_match_rate": "pending",
-    "M5_clean_arch": "pending",
+    "M5_clean_arch": "pass",
     "M6_design_system": "pending",
     "M7_e2e_7layer": "pending",
     "M8_lighthouse": "pending",
-    "M9_security": "pending",
+    "M9_security": "pass (SSRF guard)",
     "M10_launch_checklist": "pending"
   },
   "kpi": {
     "estimatedDays": 23,
     "actualDays": null,
-    "phasesComplete": 2,
+    "phasesComplete": 5,
     "phasesTotal": 6,
-    "tasksComplete": 9,
+    "tasksComplete": 23,
     "tasksTotal": 30
   },
   "autoPause": {

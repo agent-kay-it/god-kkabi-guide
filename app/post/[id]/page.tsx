@@ -19,12 +19,8 @@ import {
   getMyReactionsForComments,
 } from '@/lib/reaction/actions';
 import { renderMarkdownToSafeHtml } from '@/lib/post/markdown';
-import {
-  MarkdownView,
-  PostMeta,
-  CommentThread,
-  Note,
-} from '@/components/domain';
+import { MarkdownView } from '@/components/domain/markdown-view';
+import { PostMeta, CommentThread, Note } from '@/components/domain';
 import { CommentItem } from '@/components/feature/comment-item';
 import { CommentForm } from '@/components/feature/comment-form';
 import { LikeButton } from '@/components/feature/like-button';
