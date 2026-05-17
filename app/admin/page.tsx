@@ -37,7 +37,7 @@ export default async function AdminPage(): Promise<React.JSX.Element> {
   ]);
 
   return (
-    <main className="mx-auto max-w-screen-lg px-5 pb-20 pt-8 sm:px-6">
+    <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>운영자 콘솔</HeroMetaBadge>

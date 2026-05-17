@@ -51,8 +51,24 @@ export function AuthButtons({
 
       <p className="mt-2 text-center text-xs text-text-mute">
         로그인 시{' '}
-        <span className="text-bronze-soft">이용약관 / 개인정보처리방침</span>에 동의한 것으로
-        간주됩니다.
+        <a
+          href="/terms"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-bronze-soft underline-offset-4 hover:underline"
+        >
+          이용약관
+        </a>{' '}
+        /{' '}
+        <a
+          href="/privacy"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-bronze-soft underline-offset-4 hover:underline"
+        >
+          개인정보처리방침
+        </a>
+        에 동의한 것으로 간주됩니다.
       </p>
     </div>
   );
