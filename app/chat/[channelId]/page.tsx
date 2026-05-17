@@ -23,6 +23,7 @@ import { canAccessChannel, accessDenyMessage } from '@/lib/chat/channel-permissi
 import { chatUserFromSession } from '@/lib/chat/session-context';
 import { ChannelHeader } from '@/components/feature/chat/channel-header';
 import { MessageList } from '@/components/feature/chat/message-list';
+import { MessageComposer } from '@/components/feature/chat/message-composer';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,7 +64,19 @@ export default async function ChannelPage({ params }: PageProps): Promise<React.
   const channels = resolveUserChannels(user);
   const label = channelLabel(parsed);
   const isAdmin = user.role === 'admin';
-  const canReport = user.role !== 'banned';
+  const isBanned = user.role === 'banned';
+  const canReport = !isBanned;
+
+  // Composer author meta (RTDB authorNickname/classId/role 동봉용)
+  const sessionUser = session?.user;
+  const author = {
+    uid: user.uid,
+    nickname: sessionUser?.nickname ?? sessionUser?.name ?? '익명',
+    ...(sessionUser?.classId
+      ? { classId: sessionUser.classId as 'warrior' | 'swordsman' | 'medium' }
+      : {}),
+    ...(isAdmin ? { role: 'admin' as const } : { role: 'user' as const }),
+  };
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -74,10 +87,12 @@ export default async function ChannelPage({ params }: PageProps): Promise<React.
         canReport={canReport}
         isAdmin={isAdmin}
       />
-      {/* MessageComposer — Task #26에서 추가 */}
-      <div className="border-t border-ink-line bg-ink-card-strong/50 p-3 text-center text-xs text-text-mute">
-        메시지 입력은 Task #26에서 추가됩니다.
-      </div>
+      <MessageComposer
+        channelId={channelId}
+        author={author}
+        disabled={isBanned}
+        {...(isBanned ? { disabledReason: '정지된 계정은 메시지를 보낼 수 없습니다' } : {})}
+      />
     </div>
   );
 }

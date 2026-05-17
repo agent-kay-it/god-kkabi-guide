@@ -24,6 +24,18 @@ export interface SendMessageInput {
   readonly channelId: string;
   readonly content: string;
   readonly imageUrl?: string;
+  /**
+   * Sprint 10 Phase E: OG 미리보기 메타 동봉 (옵션).
+   * RTDB rules의 linkPreview 화이트리스트와 일치하는 필드만 전송.
+   * url/image는 https only — 이외 값은 호출자가 사전 필터링하거나 RTDB rules가 거부.
+   */
+  readonly linkPreview?: {
+    readonly url: string;
+    readonly title: string;
+    readonly description?: string;
+    readonly image?: string;
+    readonly domain: string;
+  };
   readonly author: {
     readonly uid: string;
     readonly nickname: string;
@@ -65,6 +77,21 @@ export async function sendChatMessage(
       ...(input.author.role ? { authorRole: input.author.role } : {}),
       content: masked,
       ...(input.imageUrl ? { imageUrl: input.imageUrl } : {}),
+      ...(input.linkPreview && input.linkPreview.url.startsWith('https://')
+        ? {
+            linkPreview: {
+              url: input.linkPreview.url,
+              title: input.linkPreview.title,
+              domain: input.linkPreview.domain,
+              ...(input.linkPreview.description
+                ? { description: input.linkPreview.description }
+                : {}),
+              ...(input.linkPreview.image && input.linkPreview.image.startsWith('https://')
+                ? { image: input.linkPreview.image }
+                : {}),
+            },
+          }
+        : {}),
       createdAt: 0, // serverTimestamp() 자리표시자 — push 시 RTDB에서 채움
     };
     const newRef = await push(messagesRef, {
