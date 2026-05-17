@@ -24,6 +24,11 @@ import { chatUserFromSession } from '@/lib/chat/session-context';
 import { ChannelHeader } from '@/components/feature/chat/channel-header';
 import { MessageList } from '@/components/feature/chat/message-list';
 import { MessageComposer } from '@/components/feature/chat/message-composer';
+import {
+  hideMessage,
+  keepMessage,
+  deleteMessage,
+} from '@/lib/chat/moderation-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,6 +91,13 @@ export default async function ChannelPage({ params }: PageProps): Promise<React.
         currentUid={user.uid}
         canReport={canReport}
         isAdmin={isAdmin}
+        {...(isAdmin
+          ? {
+              onAdminHide: hideMessage,
+              onAdminKeep: keepMessage,
+              onAdminDelete: deleteMessage,
+            }
+          : {})}
       />
       <MessageComposer
         channelId={channelId}

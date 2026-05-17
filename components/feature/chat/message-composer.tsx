@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { sendChatMessage } from '@/lib/chat/send-message';
 import { containsBadWord, maskBadWords } from '@/lib/chat/masking';
+import { enforceChatRateLimit } from '@/lib/chat/rate-limit';
 import { useChatRateLimit } from '@/hooks/use-chat-rate-limit';
 import { logEvent } from '@/lib/firebase/analytics';
 import { cn } from '@/lib/utils';
@@ -164,6 +165,26 @@ export function MessageComposer({
     const payloadPreview = pendingLinkPreview;
 
     startTransition(async () => {
+      // Server-side rate limit (Firestore counter) — RTDB push 직전 게이트.
+      // Admin SDK 미설정 환경은 fail-open (개발/로컬), prod에서는 진정한 limit.
+      const limit = await enforceChatRateLimit();
+      if (!limit.ok) {
+        if (limit.error === 'RATE_LIMIT_EXCEEDED') {
+          const seconds = Math.ceil(limit.retryAfterMs / 1000);
+          const scopeLabel = limit.scope === 'minute' ? '분당' : '시간당';
+          toast.error(`${scopeLabel} 한도 초과 — ${seconds}초 후 다시 시도하세요.`);
+        } else if (limit.error === 'BANNED') {
+          toast.error('정지된 계정은 메시지를 보낼 수 없습니다.');
+        } else if (limit.error === 'NOT_REGISTERED') {
+          toast.error('등록 완료 후 채팅을 이용할 수 있습니다.');
+        } else if (limit.error === 'UNAUTHENTICATED') {
+          toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
+        } else {
+          toast.error('일시적 오류 — 잠시 후 다시 시도하세요.');
+        }
+        return;
+      }
+
       const result = await sendChatMessage({
         channelId,
         content: trimmed,
