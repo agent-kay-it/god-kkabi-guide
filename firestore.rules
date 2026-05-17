@@ -290,6 +290,13 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Sprint 10 Phase E (Task #27) — chat rate limits: server-only (Admin SDK 트랜잭션).
+    // {uid}별 sliding window counter (minute / hour buckets). Admin 조회만 허용.
+    match /chat_rate_limits/{uid} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
     // Sprint V2 P3.C — coupons: 검증된 것만 공개 read / 등록 사용자 create (pending) / admin verify
     match /coupons/{couponId} {
       allow read: if resource.data.status == 'verified' || isAdmin();

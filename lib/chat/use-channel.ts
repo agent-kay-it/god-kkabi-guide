@@ -182,6 +182,17 @@ export function useChannel(
 function toChatMessage(snap: DataSnapshot): ChatMessage | null {
   const value = snap.val();
   if (!value || typeof value !== 'object' || !snap.key) return null;
+  const lp = value.linkPreview;
+  const linkPreview =
+    lp && typeof lp === 'object' && typeof lp.url === 'string'
+      ? {
+          url: lp.url as string,
+          title: typeof lp.title === 'string' ? lp.title : '',
+          domain: typeof lp.domain === 'string' ? lp.domain : '',
+          ...(typeof lp.description === 'string' ? { description: lp.description } : {}),
+          ...(typeof lp.image === 'string' ? { image: lp.image } : {}),
+        }
+      : undefined;
   return {
     id: snap.key,
     channelId: value.channelId ?? '',
@@ -191,6 +202,7 @@ function toChatMessage(snap: DataSnapshot): ChatMessage | null {
     authorRole: value.authorRole,
     content: value.content ?? '',
     imageUrl: value.imageUrl,
+    ...(linkPreview ? { linkPreview } : {}),
     createdAt: value.createdAt ?? 0,
     hidden: Boolean(value.hidden),
     keptByOperator: Boolean(value.keptByOperator),

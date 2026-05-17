@@ -24,8 +24,9 @@ import { reportChatMessage } from '@/lib/chat/report-action';
 import { logEvent } from '@/lib/firebase/analytics';
 
 function channelKindOf(channelId: string): 'global' | 'server' | 'munpa' {
-  if (channelId.startsWith('munpa:')) return 'munpa';
-  if (channelId.startsWith('server:')) return 'server';
+  // Sprint 10 Phase E: 하이픈 prefix (server- / munpa-) + 기존 widget 콜론 prefix 양쪽 지원
+  if (channelId.startsWith('munpa-') || channelId.startsWith('munpa:')) return 'munpa';
+  if (channelId.startsWith('server-') || channelId.startsWith('server:')) return 'server';
   return 'global';
 }
 import {

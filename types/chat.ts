@@ -31,8 +31,19 @@ export interface ChatMessage {
   readonly authorRole?: 'admin' | 'user';
   /** 마스킹 적용 후 본문 (서버에서 처리하지 않고 클라이언트 사전 검증 + admin 사후 검토) */
   readonly content: string;
-  /** Storage URL (선택) — 1MB 미만 압축본만 허용 */
+  /** Storage URL (선택) — 1MB 미만 압축본만 허용. Sprint 11에서 활성화 예정. */
   readonly imageUrl?: string;
+  /**
+   * Sprint 10 Phase E: OG 미리보기 메타. send-message 시 옵션으로 동봉.
+   * RTDB rules의 linkPreview 노드 화이트리스트(url/title/description?/image?/domain)와 일치.
+   */
+  readonly linkPreview?: {
+    readonly url: string;
+    readonly title: string;
+    readonly description?: string;
+    readonly image?: string;
+    readonly domain: string;
+  };
   /** 메시지 작성 시각 (RTDB serverTimestamp() — 숫자 ms) */
   readonly createdAt: number;
   /** 자동 숨김 (신고 누적 3건 시 true) */

@@ -31,6 +31,16 @@ export interface UserClaimsPayload {
   readonly registered?: boolean;
   readonly tier?: 'free' | 'premium';
   readonly bannedReason?: string;
+  /**
+   * Sprint 10 Phase E (Task #23): RTDB chat 채널 라우팅에 사용.
+   * - serverId: 게임 서버 ID (예 'S785') — RTDB rules에서 server-{serverId} 매칭
+   * - munpaId : Firestore munpa doc id (`${serverId}_${munpaName}`) — RTDB rules에서 munpa-{munpaId} 매칭
+   *
+   * 값을 명시적으로 빈 문자열로 설정하면 claim 제거와 동치 (auth.token.serverId == null
+   * 평가 결과를 받기 위함). Firestore Admin SDK는 string 빈값을 그대로 설정한다.
+   */
+  readonly serverId?: string;
+  readonly munpaId?: string;
 }
 
 interface RetryQueueDoc {

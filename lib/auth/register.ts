@@ -234,7 +234,13 @@ export async function registerUser(
 
     // 7) Firebase Auth custom claims (RTDB rules에서 registered=true claim 평가용)
     // Sprint V3 P3.A (CA2-I11): retry queue로 일시 장애 대비.
-    await setUserClaimsWithRetry(uid, { role: 'user', registered: true });
+    // Sprint 10 Phase E (Task #23): RTDB chat 채널 라우팅용 serverId + munpaId 동봉.
+    await setUserClaimsWithRetry(uid, {
+      role: 'user',
+      registered: true,
+      serverId: input.serverId,
+      munpaId: `${input.serverId}_${input.munpa}`,
+    });
 
     return { ok: true };
   } catch (err) {
