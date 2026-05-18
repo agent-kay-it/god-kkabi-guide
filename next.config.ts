@@ -66,9 +66,13 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
+              // Sprint 13 / Hotfix: vercel.live (preview feedback 위젯) 허용
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://vercel.live",
               "img-src 'self' https://play-lh.googleusercontent.com https://lh3.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com https://cdn.kkaebizigi.com https://cdn-staging.kkaebizigi.com https://i.ytimg.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net data: blob:",
-              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://*.firebasedatabase.app https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://pagead2.googlesyndication.com https://*.s3.ap-northeast-2.amazonaws.com https://cdn.kkaebizigi.com https://cdn-staging.kkaebizigi.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io https://vitals.vercel-insights.com",
+              // Sprint 13 / Hotfix:
+              //  - firebaseinstallations.googleapis.com (Firebase Analytics instance ID)
+              //  - vercel.live + ws/wss (preview feedback realtime)
+              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://*.firebasedatabase.app https://www.google-analytics.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://pagead2.googlesyndication.com https://*.s3.ap-northeast-2.amazonaws.com https://cdn.kkaebizigi.com https://cdn-staging.kkaebizigi.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io https://vitals.vercel-insights.com https://vercel.live wss://*.pusher.com",
               "font-src 'self' https://fonts.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
