@@ -18,7 +18,7 @@
 
 **Severity**: P1 (Vercel preview 환경 console error 다수)
 **Discovered by**: smoke.spec.ts `홈 페이지 진입 + 콘솔 에러 0 + 4xx-5xx 0`
-**Status**: TRIAGED — Iterate Phase 에서 fix PR
+**Status**: **FIXED** (2026-05-18, hotfix PR — `next.config.ts` CSP `script-src` 에 `https://vercel.live` 추가)
 
 **증상**:
 ```
@@ -41,7 +41,7 @@ https://googleads.g.doubleclick.net https://tpc.googlesyndication.com".
 
 **Severity**: P1 (Firebase Analytics + Push 기능 잠재 영향)
 **Discovered by**: smoke.spec.ts 동일
-**Status**: TRIAGED — Iterate Phase 에서 fix PR
+**Status**: **FIXED** (2026-05-18, hotfix PR — `next.config.ts` CSP `connect-src` 에 `https://firebaseinstallations.googleapis.com` + `https://vercel.live` + `wss://*.pusher.com` 추가)
 
 **증상**:
 ```
