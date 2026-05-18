@@ -1,0 +1,48 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3UploadGetDelete",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:GetObjectAttributes"
+      ],
+      "Resource": [
+        "arn:aws:s3:::kkaebizigi-prod/posts/*",
+        "arn:aws:s3:::kkaebizigi-prod/chat/*",
+        "arn:aws:s3:::kkaebizigi-prod/tmp/*",
+        "arn:aws:s3:::kkaebizigi-staging/posts/*",
+        "arn:aws:s3:::kkaebizigi-staging/chat/*",
+        "arn:aws:s3:::kkaebizigi-staging/tmp/*"
+      ]
+    },
+    {
+      "Sid": "S3ListBucketForPresign",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::kkaebizigi-prod",
+        "arn:aws:s3:::kkaebizigi-staging"
+      ],
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["posts/*", "chat/*", "tmp/*"]
+        }
+      }
+    },
+    {
+      "Sid": "CloudFrontInvalidation",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:CreateInvalidation",
+        "cloudfront:GetInvalidation",
+        "cloudfront:ListInvalidations"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
