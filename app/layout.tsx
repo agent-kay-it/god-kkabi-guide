@@ -28,12 +28,18 @@ import { LightboxProvider } from '@/components/feature/lightbox-provider';
 import { BackToTop } from '@/components/feature/back-to-top';
 import './globals.css';
 
+// Sprint 12 / F12-B-1 — Pretendard weight 범위 좁히기 ('45 920' → '400 700').
+// 모바일 LCP 16s 분석에서 variable font payload (~800KB) 가 LCP 직전 점유 의심.
+// Variable font weight axis 를 '400 700' 으로 한정하여 글리프 subset 효과 + browser hint 단순화.
+// 본문은 400, heading/bold 는 700 만 사용. font-medium(500), semibold(600) 같은
+// 중간 weight 는 variable axis 가 자동 보간하므로 hard cut 없음.
 const pretendard = localFont({
   src: '../public/fonts/PretendardVariable.woff2',
   display: 'swap',
   variable: '--font-pretendard',
-  weight: '45 920',
+  weight: '400 700',
   preload: true,
+  fallback: ['Pretendard', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -215,8 +221,10 @@ export default async function RootLayout({
             <Toaster />
           </LightboxProvider>
         </TooltipProvider>
-        {/* Vercel Speed Insights — Sprint 10 / Phase F-final Task #32. RUM 데이터 자동 수집. */}
-        <SpeedInsights />
+        {/* Vercel Speed Insights — Sprint 10 / Phase F-final Task #32. RUM 데이터 자동 수집.
+            Sprint 12 / F12-B-4: production 환경에서만 mount 하여 dev/staging 번들에서 제외 +
+            preview 환경에서는 측정 우선 noise 제거. */}
+        {process.env.NODE_ENV === 'production' ? <SpeedInsights /> : null}
       </body>
     </html>
   );
