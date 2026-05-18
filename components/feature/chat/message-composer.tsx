@@ -1,6 +1,7 @@
 /**
- * <MessageComposer> — 채팅 메시지 입력 (text + URL 자동 미리보기).
+ * <MessageComposer> — 채팅 메시지 입력 (text + 이미지 + URL 자동 미리보기).
  * 출처: docs/sprint/10-sprint-launch/design.md §7.1 + Phase D url-preview-inline 패턴 재사용
+ *      + docs/sprint/11-sprint-images/design.md §6.1~6.4 (Sprint 11 이미지 첨부)
  *
  * 정책:
  *  - 500자 limit (Zod 없이 inline 검증 — UI 즉시성 우선, server-side는 send-message.ts)
@@ -8,17 +9,21 @@
  *  - URL 감지: 본문에 단독 URL line 1개 포함되면 OG 사전 fetch → 전송 시 linkPreview 동봉
  *  - 마스킹: 클라이언트 즉시 (전송 전 사용자 경고)
  *  - rate limit: useChatRateLimit (클라이언트 가드) — 진정한 limit은 server-side
- *  - 이미지 첨부: Sprint 11 (UI 미노출)
+ *  - 이미지 첨부: Sprint 11 Phase D — S3 presigned URL + CloudFront CDN
+ *    (lib/storage/upload-chat-image.ts, 압축 20% / presign 40% / PUT 100% 진행률)
  *  - 모바일 키보드 대응: 컨테이너 sticky bottom + safe-area-inset-bottom
  */
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { Send } from 'lucide-react';
+import Image from 'next/image';
+import { ImagePlus, Send, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { sendChatMessage } from '@/lib/chat/send-message';
+import { uploadChatImage } from '@/lib/storage/upload-chat-image';
+import { uploadErrorMessage } from '@/lib/storage/error-messages';
 import { containsBadWord, maskBadWords } from '@/lib/chat/masking';
 import { enforceChatRateLimit } from '@/lib/chat/rate-limit';
 import { useChatRateLimit } from '@/hooks/use-chat-rate-limit';
@@ -73,8 +78,38 @@ export function MessageComposer({
   const [pendingLinkPreview, setPendingLinkPreview] = useState<LinkPreviewMeta | null>(null);
   const [previewFetching, setPreviewFetching] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const rateLimit = useChatRateLimit();
+
+  async function handleImageAttach(file: File) {
+    setIsUploading(true);
+    setUploadProgress(0);
+    try {
+      const result = await uploadChatImage({
+        file,
+        channelId,
+        onProgress: (pct) => setUploadProgress(pct),
+      });
+      if (result.ok) {
+        setImageUrl(result.url);
+        toast.success('이미지가 첨부되었습니다');
+        void logEvent('chat_image_upload', {
+          channel_kind: channelKindOf(channelId),
+          compressed_size_kb: Math.round(file.size / 1024),
+        });
+      } else {
+        toast.error(uploadErrorMessage(result.error));
+      }
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
 
   // 본문에서 첫 단독 URL 추출 → debounced OG fetch.
   // setState in effect 패턴 회피: 빈 URL/리셋은 마이크로태스크로 지연, fetch loading flag는 timeout 콜백 내부에서만.
@@ -146,7 +181,7 @@ export function MessageComposer({
   function handleSend() {
     if (disabled) return;
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed && !imageUrl) return;
     if (trimmed.length > MAX_LENGTH) {
       toast.error(`500자 이내로 입력하세요 (현재 ${trimmed.length}자)`);
       return;
@@ -156,13 +191,14 @@ export function MessageComposer({
       toast.error(guard.reason);
       return;
     }
-    if (containsBadWord(trimmed)) {
+    if (trimmed && containsBadWord(trimmed)) {
       toast.message('욕설이 감지되어 마스킹 후 전송됩니다.', {
         description: maskBadWords(trimmed),
       });
     }
 
     const payloadPreview = pendingLinkPreview;
+    const payloadImageUrl = imageUrl;
 
     startTransition(async () => {
       // Server-side rate limit (Firestore counter) — RTDB push 직전 게이트.
@@ -188,6 +224,7 @@ export function MessageComposer({
       const result = await sendChatMessage({
         channelId,
         content: trimmed,
+        ...(payloadImageUrl ? { imageUrl: payloadImageUrl } : {}),
         ...(payloadPreview ? { linkPreview: payloadPreview } : {}),
         author,
       });
@@ -195,10 +232,11 @@ export function MessageComposer({
         rateLimit.markSent();
         setText('');
         setPendingLinkPreview(null);
+        setImageUrl(null);
         void logEvent('chat_send', {
           channel_kind: channelKindOf(channelId),
-          has_image: false,
-          masked_count: containsBadWord(trimmed) ? 1 : 0,
+          has_image: Boolean(payloadImageUrl),
+          masked_count: trimmed && containsBadWord(trimmed) ? 1 : 0,
           has_link_preview: payloadPreview ? 1 : 0,
         });
       } else {
@@ -241,7 +279,70 @@ export function MessageComposer({
         <div className="mb-2 px-2 py-1.5 text-xs text-text-mute">미리보기 가져오는 중…</div>
       ) : null}
 
+      {imageUrl ? (
+        <div className="mb-2 inline-flex relative">
+          <Image
+            src={imageUrl}
+            alt="첨부 이미지 미리보기"
+            width={64}
+            height={64}
+            sizes="64px"
+            className="h-16 w-auto rounded-md border border-ink-line object-cover"
+          />
+          <button
+            type="button"
+            onClick={() => setImageUrl(null)}
+            aria-label="이미지 첨부 제거"
+            className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-vermilion text-ink-base hover:bg-vermilion-soft"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </div>
+      ) : isUploading ? (
+        <div
+          className="mb-2 flex w-40 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-bronze bg-ink-elev px-2 py-1.5"
+          role="status"
+          aria-live="polite"
+          aria-label={`이미지 업로드 진행 중 ${uploadProgress}%`}
+        >
+          <span className="text-[0.65rem] text-text-soft">업로드 중…</span>
+          <div className="h-1 w-full overflow-hidden rounded-full bg-ink-card-strong">
+            <div
+              className="h-full bg-bronze transition-[width] duration-200"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+          <span className="font-mono text-[0.65rem] tabular-nums text-text-mute">
+            {uploadProgress}%
+          </span>
+        </div>
+      ) : null}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        capture="environment"
+        className="sr-only"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) void handleImageAttach(f);
+        }}
+        aria-label="이미지 첨부"
+      />
+
       <div className="flex items-end gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isDisabled || isUploading || Boolean(imageUrl)}
+          aria-label="이미지 첨부"
+          className="shrink-0"
+        >
+          <ImagePlus className="h-4 w-4" aria-hidden="true" />
+        </Button>
         <textarea
           ref={textareaRef}
           value={text}
@@ -269,7 +370,7 @@ export function MessageComposer({
           variant="bronze"
           size="icon-sm"
           onClick={handleSend}
-          disabled={isDisabled || !text.trim() || !rateLimit.canSend}
+          disabled={isDisabled || (!text.trim() && !imageUrl) || !rateLimit.canSend || isUploading}
           aria-label="메시지 전송"
           className="shrink-0"
         >

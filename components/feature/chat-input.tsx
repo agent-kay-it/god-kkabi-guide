@@ -1,20 +1,25 @@
 /**
  * ChatInput — 채팅 메시지 입력 (텍스트 + 이미지 + 마스킹).
- * 출처: docs/sprint/03-sprint-mvp-v2/design.md §6 + lib/chat/{send-message,image-upload,masking}
+ * 출처: docs/sprint/03-sprint-mvp-v2/design.md §6 + lib/chat/{send-message,masking}
+ *      + docs/sprint/11-sprint-images/design.md §6 (Sprint 11: S3 + CloudFront 마이그레이션)
  *
  * - Enter = 전송 / Shift+Enter = 줄바꿈
- * - 이미지 첨부: 1MB 자동 압축 후 Storage 업로드
+ * - 이미지 첨부: Sprint 11 — S3 presigned URL + CloudFront CDN
+ *   (lib/storage/upload-chat-image.ts, uid는 서버 session에서 추출)
+ * - 진행률 콜백 (압축 20% / presign 40% / PUT 100%)
  * - 마스킹: 클라이언트 즉시 (전송 전 확인)
  */
 'use client';
 
 import { useState, useTransition, useRef } from 'react';
+import Image from 'next/image';
 import { ImagePlus, Send, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { sendChatMessage } from '@/lib/chat/send-message';
-import { uploadChatImage } from '@/lib/chat/image-upload';
+import { uploadChatImage } from '@/lib/storage/upload-chat-image';
+import { uploadErrorMessage } from '@/lib/storage/error-messages';
 import { containsBadWord, maskBadWords } from '@/lib/chat/masking';
 import { logEvent } from '@/lib/firebase/analytics';
 import { cn } from '@/lib/utils';
@@ -46,12 +51,18 @@ export function ChatInput({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File) {
     setIsUploading(true);
+    setUploadProgress(0);
     try {
-      const result = await uploadChatImage({ file, channelId, uid: author.uid });
+      const result = await uploadChatImage({
+        file,
+        channelId,
+        onProgress: (pct) => setUploadProgress(pct),
+      });
       if (result.ok) {
         setImageUrl(result.url);
         toast.success('이미지가 첨부되었습니다');
@@ -60,18 +71,11 @@ export function ChatInput({
           compressed_size_kb: Math.round(file.size / 1024),
         });
       } else {
-        const msg =
-          result.error === 'UNSUPPORTED_TYPE'
-            ? 'JPG/PNG/WebP 형식만 허용됩니다'
-            : result.error === 'TOO_LARGE_BEFORE_COMPRESS'
-              ? '10MB 이하 이미지만 업로드 가능합니다'
-              : result.error === 'COMPRESS_FAILED'
-                ? '이미지 압축에 실패했습니다'
-                : (result.message ?? '업로드에 실패했습니다');
-        toast.error(msg);
+        toast.error(uploadErrorMessage(result.error));
       }
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   }
@@ -120,11 +124,13 @@ export function ChatInput({
     <div className={cn('space-y-2 border-t border-ink-line bg-ink-card-strong p-3')}>
       {imageUrl ? (
         <div className="relative inline-block">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={imageUrl}
             alt="첨부 이미지 미리보기"
-            className="h-20 rounded-md border border-ink-line"
+            width={80}
+            height={80}
+            sizes="80px"
+            className="h-20 w-auto rounded-md border border-ink-line object-cover"
           />
           <button
             type="button"
@@ -135,13 +141,32 @@ export function ChatInput({
             <X className="h-3 w-3" />
           </button>
         </div>
+      ) : isUploading ? (
+        <div
+          className="flex h-20 w-32 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-bronze bg-ink-elev px-2"
+          role="status"
+          aria-live="polite"
+          aria-label={`이미지 업로드 진행 중 ${uploadProgress}%`}
+        >
+          <span className="text-[0.65rem] text-text-soft">업로드 중…</span>
+          <div className="h-1 w-full overflow-hidden rounded-full bg-ink-card-strong">
+            <div
+              className="h-full bg-bronze transition-[width] duration-200"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+          <span className="font-mono text-[0.65rem] tabular-nums text-text-mute">
+            {uploadProgress}%
+          </span>
+        </div>
       ) : null}
 
       <div className="flex items-end gap-2">
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          capture="environment"
           className="sr-only"
           onChange={(e) => {
             const f = e.target.files?.[0];

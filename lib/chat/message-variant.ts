@@ -1,15 +1,17 @@
 /**
  * MessageVariant resolver — RTDB ChatMessage → render variant.
  * 출처: docs/sprint/10-sprint-launch/design.md §7.2
+ *      + docs/sprint/11-sprint-images/design.md §6.7 (Sprint 11 image variant)
  *
  * 우선순위:
  *   1. deletedByOperator → { type: 'deleted', reason: 'operator' }
  *   2. hidden && !keptByOperator → { type: 'deleted', reason: 'hidden' }
- *   3. linkPreview 존재 → { type: 'link', content, linkPreview }
- *   4. default → { type: 'text', content }
+ *   3. imageUrl 존재 → { type: 'image', imageUrl, content? }  ← Sprint 11
+ *   4. linkPreview 존재 → { type: 'link', content, linkPreview }
+ *   5. default → { type: 'text', content }
  *
- * Sprint 11+: image variant 추가 예정 (현재 단계에서는 image variant 제거 — UI에서
- * image 첨부 기능 미노출).
+ * image > link 우선: 메시지가 이미지와 링크를 둘 다 동봉하면 시각적으로 더 강한
+ * 이미지를 메인 콘텐츠로 표시한다 (디자인 §6.7).
  */
 import type { ChatMessage } from '@/types/chat';
 import type { MessageVariant, LinkPreviewMeta } from './types';
@@ -51,6 +53,15 @@ export function resolveMessageVariant(message: ChatMessage): MessageVariant {
   }
   if (message.hidden && !message.keptByOperator) {
     return { type: 'deleted', reason: 'hidden' };
+  }
+  // Sprint 11 Phase D — image가 link보다 우선 (시각적 우선순위).
+  // RTDB rules가 imageUrl 도메인을 cdn(-staging)?.kkaebizigi.com으로 1차 검증.
+  if (typeof message.imageUrl === 'string' && message.imageUrl.length > 0) {
+    return {
+      type: 'image',
+      imageUrl: message.imageUrl,
+      ...(message.content ? { content: message.content } : {}),
+    };
   }
   const linkPreview = extractLinkPreview(message);
   if (linkPreview) {

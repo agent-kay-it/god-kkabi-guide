@@ -23,6 +23,8 @@ export interface ParsedChannel {
 export type MessageVariant =
   | { readonly type: 'text'; readonly content: string }
   | { readonly type: 'link'; readonly content: string; readonly linkPreview: LinkPreviewMeta }
+  /** Sprint 11 Phase D — 이미지 메시지 (image only / image + content). */
+  | { readonly type: 'image'; readonly imageUrl: string; readonly content?: string }
   | { readonly type: 'deleted'; readonly reason: 'self' | 'operator' | 'hidden' };
 
 /**

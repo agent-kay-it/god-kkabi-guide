@@ -88,4 +88,87 @@ describe('resolveMessageVariant', () => {
       expect(v.linkPreview.image).toBeUndefined();
     }
   });
+
+  // ========================================================================
+  // Sprint 11 Phase D — image variant
+  // ========================================================================
+
+  it('returns image variant when imageUrl present and content empty', () => {
+    const v = resolveMessageVariant(
+      msgOf({
+        content: '',
+        imageUrl: 'https://cdn-staging.kkaebizigi.com/chat/u1/20260518/abc.webp',
+      }),
+    );
+    expect(v.type).toBe('image');
+    if (v.type === 'image') {
+      expect(v.imageUrl).toBe('https://cdn-staging.kkaebizigi.com/chat/u1/20260518/abc.webp');
+      expect(v.content).toBeUndefined();
+    }
+  });
+
+  it('returns image variant with content when both present', () => {
+    const v = resolveMessageVariant(
+      msgOf({
+        content: '여기 스샷',
+        imageUrl: 'https://cdn.kkaebizigi.com/chat/u1/20260518/x.webp',
+      }),
+    );
+    expect(v.type).toBe('image');
+    if (v.type === 'image') {
+      expect(v.content).toBe('여기 스샷');
+      expect(v.imageUrl).toBe('https://cdn.kkaebizigi.com/chat/u1/20260518/x.webp');
+    }
+  });
+
+  it('prioritizes image over link when both present', () => {
+    const v = resolveMessageVariant(
+      msgOf({
+        content: 'see https://example.com',
+        imageUrl: 'https://cdn.kkaebizigi.com/chat/u1/20260518/x.webp',
+        linkPreview: {
+          url: 'https://example.com',
+          title: 'Example',
+          domain: 'example.com',
+        },
+      }),
+    );
+    expect(v.type).toBe('image');
+  });
+
+  it('prioritizes deleted/operator over image (image ignored when deleted)', () => {
+    const v = resolveMessageVariant(
+      msgOf({
+        deletedByOperator: true,
+        imageUrl: 'https://cdn.kkaebizigi.com/chat/u1/20260518/x.webp',
+      }),
+    );
+    expect(v).toEqual({ type: 'deleted', reason: 'operator' });
+  });
+
+  it('prioritizes deleted/hidden over image', () => {
+    const v = resolveMessageVariant(
+      msgOf({
+        hidden: true,
+        imageUrl: 'https://cdn.kkaebizigi.com/chat/u1/20260518/x.webp',
+      }),
+    );
+    expect(v).toEqual({ type: 'deleted', reason: 'hidden' });
+  });
+
+  it('returns image variant when hidden but keptByOperator', () => {
+    const v = resolveMessageVariant(
+      msgOf({
+        hidden: true,
+        keptByOperator: true,
+        imageUrl: 'https://cdn-staging.kkaebizigi.com/chat/u1/20260518/x.webp',
+      }),
+    );
+    expect(v.type).toBe('image');
+  });
+
+  it('treats empty-string imageUrl as no image (falls back to text/link)', () => {
+    const v = resolveMessageVariant(msgOf({ content: 'hi', imageUrl: '' }));
+    expect(v).toEqual({ type: 'text', content: 'hi' });
+  });
 });
