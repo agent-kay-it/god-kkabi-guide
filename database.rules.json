@@ -16,7 +16,7 @@
             "authorServerId": { ".validate": "!newData.exists() || newData.isString()" },
             "authorMunpaId": { ".validate": "!newData.exists() || newData.isString()" },
             "content": { ".validate": "newData.isString() && newData.val().length <= 500" },
-            "imageUrl": { ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^https:\\/\\/firebasestorage\\.googleapis\\.com\\//))" },
+            "imageUrl": { ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^https:\\/\\/cdn(-staging)?\\.kkaebizigi\\.com\\//))" },
             "linkPreview": {
               "url": { ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\//) && newData.val().length <= 2048" },
               "title": { ".validate": "newData.isString() && newData.val().length <= 200" },
