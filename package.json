@@ -24,7 +24,11 @@
     "audit:all": "pnpm audit:arch && pnpm audit:design",
     "lighthouse": "./scripts/lighthouse-ci.sh",
     "lighthouse:desktop": "./scripts/lighthouse-ci.sh --desktop",
-    "lighthouse:mobile": "./scripts/lighthouse-ci.sh --mobile"
+    "lighthouse:mobile": "./scripts/lighthouse-ci.sh --mobile",
+    "seed:upload-images": "node scripts/upload-seed-images.mjs",
+    "seed:staging-posts": "tene run -- node scripts/seed-staging-posts.mjs",
+    "perf:baseline": "node scripts/lighthouse-baseline.mjs",
+    "perf:analyze": "ANALYZE=true tene run -- next build"
   },
   "dependencies": {
     "@auth/firebase-adapter": "^2.11.2",
@@ -61,6 +65,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.2.6",
     "@next/eslint-plugin-next": "^16.2.6",
     "@tailwindcss/postcss": "^4.3.0",
     "@testing-library/jest-dom": "^6.6.3",

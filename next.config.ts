@@ -1,5 +1,15 @@
 import type { NextConfig } from 'next';
 import { withSentryConfig } from '@sentry/nextjs';
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+/**
+ * Sprint 12 / F12-A-4 — @next/bundle-analyzer 통합.
+ * 사용: ANALYZE=true pnpm build → .next/analyze/{client,nodejs}.html 생성
+ */
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: false,
+});
 
 const nextConfig: NextConfig = {
   images: {
@@ -116,4 +126,4 @@ const sentryBuildOptions = {
   automaticVercelMonitors: false,
 };
 
-export default withSentryConfig(nextConfig, sentryBuildOptions);
+export default withSentryConfig(withBundleAnalyzer(nextConfig), sentryBuildOptions);
