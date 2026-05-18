@@ -28,7 +28,13 @@
     "seed:upload-images": "node scripts/upload-seed-images.mjs",
     "seed:staging-posts": "tene run -- node scripts/seed-staging-posts.mjs",
     "perf:baseline": "node scripts/lighthouse-baseline.mjs",
-    "perf:analyze": "ANALYZE=true tene run -- next build"
+    "perf:analyze": "ANALYZE=true tene run -- next build",
+    "test:e2e": "./scripts/test-e2e.sh",
+    "test:e2e:staging": "./scripts/test-e2e.sh --staging",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:setup": "./scripts/test-e2e.sh --setup",
+    "test:e2e:report": "playwright show-report e2e/playwright-report"
   },
   "dependencies": {
     "@auth/firebase-adapter": "^2.11.2",
@@ -65,8 +71,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@next/bundle-analyzer": "^16.2.6",
     "@next/eslint-plugin-next": "^16.2.6",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",

@@ -1,0 +1,121 @@
+name: E2E
+
+# Sprint 13 / F13-A-6 — Vercel preview deploy 대기 후 Playwright e2e 실행.
+# 결과 HTML report 를 artifact 로 업로드.
+#
+# 정책:
+#  - draft PR 제외 (perf 비용 절감)
+#  - chromium-desktop + chromium-mobile 만 실행 (CI 기본). webkit 은 nightly cron 별도
+#  - workers=2, retries=2 (config 에서 IS_CI 분기)
+#  - storageState 는 secret (Base64) 으로 주입 → CI 에서 e2e/.storage/ 복원
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+  push:
+    branches: [staging, main]
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: '대상 URL (default: 자동 Vercel preview)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  playwright:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium-desktop, chromium-mobile]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        run: pnpm playwright install --with-deps chromium
+
+      - name: Restore storageState (admin/regular/banned/new)
+        env:
+          E2E_STORAGE_ADMIN_B64: ${{ secrets.E2E_STORAGE_ADMIN_B64 }}
+          E2E_STORAGE_REGULAR_B64: ${{ secrets.E2E_STORAGE_REGULAR_B64 }}
+          E2E_STORAGE_BANNED_B64: ${{ secrets.E2E_STORAGE_BANNED_B64 }}
+          E2E_STORAGE_NEW_B64: ${{ secrets.E2E_STORAGE_NEW_B64 }}
+        run: |
+          mkdir -p e2e/.storage
+          if [ -n "$E2E_STORAGE_ADMIN_B64" ]; then echo "$E2E_STORAGE_ADMIN_B64" | base64 -d > e2e/.storage/admin.json; fi
+          if [ -n "$E2E_STORAGE_REGULAR_B64" ]; then echo "$E2E_STORAGE_REGULAR_B64" | base64 -d > e2e/.storage/regular.json; fi
+          if [ -n "$E2E_STORAGE_BANNED_B64" ]; then echo "$E2E_STORAGE_BANNED_B64" | base64 -d > e2e/.storage/banned.json; fi
+          if [ -n "$E2E_STORAGE_NEW_B64" ]; then echo "$E2E_STORAGE_NEW_B64" | base64 -d > e2e/.storage/new.json; fi
+
+      - name: Wait for Vercel Preview
+        id: vercel
+        if: github.event_name == 'pull_request'
+        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 600
+          check_interval: 15
+
+      - name: Resolve target URL
+        id: url
+        run: |
+          if [ -n "${{ github.event.inputs.base_url }}" ]; then
+            echo "target=${{ github.event.inputs.base_url }}" >> "$GITHUB_OUTPUT"
+          elif [ -n "${{ steps.vercel.outputs.url }}" ]; then
+            echo "target=${{ steps.vercel.outputs.url }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "target=https://staging.kkaebizigi.com" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Playwright (${{ matrix.project }})
+        env:
+          E2E_BASE_URL: ${{ steps.url.outputs.target }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          CI: 'true'
+        run: pnpm playwright test --project=${{ matrix.project }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: e2e/playwright-report
+          retention-days: 14
+
+      - name: Upload test-results (failure traces + screenshots)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results-${{ matrix.project }}
+          path: e2e/test-results
+          retention-days: 14
+
+      - name: Comment summary on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: e2e-${{ matrix.project }}
+          message: |
+            ### Playwright E2E — `${{ matrix.project }}`
+            Target: ${{ steps.url.outputs.target }}
+            Result: ${{ job.status }}
+            Artifacts: `playwright-report-${{ matrix.project }}` (HTML), `playwright-test-results-${{ matrix.project }}` (traces on failure)

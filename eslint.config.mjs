@@ -61,6 +61,17 @@ export default tseslint.config(
     },
   },
 
+  // ─── E2E (Playwright) — Sprint 13 / F13-A ───
+  // Playwright 의 `use` callback 파라미터가 React Hook 처럼 인식되는 false-positive 차단.
+  // Playwright 컨벤션이므로 e2e/ 디렉토리 전체에서 react-hooks/rules-of-hooks off.
+  {
+    files: ['e2e/**/*.{ts,tsx}'],
+    rules: {
+      'react-hooks/rules-of-hooks': 'off',
+      'no-console': 'off',
+    },
+  },
+
   // ─── ignores ───
   {
     ignores: [
