@@ -1,0 +1,70 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-13-qa",
+  "name": "Comprehensive Integration QA via Chrome MCP",
+  "createdAt": "2026-05-18T12:30:00.000Z",
+  "trustLevel": 3,
+  "trustLevelLabel": "Auto",
+  "automationScope": "auto",
+  "stopAfter": "report",
+  "phase": "prd",
+  "currentPhase": "Phase A 완료 — PRD/Plan/Design 작성 완료, Sprint 12 완료 후 Phase B (Do) 진입",
+  "phaseHistory": [
+    {
+      "phase": "prd",
+      "enteredAt": "2026-05-18T12:30:00.000Z",
+      "exitedAt": "2026-05-18T12:45:00.000Z",
+      "deliverable": "docs/sprint/13-sprint-qa/prd.md"
+    },
+    {
+      "phase": "plan",
+      "enteredAt": "2026-05-18T12:45:00.000Z",
+      "exitedAt": "2026-05-18T13:00:00.000Z",
+      "deliverable": "docs/sprint/13-sprint-qa/plan.md"
+    },
+    {
+      "phase": "design",
+      "enteredAt": "2026-05-18T13:00:00.000Z",
+      "exitedAt": "2026-05-18T13:15:00.000Z",
+      "deliverable": "docs/sprint/13-sprint-qa/design.md"
+    }
+  ],
+  "features": [
+    { "id": "F13-A", "name": "Playwright workspace + CI 인프라", "priority": "P0", "tasks": ["114", "115", "116", "117", "118", "119", "120", "121"] },
+    { "id": "F13-B", "name": "Auth + 세션 시나리오 (8건)", "priority": "P0", "tasks": ["122", "123"] },
+    { "id": "F13-C", "name": "Post CRUD + 댓글 + 좋아요 + 북마크 시나리오 (12건)", "priority": "P0", "tasks": ["124", "125"] },
+    { "id": "F13-D", "name": "Chat 3-tier + 이미지 + 신고 시나리오 (10건)", "priority": "P0", "tasks": ["126", "127"] },
+    { "id": "F13-E", "name": "Profile + 회원탈퇴 + 프로필 사진 시나리오 (6건)", "priority": "P1", "tasks": ["128", "129"] },
+    { "id": "F13-F", "name": "Admin 시나리오 (6건)", "priority": "P1", "tasks": ["130", "131"] },
+    { "id": "F13-G", "name": "Search + Discovery + Recent-views 시나리오 (5건)", "priority": "P2", "tasks": ["132", "133"] },
+    { "id": "F13-H", "name": "a11y + 시각 회귀 + Chrome MCP 탐색 + 종합 보고 (13건)", "priority": "P0", "tasks": ["134", "135", "136", "137", "138", "139", "140"] }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": "Playwright 시나리오 50+ pass / 0 fail (목표 60건)", "status": "pending" },
+    { "id": "DoD-2", "criterion": "0 console error / 0 4xx-5xx network", "status": "pending" },
+    { "id": "DoD-3", "criterion": "a11y critical/serious violations 0", "status": "pending" },
+    { "id": "DoD-4", "criterion": "7-Layer dataFlowIntegrity 56/56 ✅", "status": "pending" },
+    { "id": "DoD-5", "criterion": "Visual regression diff < 1%", "status": "pending" },
+    { "id": "DoD-6", "criterion": "Chrome MCP 탐색 10건 통과", "status": "pending" },
+    { "id": "DoD-7", "criterion": "Coverage > 70% on lib/", "status": "pending" },
+    { "id": "DoD-8", "criterion": ".github/workflows/e2e.yml green", "status": "pending" },
+    { "id": "DoD-9", "criterion": "Sprint 13 종합 보고서 — P0/P1 bug 0", "status": "pending" },
+    { "id": "DoD-10", "criterion": "prod cutover 체크리스트 작성", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 300000,
+    "phaseTimeoutHours": 120,
+    "minMatchRate": 90
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "pending",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  },
+  "dependsOn": ["sprint-12-perf"]
+}
