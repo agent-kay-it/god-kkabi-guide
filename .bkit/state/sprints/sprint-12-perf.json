@@ -6,9 +6,11 @@
   "trustLevel": 3,
   "trustLevelLabel": "Auto",
   "automationScope": "auto",
-  "stopAfter": "report",
-  "phase": "report",
-  "currentPhase": "Phase G 완료 — Report 작성, Archive 사용자 승인 대기",
+  "stopAfter": "archived",
+  "phase": "archived",
+  "currentPhase": "Phase H 완료 — Sprint 12 Archive (사용자 승인 2026-05-18)",
+  "archivedAt": "2026-05-18T22:45:00.000Z",
+  "archiveReason": "사용자 승인 — seed 작업은 Firebase 단일 프로젝트 (god-kkabi-guide, prod tag) 영향 우려로 생략. 측정은 Sprint 13 e2e 작업 중 자연 발생.",
   "phaseHistory": [
     {
       "phase": "prd",
@@ -51,6 +53,12 @@
       "enteredAt": "2026-05-18T22:15:00.000Z",
       "exitedAt": "2026-05-18T22:30:00.000Z",
       "deliverable": "docs/sprint/12-sprint-perf/reports/sprint-12-final.md"
+    },
+    {
+      "phase": "archived",
+      "enteredAt": "2026-05-18T22:45:00.000Z",
+      "exitedAt": "2026-05-18T22:45:00.000Z",
+      "deliverable": "terminal — 사용자 승인. seed 작업 생략 결정 (Firebase 단일 prod 프로젝트)."
     }
   ],
   "features": [
