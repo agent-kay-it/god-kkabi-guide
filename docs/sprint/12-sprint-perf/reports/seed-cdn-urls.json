@@ -1,0 +1,40 @@
+{
+  "sprint": "sprint-12-perf",
+  "feature": "F12-A-2",
+  "bucket": "kkaebizigi-staging",
+  "prefix": "posts/seed-sprint12",
+  "cdnBase": "https://cdn-staging.kkaebizigi.com",
+  "uploadedAt": "2026-05-18T12:23:23.163Z",
+  "items": [
+    {
+      "file": "banner-baekgwi.webp",
+      "objectKey": "posts/seed-sprint12/01krxgmwmq9x4v2agb7v9k6g43.webp",
+      "cdnUrl": "https://cdn-staging.kkaebizigi.com/posts/seed-sprint12/01krxgmwmq9x4v2agb7v9k6g43.webp",
+      "uploadedAt": "2026-05-18T12:23:21.552Z"
+    },
+    {
+      "file": "banner-coop-battle.webp",
+      "objectKey": "posts/seed-sprint12/01krxgmx6gpctnk5jtdcqqm07p.webp",
+      "cdnUrl": "https://cdn-staging.kkaebizigi.com/posts/seed-sprint12/01krxgmx6gpctnk5jtdcqqm07p.webp",
+      "uploadedAt": "2026-05-18T12:23:21.945Z"
+    },
+    {
+      "file": "banner-demon-king.webp",
+      "objectKey": "posts/seed-sprint12/01krxgmxjs4gejt04n1aq74rps.webp",
+      "cdnUrl": "https://cdn-staging.kkaebizigi.com/posts/seed-sprint12/01krxgmxjs4gejt04n1aq74rps.webp",
+      "uploadedAt": "2026-05-18T12:23:22.353Z"
+    },
+    {
+      "file": "banner-fantasy-explore.webp",
+      "objectKey": "posts/seed-sprint12/01krxgmxzhd3p0f8626jq18t74.webp",
+      "cdnUrl": "https://cdn-staging.kkaebizigi.com/posts/seed-sprint12/01krxgmxzhd3p0f8626jq18t74.webp",
+      "uploadedAt": "2026-05-18T12:23:22.771Z"
+    },
+    {
+      "file": "banner-infinite-gear.webp",
+      "objectKey": "posts/seed-sprint12/01krxgmyckqg177cs61ny641zg.webp",
+      "cdnUrl": "https://cdn-staging.kkaebizigi.com/posts/seed-sprint12/01krxgmyckqg177cs61ny641zg.webp",
+      "uploadedAt": "2026-05-18T12:23:23.163Z"
+    }
+  ]
+}
