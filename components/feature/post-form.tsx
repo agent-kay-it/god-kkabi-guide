@@ -6,7 +6,7 @@
  * 책임:
  *  - react-hook-form + zodResolver (PostInputSchema)
  *  - Markdown lite 입력 (Sprint 10: + 라이브 프리뷰 + URL 미리보기 + autosave)
- *  - 이미지 첨부 3개 (Sprint 11에서 AWS S3로 이전 예정 — Spark plan 제한)
+ *  - 이미지 첨부 3개 (Sprint 11 / Phase C: AWS S3 + CloudFront CDN 직접 업로드)
  *  - 태그 5개 (사전 정의 화이트리스트)
  *  - 성공 시 router.push(`/post/${postId}`)
  *
@@ -14,6 +14,15 @@
  *  - localStorage autosave (2s debounce, key = `post-draft-{userId}`, create 모드만)
  *  - 본문 옆 라이브 프리뷰 (md+ split-view, sm 이하 toggle)
  *  - 단독 URL 줄 감지 → 1s debounce → /api/og-preview → 인라인 미리보기 카드
+ *
+ * Sprint 11 / Phase C 변경:
+ *  - 이미지 업로드: Firebase Storage → S3 presigned URL → CloudFront 캐싱
+ *    (lib/storage/upload-post-image.ts 사용, uid는 서버 session에서 추출)
+ *  - 진행률 UI: per-image progress bar (onProgress 콜백 — 압축 20%, presign 40%, PUT 100%)
+ *  - 모바일 카메라 직접 촬영: input capture="environment"
+ *  - 반응형 그리드: 1열 (모바일) / 2열 (sm) / 3열 (md+)
+ *  - 에러 메시지: lib/storage/error-messages.ts 공용 매핑 사용
+ *  - GIF 허용 추가 (애니메이션 보존, design §5)
  */
 'use client';
 
@@ -26,7 +35,8 @@ import { ImagePlus, X, Eye, EyeOff, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { createPost, updatePost } from '@/lib/post/actions';
-import { uploadPostImage } from '@/lib/post/image-upload';
+import { uploadPostImage } from '@/lib/storage/upload-post-image';
+import { uploadErrorMessage } from '@/lib/storage/error-messages';
 import { PostInputSchema } from '@/lib/post/schema';
 import { logEvent } from '@/lib/firebase/analytics';
 import {
@@ -72,6 +82,7 @@ export function PostForm({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<PostInput>({
@@ -146,24 +157,21 @@ export function PostForm({
       return;
     }
     setUploadingIndex(currentCount);
+    setUploadProgress(0);
     try {
-      const result = await uploadPostImage({ file, uid: authorUid, index: currentCount });
+      const result = await uploadPostImage({
+        file,
+        onProgress: (pct) => setUploadProgress(pct),
+      });
       if (result.ok) {
         form.setValue('imageUrls', [...imageUrls, result.url], { shouldDirty: true });
         toast.success('이미지가 추가되었습니다');
       } else {
-        const msg =
-          result.error === 'UNSUPPORTED_TYPE'
-            ? 'JPG/PNG/WebP만 허용됩니다'
-            : result.error === 'TOO_LARGE_BEFORE_COMPRESS'
-              ? '10MB 이하 이미지만 업로드 가능합니다'
-              : result.error === 'COMPRESS_FAILED'
-                ? '이미지 압축에 실패했습니다'
-                : (result.message ?? '업로드 실패');
-        toast.error(msg);
+        toast.error(uploadErrorMessage(result.error));
       }
     } finally {
       setUploadingIndex(null);
+      setUploadProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   }
@@ -359,35 +367,54 @@ export function PostForm({
             )}
           />
 
-          {/* 이미지 첨부 */}
+          {/* 이미지 첨부 — Sprint 11 / Phase C: S3 + CloudFront, 반응형 grid + 진행률 UI */}
           <div className="space-y-3">
             <Label className="text-text">
               이미지 ({imageUrls.length}/{POST_LIMITS.images.max})
             </Label>
-            {imageUrls.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
+            {imageUrls.length > 0 || uploadingIndex !== null ? (
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
                 {imageUrls.map((url, idx) => (
                   <div
                     key={`${url}-${idx}`}
-                    className="relative h-20 w-20 overflow-hidden rounded-md border border-ink-line"
+                    className="relative aspect-square overflow-hidden rounded-md border border-ink-line"
                   >
                     <Image
                       src={url}
                       alt={`첨부 ${idx + 1}`}
                       fill
-                      sizes="80px"
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
                     <button
                       type="button"
                       onClick={() => handleImageRemove(url)}
                       aria-label={`이미지 ${idx + 1} 제거`}
-                      className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-vermilion text-ink-base hover:bg-vermilion-soft"
+                      className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-vermilion text-ink-base shadow-md hover:bg-vermilion-soft"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 ))}
+                {uploadingIndex !== null ? (
+                  <div
+                    className="relative flex aspect-square flex-col items-center justify-center gap-2 rounded-md border border-dashed border-bronze bg-ink-elev p-3"
+                    role="status"
+                    aria-live="polite"
+                    aria-label={`이미지 업로드 진행 중 ${uploadProgress}%`}
+                  >
+                    <span className="text-xs text-text-soft">업로드 중…</span>
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-ink-card-strong">
+                      <div
+                        className="h-full bg-bronze transition-[width] duration-200"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                    <span className="font-mono text-xs tabular-nums text-text-mute">
+                      {uploadProgress}%
+                    </span>
+                  </div>
+                ) : null}
               </div>
             ) : null}
             {imageUrls.length < POST_LIMITS.images.max ? (
@@ -395,7 +422,8 @@ export function PostForm({
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  capture="environment"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) void handleImageAdd(file);
@@ -414,6 +442,9 @@ export function PostForm({
                   <ImagePlus className="h-4 w-4" />
                   {uploadingIndex !== null ? '업로드 중...' : '이미지 추가'}
                 </Button>
+                <p className="text-xs text-text-mute">
+                  JPG / PNG / WebP / GIF · 최대 5MB · 자동 압축 후 업로드
+                </p>
               </>
             ) : null}
           </div>

@@ -23,8 +23,13 @@ const POST_CATEGORIES: readonly PostCategory[] = ['build', 'guide', 'review'] as
 /** 태그 화이트리스트 prefix — 실제 ID는 prefix:value 형태 */
 const TAG_PREFIX_RE = /^(class|jinryeong|content|skill|equipment|munpa):[a-z0-9_-]{1,40}$/;
 
-/** Firebase Storage URL 화이트리스트 */
-const STORAGE_URL_RE = /^https:\/\/firebasestorage\.googleapis\.com\//;
+/**
+ * 이미지 호스트 URL 화이트리스트.
+ * Sprint 11 Phase C — Firebase Storage → AWS CloudFront(CDN) 마이그레이션.
+ * 기존 firebasestorage 데이터는 prod에 0건이므로 안전하게 교체.
+ * prod = `cdn.kkaebizigi.com`, staging/dev = `cdn-staging.kkaebizigi.com`.
+ */
+export const STORAGE_URL_RE = /^https:\/\/cdn(-staging)?\.kkaebizigi\.com\//;
 
 export const PostInputSchema = z
   .object({
@@ -43,7 +48,7 @@ export const PostInputSchema = z
       .array(z.string().regex(TAG_PREFIX_RE, '태그 형식 오류 (prefix:value)'))
       .max(POST_LIMITS.tags.max, `태그는 최대 ${POST_LIMITS.tags.max}개`),
     imageUrls: z
-      .array(z.string().regex(STORAGE_URL_RE, '이미지 URL은 Firebase Storage만 허용'))
+      .array(z.string().regex(STORAGE_URL_RE, '이미지 URL은 kkaebizigi CDN만 허용'))
       .max(POST_LIMITS.images.max, `이미지는 최대 ${POST_LIMITS.images.max}개`),
   })
   .strict();
