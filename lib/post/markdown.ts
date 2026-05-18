@@ -36,8 +36,14 @@ import { remarkAutolinkBareUrlsPlugin } from './remark-autolink-bare-urls';
 
 type SanitizeSchema = typeof defaultSchema;
 
-/** Sprint V2 P3.A — CA-m4: 허용된 img src 도메인 화이트리스트 */
+/**
+ * Sprint V2 P3.A — CA-m4: 허용된 img src 도메인 화이트리스트.
+ * Sprint 11 Phase E: CloudFront CDN 추가. firebasestorage는 레거시 호환 유지
+ * (Sprint 11 이전 데이터는 0건이라 점진 제거 가능하지만 안전 마진 유지).
+ */
 const ALLOWED_IMG_HOSTS: ReadonlySet<string> = new Set([
+  'cdn.kkaebizigi.com',
+  'cdn-staging.kkaebizigi.com',
   'firebasestorage.googleapis.com',
 ]);
 

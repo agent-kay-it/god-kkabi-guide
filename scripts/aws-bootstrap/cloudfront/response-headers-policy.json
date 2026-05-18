@@ -1,0 +1,32 @@
+{
+  "Name": "kkaebizigi-immutable-image-cache",
+  "Comment": "Sprint 11 Phase E — 이미지 객체에 Cache-Control: public, max-age=31536000, immutable. ULID 기반 path가 unique하므로 안전.",
+  "CorsConfig": {
+    "AccessControlAllowCredentials": false,
+    "AccessControlAllowHeaders": { "Items": ["*"], "Quantity": 1 },
+    "AccessControlAllowMethods": { "Items": ["GET", "HEAD"], "Quantity": 2 },
+    "AccessControlAllowOrigins": { "Items": ["*"], "Quantity": 1 },
+    "AccessControlExposeHeaders": { "Items": [], "Quantity": 0 },
+    "AccessControlMaxAgeSec": 600,
+    "OriginOverride": false
+  },
+  "SecurityHeadersConfig": {
+    "ContentTypeOptions": {
+      "Override": true
+    },
+    "ReferrerPolicy": {
+      "Override": true,
+      "ReferrerPolicy": "strict-origin-when-cross-origin"
+    }
+  },
+  "CustomHeadersConfig": {
+    "Quantity": 1,
+    "Items": [
+      {
+        "Header": "Cache-Control",
+        "Value": "public, max-age=31536000, immutable",
+        "Override": true
+      }
+    ]
+  }
+}

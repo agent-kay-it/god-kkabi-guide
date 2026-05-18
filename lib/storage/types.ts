@@ -11,8 +11,9 @@
  * 'posts' (복수형) 선택 이유: AWS IAM policy, S3 lifecycle rule, CORS rule이
  * 모두 `posts/*`를 허용 prefix로 정의 (RESTful 컬렉션 컨벤션). 'chat'은
  * 셀 수 없는 명사라 단수 유지 — 인프라 정책과 1:1 매핑.
+ * Sprint 11 Phase E — 'profiles' 추가 (사용자 아바타). lifecycle 없음 (영구 보관).
  */
-export type ImageKind = 'posts' | 'chat';
+export type ImageKind = 'posts' | 'chat' | 'profiles';
 
 /** S3에 허용되는 MIME 화이트리스트. */
 export type AllowedMime =
