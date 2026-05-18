@@ -1,13 +1,15 @@
 /**
- * sitemap.xml — Sprint V6 P3.E.
+ * sitemap.xml — Sprint V6 P3.E + Sprint 12 / F12-D-5.
  *
- * 사용자 도달 가능 정적 라우트 일괄 등록.
- * robots: index:false (1인 운영 정책) 이지만 sitemap은 내부 navigation graph로 유지.
+ * 정적 라우트 + 최근 100개 게시물 동적 포함.
+ * Sprint 14 prod cutover 시 NEXT_PUBLIC_ROBOTS_INDEX=true 와 동시에
+ * Google Search Console 에 본 sitemap.xml 제출.
  *
- * Wiki entity (직업/진령/스킬 등 ~100항목)는 anchor `#id` 단위라 별도 등록 안 함 —
- * 검색 엔진은 페이지 자체 인덱스 (현재 disabled) 후 본문 anchor를 자동 탐지.
+ * Wiki entity 는 anchor `#id` 단위라 별도 등록 안 함 — 검색 엔진이 본문 anchor 자동 탐지.
  */
 import type { MetadataRoute } from 'next';
+
+import { listPosts } from '@/lib/post/actions';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.com';
@@ -37,14 +39,44 @@ const STATIC_ROUTES: ReadonlyArray<{
   // 도구
   { path: '/simulator', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/class-quiz', changeFrequency: 'monthly', priority: 0.5 },
+  // 커뮤니티 (정적 진입점)
+  { path: '/post', changeFrequency: 'daily', priority: 0.8 },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+/** Sprint 12 / F12-D-5 — 최근 게시물 sitemap entry (페이지네이션 1페이지 = 20개) */
+async function fetchRecentPostEntries(): Promise<MetadataRoute.Sitemap> {
+  try {
+    // 5페이지 (100개) 까지 cursor pagination 으로 수집.
+    const entries: MetadataRoute.Sitemap = [];
+    let cursor: number | undefined = undefined;
+    for (let i = 0; i < 5; i++) {
+      const result = await listPosts({ sort: 'latest' }, cursor);
+      for (const post of result.items) {
+        entries.push({
+          url: `${SITE_URL}/post/${post.id}`,
+          lastModified: new Date(post.updatedAtMs ?? post.createdAtMs),
+          changeFrequency: 'weekly',
+          priority: 0.6,
+        });
+      }
+      if (!result.nextCursor) break;
+      cursor = result.nextCursor;
+    }
+    return entries;
+  } catch {
+    // Firestore 미설정 / 권한 누락 — sitemap 생성 차단 금지, 정적 라우트만 반환
+    return [];
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  return STATIC_ROUTES.map((r) => ({
+  const staticEntries = STATIC_ROUTES.map((r) => ({
     url: `${SITE_URL}${r.path}`,
     lastModified: now,
     changeFrequency: r.changeFrequency,
     priority: r.priority,
   }));
+  const postEntries = await fetchRecentPostEntries();
+  return [...staticEntries, ...postEntries];
 }

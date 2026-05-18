@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   title: '장비 가이드 — 제련 시스템 + 강화 + 우선순위',
   description:
     '갓깨비 키우기 제련 시스템과 자원 우선순위. 무기 → 스킬 → 진령 → 장비 → 코스튬 순. 강화 수치 자동 이전 룰.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 export default async function EquipmentPage(): Promise<React.JSX.Element> {

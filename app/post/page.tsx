@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   title: '커뮤니티 — 빌드 · 공략 · 후기',
   description:
     '갓깨비 키우기 사용자 게시판. 빌드 / 공략 / 후기 카테고리. 본인 빌드 공유 + 댓글 + 좋아요.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 const SORTS: readonly PostSort[] = ['latest', 'popular', 'hot'];

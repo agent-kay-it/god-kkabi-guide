@@ -21,6 +21,10 @@ import {
 import { renderMarkdownToSafeHtml } from '@/lib/post/markdown';
 import { MarkdownView } from '@/components/domain/markdown-view';
 import { PostMeta, CommentThread, Note } from '@/components/domain';
+import {
+  ArticleStructuredData,
+  BreadcrumbStructuredData,
+} from '@/components/feature/structured-data';
 import { CommentItem } from '@/components/feature/comment-item';
 import { CommentForm } from '@/components/feature/comment-form';
 import { LikeButton } from '@/components/feature/like-button';
@@ -34,12 +38,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
   const post = await getPost(id);
   if (!post) {
+    // 존재하지 않는 게시물 — 영구 noindex
     return { title: '게시물 없음', robots: { index: false, follow: false } };
   }
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 의 robotsConfig 로 cascade.
+  // Sprint 12 / F12-D-6 — canonical 은 본 post 의 표준 URL.
   return {
     title: post.title,
     description: post.bodyExcerpt,
-    robots: { index: false, follow: false },
+    alternates: { canonical: `/post/${id}` },
   };
 }
 
@@ -79,8 +86,31 @@ export default async function PostDetailPage({ params }: PageProps): Promise<Rea
   ]);
   const isLiked = reactionMap.get(post.id) ?? false;
 
+  // Sprint 12 / F12-D-4 — Article + Breadcrumb JSON-LD
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.com';
+  const postUrl = `${SITE_URL}/post/${post.id}`;
+
   return (
     <main className="mx-auto max-w-3xl px-5 pb-20 pt-8 sm:px-[5vw]">
+      <ArticleStructuredData
+        post={{
+          id: post.id,
+          title: post.title,
+          bodyExcerpt: post.bodyExcerpt,
+          authorNickname: post.authorNickname,
+          imageUrls: post.imageUrls,
+          createdAtMs: post.createdAtMs,
+          updatedAtMs: post.updatedAtMs,
+        }}
+        url={postUrl}
+      />
+      <BreadcrumbStructuredData
+        items={[
+          { position: 1, name: '홈', url: SITE_URL },
+          { position: 2, name: '커뮤니티', url: `${SITE_URL}/post` },
+          { position: 3, name: post.title.slice(0, 60), url: postUrl },
+        ]}
+      />
       <article className="space-y-6">
         <header className="space-y-3">
           <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-text sm:text-3xl">

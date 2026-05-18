@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   title: '이벤트 · 쿠폰 — 갓깨비 키우기 가이드',
   description:
     '갓깨비 키우기 이벤트 6종 (상시·정기·한정·콜라보·시즌·일일) 대응 전략. 누적 소비 이벤트, 홍길동 확정 라인, 쿠폰 코드 입력 경로 가이드.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
   alternates: { canonical: '/event' },
 };
 

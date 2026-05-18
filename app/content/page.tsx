@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   title: '콘텐츠 가이드 — 던전 · PvP · 이벤트 · 메커니즘',
   description:
     '갓깨비 키우기 콘텐츠 22종. 진령/무한/보스/비경 던전, 결투장 PvP, 이벤트 6종, 진령 시스템 메커니즘 6, 자동사냥 메타 5.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 export default async function ContentPage(): Promise<React.JSX.Element> {

@@ -23,7 +23,7 @@ import {
 export const metadata: Metadata = {
   title: '직업 진단',
   description: '7문항으로 본인에게 맞는 직업 추천. 전사 / 검객 / 영매 중 베스트 매칭.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 export default function ClassQuizPage(): React.JSX.Element {
