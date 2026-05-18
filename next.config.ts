@@ -45,8 +45,8 @@ const nextConfig: NextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
-              "img-src 'self' https://play-lh.googleusercontent.com https://lh3.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com https://i.ytimg.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net data: blob:",
-              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://*.firebasedatabase.app https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://pagead2.googlesyndication.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io https://vitals.vercel-insights.com",
+              "img-src 'self' https://play-lh.googleusercontent.com https://lh3.googleusercontent.com https://is1-ssl.mzstatic.com https://firebasestorage.googleapis.com https://cdn.kkaebizigi.com https://cdn-staging.kkaebizigi.com https://i.ytimg.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net data: blob:",
+              "connect-src 'self' https://firestore.googleapis.com https://*.firebaseio.com https://*.firebasedatabase.app https://www.google-analytics.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://pagead2.googlesyndication.com https://*.s3.ap-northeast-2.amazonaws.com https://cdn.kkaebizigi.com https://cdn-staging.kkaebizigi.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io https://vitals.vercel-insights.com",
               "font-src 'self' https://fonts.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
