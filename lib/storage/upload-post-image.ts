@@ -75,7 +75,7 @@ export async function uploadPostImage(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        kind: 'post',
+        kind: 'posts',
         contentType: compressed.type,
         sizeBytes: compressed.size,
       }),
