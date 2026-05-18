@@ -1,0 +1,66 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-12-perf",
+  "name": "Performance & Production Readiness",
+  "createdAt": "2026-05-18T11:55:00.000Z",
+  "trustLevel": 3,
+  "trustLevelLabel": "Auto",
+  "automationScope": "auto",
+  "stopAfter": "report",
+  "phase": "prd",
+  "currentPhase": "Phase A 완료 — PRD/Plan/Design 작성 완료, Phase B (Do) 대기",
+  "phaseHistory": [
+    {
+      "phase": "prd",
+      "enteredAt": "2026-05-18T11:55:00.000Z",
+      "exitedAt": "2026-05-18T12:10:00.000Z",
+      "deliverable": "docs/sprint/12-sprint-perf/prd.md"
+    },
+    {
+      "phase": "plan",
+      "enteredAt": "2026-05-18T12:10:00.000Z",
+      "exitedAt": "2026-05-18T12:20:00.000Z",
+      "deliverable": "docs/sprint/12-sprint-perf/plan.md"
+    },
+    {
+      "phase": "design",
+      "enteredAt": "2026-05-18T12:20:00.000Z",
+      "exitedAt": "2026-05-18T12:30:00.000Z",
+      "deliverable": "docs/sprint/12-sprint-perf/design.md"
+    }
+  ],
+  "features": [
+    { "id": "F12-A", "name": "Lighthouse baseline + 시드 post + 진단", "priority": "P0", "tasks": ["77", "78", "79", "80", "81"] },
+    { "id": "F12-B", "name": "Font + 3rd-party scripts diet", "priority": "P0", "tasks": ["82", "83", "84", "85", "86", "87", "88"] },
+    { "id": "F12-C", "name": "Bundle splitting via dynamic import", "priority": "P0", "tasks": ["89", "90", "91", "92", "93", "94", "95"] },
+    { "id": "F12-D", "name": "SEO 전환 안전망 (robots toggle + structured data + sitemap)", "priority": "P1", "tasks": ["96", "97", "98", "99", "100", "101", "102", "103", "104"] },
+    { "id": "F12-E", "name": "Lighthouse CI workflow + perf budget gate", "priority": "P1", "tasks": ["105", "106", "107", "108", "109"] }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": "Mobile LCP < 4s on /", "status": "pending" },
+    { "id": "DoD-2", "criterion": "Mobile Performance >= 85", "status": "pending" },
+    { "id": "DoD-3", "criterion": "Desktop Performance >= 90", "status": "pending" },
+    { "id": "DoD-4", "criterion": "Real-post /post/[id] Mobile LCP < 3s", "status": "pending" },
+    { "id": "DoD-5", "criterion": "Unused JS savings < 300ms", "status": "pending" },
+    { "id": "DoD-6", "criterion": "CLS == 0 유지", "status": "pending" },
+    { "id": "DoD-7", "criterion": "A11y >= 91 / BP >= 92", "status": "pending" },
+    { "id": "DoD-8", "criterion": "Lighthouse CI gate on PR", "status": "pending" },
+    { "id": "DoD-9", "criterion": "NEXT_PUBLIC_ROBOTS_INDEX 토글 안전", "status": "pending" },
+    { "id": "DoD-10", "criterion": "Rich Results Test 통과", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 200000,
+    "phaseTimeoutHours": 96,
+    "minMatchRate": 90
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "deferred-to-sprint-13",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  }
+}
