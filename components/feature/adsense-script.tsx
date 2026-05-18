@@ -30,19 +30,20 @@ function useIdleMount(timeoutMs: number = 3000): boolean {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const requestIdle =
-      typeof window.requestIdleCallback === 'function'
-        ? window.requestIdleCallback.bind(window)
-        : (cb: () => void) => window.setTimeout(cb, timeoutMs);
-    const cancelIdle =
-      typeof window.cancelIdleCallback === 'function'
-        ? window.cancelIdleCallback.bind(window)
-        : window.clearTimeout.bind(window);
+    if (typeof window.requestIdleCallback === 'function') {
+      const handle = window.requestIdleCallback(() => setReady(true), {
+        timeout: timeoutMs,
+      });
+      return () => {
+        if (typeof window.cancelIdleCallback === 'function') {
+          window.cancelIdleCallback(handle);
+        }
+      };
+    }
 
-    const handle = requestIdle(() => setReady(true), { timeout: timeoutMs });
+    const handle = window.setTimeout(() => setReady(true), timeoutMs);
     return () => {
-      if (typeof handle === 'number') cancelIdle(handle);
-      else cancelIdle(handle as unknown as number);
+      window.clearTimeout(handle);
     };
   }, [timeoutMs]);
 
