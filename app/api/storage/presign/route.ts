@@ -31,7 +31,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const BodySchema = z.object({
-  kind: z.enum(['post', 'chat']),
+  kind: z.enum(['posts', 'chat']),
   contentType: z.enum(['image/jpeg', 'image/png', 'image/webp', 'image/gif']),
   sizeBytes: z.number().int().positive().max(5 * 1024 * 1024),
   channelId: z.string().min(1).max(128).optional(),

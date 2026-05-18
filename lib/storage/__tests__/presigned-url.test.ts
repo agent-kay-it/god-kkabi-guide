@@ -55,16 +55,16 @@ afterEach(() => {
 describe('createPresignedUploadUrl', () => {
   it('returns presigned + cdn URL on valid input', async () => {
     const result = await createPresignedUploadUrl({
-      kind: 'post',
+      kind: 'posts',
       uid: 'user-abc-123',
       contentType: 'image/webp',
       sizeBytes: 200_000,
     });
     expect(result.presignedUrl).toContain('MOCK_SIGNED_URL');
     expect(result.cdnUrl).toMatch(
-      /^https:\/\/cdn-staging\.kkaebizigi\.com\/post\/user-abc-123\/\d{8}\/[a-z0-9]+\.webp$/,
+      /^https:\/\/cdn-staging\.kkaebizigi\.com\/posts\/user-abc-123\/\d{8}\/[a-z0-9]+\.webp$/,
     );
-    expect(result.objectKey).toMatch(/^post\/user-abc-123\/\d{8}\/[a-z0-9]+\.webp$/);
+    expect(result.objectKey).toMatch(/^posts\/user-abc-123\/\d{8}\/[a-z0-9]+\.webp$/);
     expect(result.expiresInSeconds).toBe(PRESIGN_EXPIRES_IN_SECONDS);
     expect(result.headers['Content-Type']).toBe('image/webp');
   });
@@ -83,7 +83,7 @@ describe('createPresignedUploadUrl', () => {
   it('rejects non-whitelist MIME', async () => {
     await expect(
       createPresignedUploadUrl({
-        kind: 'post',
+        kind: 'posts',
         uid: 'u1',
         contentType: 'image/svg+xml' as never,
         sizeBytes: 1024,
@@ -94,7 +94,7 @@ describe('createPresignedUploadUrl', () => {
   it('rejects size exceeding 5MB', async () => {
     await expect(
       createPresignedUploadUrl({
-        kind: 'post',
+        kind: 'posts',
         uid: 'u1',
         contentType: 'image/jpeg',
         sizeBytes: MAX_SIZE_BYTES + 1,
@@ -105,7 +105,7 @@ describe('createPresignedUploadUrl', () => {
   it('rejects uid with special characters', async () => {
     await expect(
       createPresignedUploadUrl({
-        kind: 'post',
+        kind: 'posts',
         uid: '../../etc/passwd',
         contentType: 'image/jpeg',
         sizeBytes: 1024,
@@ -116,7 +116,7 @@ describe('createPresignedUploadUrl', () => {
   it('rejects zero or negative size', async () => {
     await expect(
       createPresignedUploadUrl({
-        kind: 'post',
+        kind: 'posts',
         uid: 'u1',
         contentType: 'image/jpeg',
         sizeBytes: 0,
@@ -126,14 +126,14 @@ describe('createPresignedUploadUrl', () => {
 
   it('generates time-orderable keys (later call > earlier call)', async () => {
     const first = await createPresignedUploadUrl({
-      kind: 'post',
+      kind: 'posts',
       uid: 'u1',
       contentType: 'image/jpeg',
       sizeBytes: 1024,
     });
     await new Promise((r) => setTimeout(r, 5));
     const second = await createPresignedUploadUrl({
-      kind: 'post',
+      kind: 'posts',
       uid: 'u1',
       contentType: 'image/jpeg',
       sizeBytes: 1024,
@@ -143,7 +143,7 @@ describe('createPresignedUploadUrl', () => {
 
   it('uses correct extension per MIME (jpeg→jpg, png/webp/gif unchanged)', async () => {
     const jpg = await createPresignedUploadUrl({
-      kind: 'post',
+      kind: 'posts',
       uid: 'u1',
       contentType: 'image/jpeg',
       sizeBytes: 100,
@@ -151,7 +151,7 @@ describe('createPresignedUploadUrl', () => {
     expect(jpg.objectKey.endsWith('.jpg')).toBe(true);
 
     const png = await createPresignedUploadUrl({
-      kind: 'post',
+      kind: 'posts',
       uid: 'u1',
       contentType: 'image/png',
       sizeBytes: 100,
@@ -159,7 +159,7 @@ describe('createPresignedUploadUrl', () => {
     expect(png.objectKey.endsWith('.png')).toBe(true);
 
     const gif = await createPresignedUploadUrl({
-      kind: 'post',
+      kind: 'posts',
       uid: 'u1',
       contentType: 'image/gif',
       sizeBytes: 100,
