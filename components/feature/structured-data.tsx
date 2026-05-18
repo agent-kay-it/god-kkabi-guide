@@ -24,8 +24,9 @@ function escapeJsonLd(value: unknown): string {
     .replace(/>/g, '\\u003e')
     .replace(/&/g, '\\u0026')
     .replace(/'/g, '\\u0027')
-    .replace(/ /g, '\\u2028')
-    .replace(/ /g, '\\u2029');
+    // U+2028 / U+2029 — JSON spec 상 unescaped 시 JS literal SyntaxError 유발.
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 }
 
 interface JsonLdScriptProps {

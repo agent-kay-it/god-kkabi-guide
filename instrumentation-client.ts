@@ -32,7 +32,9 @@ const ENV =
   'development';
 
 // Sentry instance 캐시 — onRouterTransitionStart proxy 가 init 완료 후 사용.
-let sentryRef: typeof import('@sentry/nextjs') | null = null;
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type SentryModule = typeof import('@sentry/nextjs');
+let sentryRef: SentryModule | null = null;
 
 async function initSentry(): Promise<void> {
   if (!DSN || typeof window === 'undefined') return;

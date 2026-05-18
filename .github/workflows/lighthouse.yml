@@ -1,0 +1,67 @@
+name: Lighthouse CI
+
+# Sprint 12 / F12-E-1 — Vercel preview deploy 후 자동 Lighthouse 측정 + budget 검증.
+# 결과를 GitHub PR comment 로 게시 + artifact 업로드.
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: '측정 URL (default: 자동 감지된 Vercel preview)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Wait for Vercel preview
+        id: vercel
+        if: github.event_name == 'pull_request'
+        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 600
+          check_interval: 15
+
+      - name: Resolve target URL
+        id: url
+        run: |
+          if [ -n "${{ github.event.inputs.url }}" ]; then
+            echo "target=${{ github.event.inputs.url }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "target=${{ steps.vercel.outputs.url }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            ${{ steps.url.outputs.target }}
+            ${{ steps.url.outputs.target }}/post
+            ${{ steps.url.outputs.target }}/chat
+          budgetPath: ./.lighthouse-budget.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Comment results on PR
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: lighthouse-ci
+          message: |
+            ### Lighthouse CI
+            Target: ${{ steps.url.outputs.target }}
+            Artifacts uploaded to action run.
+            Budget enforced via `.lighthouse-budget.json`.
