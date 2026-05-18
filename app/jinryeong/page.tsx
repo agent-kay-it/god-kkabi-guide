@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   title: '진령 — 등급보다 시너지',
   description:
     '갓깨비 키우기 진령 11종 (0~2티어). 신·요·인 3 진영 시너지. 메타 정석 프리셋과 추천 조합.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 type WikiJinryeongData = Omit<WikiJinryeongDoc, 'updatedAt'>;

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: '문파 가이드 — 가입 이점 + 선택 기준',
   description:
     '갓깨비 키우기 문파 가이드. 문파 미션·상점·던전·출석 보너스. 활성 문파 선택 기준과 매너.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 export default function MunpaPage(): React.JSX.Element {

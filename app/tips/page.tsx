@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   title: '실전 팁 — 12개 운영 노하우',
   description:
     '999회 무료 뽑기 활용 / 진령 강화 우선순위 / 검객 치명타 빌드 / PvP 카운터 진령 + 12개 운영 팁.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 const CATEGORY_LABEL: Record<TipCategory, string> = {

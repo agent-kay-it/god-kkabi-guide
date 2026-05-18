@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   title: '직업 가이드 — 전사 · 검객 · 영매',
   description:
     '갓깨비 키우기 3 직업 비교. 전사(도깨비) / 검객(무당) / 영매(저승사자). 추천 진령 조합 + 강점/약점 + 메타 티어.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 // V7 P5: 캐릭터 이미지 좌/우 배치 + 성별이 페이지 새로고침마다 랜덤 변경되어야 하므로

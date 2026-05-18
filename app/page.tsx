@@ -39,15 +39,22 @@ import {
   TipCard,
 } from '@/components/domain';
 import { Reveal } from '@/components/feature/reveal';
+import {
+  WebsiteStructuredData,
+  BreadcrumbStructuredData,
+} from '@/components/feature/structured-data';
 import { WIKI_CATEGORIES } from '@/data/wiki/categories';
 import { WIKI_TIPS_SEED } from '@/data/wiki/tips';
 import { cn } from '@/lib/utils';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.com';
 
 export const metadata: Metadata = {
   title: '갓깨비 키우기 비공식 팬 가이드 — 위키 · 채팅 · 북마크',
   description:
     '갓깨비 키우기 비공식 팬 가이드. 직업 3종 · 진령 11+ · 시스템 5대 · 던전 4종 · 과금 전략을 한 페이지에. 1인 운영, 매주 검증.',
-  robots: { index: false, follow: false },
+  alternates: { canonical: '/' },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 const TOC_ITEMS: ReadonlyArray<{
@@ -184,6 +191,11 @@ export default async function HomePage(): Promise<React.JSX.Element> {
 
   return (
     <>
+      {/* Sprint 12 / F12-D-3 — JSON-LD WebSite + Breadcrumb. */}
+      <WebsiteStructuredData url={SITE_URL} />
+      <BreadcrumbStructuredData
+        items={[{ position: 1, name: '홈', url: SITE_URL }]}
+      />
       {/* ============ HERO ============ */}
       {/* V7 P5: layout.tsx wrapper의 pt-14(56px)를 -mt-14로 상쇄해 hero 섹션이 viewport top(0)부터
           시작하도록 함. TopBar는 fixed glassmorphism이라 hero 배경 위에 자연스럽게 floating.

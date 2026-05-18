@@ -22,6 +22,7 @@ import { AdSlotSticky } from '@/components/feature/ad-slot-sticky';
 import { auth, signOut } from '@/lib/auth/auth';
 import { shouldShowAds } from '@/lib/subscription/guards';
 import { AUTHOR_NAME } from '@/lib/config/support';
+import { robotsConfig } from '@/lib/seo/robots-config';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { LightboxProvider } from '@/components/feature/lightbox-provider';
@@ -75,9 +76,9 @@ export const metadata: Metadata = {
     '갓깨비 장비',
     '갓깨비 문파',
   ],
-  alternates: {
-    canonical: '/',
-  },
+  // Sprint 12 / F12-D-6 — canonical 은 page 별로 명시 (layout default 제거).
+  // 이유: relative '/' 는 모든 child page 에서 homepage 로 resolve 되어 duplicate
+  //       content 위험. 각 page 가 `alternates.canonical` 명시 또는 omit (Next 기본).
   // V7 P5: app-icon.webp (89KB)를 favicon + apple-touch-icon으로 직접 지정.
   // Next.js 파일 기반 metadata는 .webp 미지원 → metadata.icons로 명시.
   icons: {
@@ -109,10 +110,9 @@ export const metadata: Metadata = {
     title: '갓깨비 키우기 비공식 팬 가이드',
     description: '위키 · 채팅 · 북마크 — 1인 팬 커뮤니티 가이드',
   },
-  robots: {
-    index: false,
-    follow: false,
-  },
+  // Sprint 12 / F12-D-2 — robotsConfig (NEXT_PUBLIC_ROBOTS_INDEX 토글) 로 위임.
+  // Sprint 14 production cutover 시 env 만 true 로 전환하면 자연 회복.
+  robots: robotsConfig,
   category: 'gaming',
   other: {
     'naver-site-verification': process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION ?? '',

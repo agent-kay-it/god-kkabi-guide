@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   title: '스킬 가이드 — 코어 · 액티브 · 패시브',
   description:
     '갓깨비 키우기 직업별 스킬 31종. 전사 8 / 검객 14 / 영매 9. 코어 1 + 액티브 3~4 + 패시브 4~5 운영 원리.',
-  robots: { index: false, follow: false },
+  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
 };
 
 const CLASS_LABEL: Record<WikiClassId, string> = {
