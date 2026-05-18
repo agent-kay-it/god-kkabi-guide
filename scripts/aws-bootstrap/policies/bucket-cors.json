@@ -1,0 +1,17 @@
+{
+  "CORSRules": [
+    {
+      "ID": "kkaebizigi-presigned-upload",
+      "AllowedOrigins": [
+        "https://kkaebizigi.com",
+        "https://www.kkaebizigi.com",
+        "https://staging.kkaebizigi.com",
+        "http://localhost:3000"
+      ],
+      "AllowedMethods": ["PUT", "POST", "GET", "HEAD"],
+      "AllowedHeaders": ["*"],
+      "ExposeHeaders": ["ETag", "x-amz-server-side-encryption", "x-amz-request-id"],
+      "MaxAgeSeconds": 3000
+    }
+  ]
+}

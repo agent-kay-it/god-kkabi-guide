@@ -1,0 +1,84 @@
+{
+  "DistributionConfig": {
+    "CallerReference": "kkaebizigi-staging-cdn-2026-05-18",
+    "Aliases": {
+      "Quantity": 1,
+      "Items": ["cdn-staging.kkaebizigi.com"]
+    },
+    "DefaultRootObject": "",
+    "Origins": {
+      "Quantity": 1,
+      "Items": [
+        {
+          "Id": "S3-kkaebizigi-staging",
+          "DomainName": "kkaebizigi-staging.s3.ap-northeast-2.amazonaws.com",
+          "OriginPath": "",
+          "CustomHeaders": { "Quantity": 0 },
+          "S3OriginConfig": {
+            "OriginAccessIdentity": ""
+          },
+          "ConnectionAttempts": 3,
+          "ConnectionTimeout": 10,
+          "OriginAccessControlId": "E1936ZHXPNIQCZ",
+          "OriginShield": { "Enabled": false }
+        }
+      ]
+    },
+    "OriginGroups": { "Quantity": 0 },
+    "DefaultCacheBehavior": {
+      "TargetOriginId": "S3-kkaebizigi-staging",
+      "TrustedSigners": { "Enabled": false, "Quantity": 0 },
+      "TrustedKeyGroups": { "Enabled": false, "Quantity": 0 },
+      "ViewerProtocolPolicy": "redirect-to-https",
+      "AllowedMethods": {
+        "Quantity": 2,
+        "Items": ["GET", "HEAD"],
+        "CachedMethods": {
+          "Quantity": 2,
+          "Items": ["GET", "HEAD"]
+        }
+      },
+      "SmoothStreaming": false,
+      "Compress": true,
+      "LambdaFunctionAssociations": { "Quantity": 0 },
+      "FunctionAssociations": { "Quantity": 0 },
+      "FieldLevelEncryptionId": "",
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "ResponseHeadersPolicyId": "60669652-455b-4ae9-85a4-c4c02393f86c"
+    },
+    "CacheBehaviors": { "Quantity": 0 },
+    "CustomErrorResponses": { "Quantity": 0 },
+    "Comment": "kkaebizigi staging CDN (Project=kkaebizigi)",
+    "Logging": {
+      "Enabled": false,
+      "IncludeCookies": false,
+      "Bucket": "",
+      "Prefix": ""
+    },
+    "PriceClass": "PriceClass_200",
+    "Enabled": true,
+    "ViewerCertificate": {
+      "ACMCertificateArn": "arn:aws:acm:us-east-1:715398629040:certificate/bf3efc4b-bd8a-4239-996f-aceb96e24677",
+      "SSLSupportMethod": "sni-only",
+      "MinimumProtocolVersion": "TLSv1.2_2021",
+      "Certificate": "arn:aws:acm:us-east-1:715398629040:certificate/bf3efc4b-bd8a-4239-996f-aceb96e24677",
+      "CertificateSource": "acm"
+    },
+    "Restrictions": {
+      "GeoRestriction": { "RestrictionType": "none", "Quantity": 0 }
+    },
+    "WebACLId": "",
+    "HttpVersion": "http2and3",
+    "IsIPV6Enabled": true,
+    "ContinuousDeploymentPolicyId": "",
+    "Staging": false
+  },
+  "Tags": {
+    "Items": [
+      { "Key": "Project", "Value": "kkaebizigi" },
+      { "Key": "Environment", "Value": "staging" },
+      { "Key": "ManagedBy", "Value": "cli-bootstrap" },
+      { "Key": "Component", "Value": "cdn" }
+    ]
+  }
+}
