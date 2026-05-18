@@ -78,17 +78,15 @@ export async function createPresignedUploadUrl(
   const id = ulidLite();
   const objectKey = `${input.kind}/${input.uid}/${yyyymmdd}/${id}.${ext}`;
 
+  // signing 가능한 헤더는 최소화 — 클라이언트(upload-*.ts)가 PUT 시
+  // 정확히 동일한 헤더로 보내야 signature가 매치한다.
+  // - SSE: 버킷 default encryption (AES256)이 자동 적용되므로 별도 signing 불필요
+  // - Metadata(uid/kind): 이미 objectKey에 포함되어 redundant
   const client = getS3Client();
   const command = new PutObjectCommand({
     Bucket: getBucket(),
     Key: objectKey,
     ContentType: input.contentType,
-    ServerSideEncryption: 'AES256',
-    Metadata: {
-      uid: input.uid,
-      kind: input.kind,
-      ...(input.channelId ? { channelid: input.channelId } : {}),
-    },
   });
   const presignedUrl = await getSignedUrl(client, command, {
     expiresIn: PRESIGN_EXPIRES_IN_SECONDS,
