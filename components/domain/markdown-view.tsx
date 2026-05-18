@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils';
 import { segmentMarkdownHtml } from '@/lib/post/markdown-render';
 import { YoutubeEmbed } from '@/components/feature/post/youtube-embed';
 import { LinkPreview } from '@/components/feature/post/link-preview';
+import { PostImage } from '@/components/feature/post/post-image';
 
 export interface MarkdownViewProps {
   /** lib/post/markdown.ts:renderMarkdownToSafeHtml 결과 */
@@ -69,6 +70,15 @@ export async function MarkdownView({
     );
   }
 
+  // Sprint 11 Phase E — 본문 첫 image segment를 LCP priority로 식별.
+  let firstImageIndex = -1;
+  for (let i = 0; i < segments.length; i++) {
+    if (segments[i]?.type === 'image') {
+      firstImageIndex = i;
+      break;
+    }
+  }
+
   return (
     <article className={cn(...PROSE_CLASSES, className)}>
       {segments.map((segment, idx) => {
@@ -86,6 +96,16 @@ export async function MarkdownView({
             <YoutubeEmbed
               key={`md-yt-${idx}-${segment.videoId}`}
               videoId={segment.videoId}
+            />
+          );
+        }
+        if (segment.type === 'image') {
+          return (
+            <PostImage
+              key={`md-img-${idx}-${segment.src}`}
+              src={segment.src}
+              alt={segment.alt}
+              priority={idx === firstImageIndex}
             />
           );
         }

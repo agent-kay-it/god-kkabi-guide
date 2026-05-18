@@ -7,8 +7,8 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full",
   "stopAfter": "archived",
-  "phase": "design",
-  "currentPhase": "Design",
+  "phase": "do",
+  "currentPhase": "Phase E 대기 — Image Optimization (next/image markdown + CloudFront cache tuning + Lighthouse 90+)",
   "phaseHistory": [
     {
       "phase": "prd",
@@ -27,16 +27,46 @@
       "enteredAt": "2026-05-17T21:16:00.000Z",
       "exitedAt": "2026-05-17T21:22:00.000Z",
       "deliverable": "docs/sprint/11-sprint-images/design.md (1580 lines)"
+    },
+    {
+      "phase": "A",
+      "enteredAt": "2026-05-17T21:30:00.000Z",
+      "exitedAt": "2026-05-18T05:43:14.000Z",
+      "deliverable": "PR #12 — scripts/aws-bootstrap/ (11 files, IAM + S3 + CloudFront + ACM + Budget, all tagged Project=kkaebizigi)"
+    },
+    {
+      "phase": "B",
+      "enteredAt": "2026-05-18T05:43:30.000Z",
+      "exitedAt": "2026-05-18T05:55:49.000Z",
+      "deliverable": "PR #13 — lib/storage/ (8 modules + 31 tests, 190/190 passing) + CSP + RTDB rule update"
+    },
+    {
+      "phase": "C",
+      "enteredAt": "2026-05-18T05:56:30.000Z",
+      "exitedAt": "2026-05-18T06:12:20.000Z",
+      "deliverable": "PR #14 — PostForm S3 통합 + 진행률 + 반응형 grid + 공용 에러 매핑 + schema CDN regex (+23 tests, 213/213 passing, next build OK)"
+    },
+    {
+      "phase": "D",
+      "enteredAt": "2026-05-18T06:20:00.000Z",
+      "exitedAt": "2026-05-18T06:27:13.000Z",
+      "deliverable": "PR #15 — chat 이미지 업로드 S3 전환 + message-variant image case + ImageLightbox + MessageItem image variant + chat-input/composer 통합 (+7 tests, 220/220 passing). RTDB rules deploy는 사용자 작업 필요"
+    },
+    {
+      "phase": "D-Hotfix",
+      "enteredAt": "2026-05-18T07:25:00.000Z",
+      "exitedAt": "2026-05-18T11:18:00.000Z",
+      "deliverable": "PR #16 (SSE+Metadata signing 제거) + PR #17 (ImageKind 'post'→'posts' IAM 일치). staging end-to-end 검증 PASS: post/chat presign 200 + S3 PUT 200 + CDN 200 양쪽"
     }
   ],
   "phases": {
     "PRD": { "name": "Product Requirements", "status": "completed", "startedAt": "2026-05-17T21:05:00.000Z", "completedAt": "2026-05-17T21:13:00.000Z", "deliverable": "docs/sprint/11-sprint-images/prd.md" },
     "Plan": { "name": "Task Breakdown + Timeline", "status": "completed", "startedAt": "2026-05-17T21:13:00.000Z", "completedAt": "2026-05-17T21:16:00.000Z", "deliverable": "docs/sprint/11-sprint-images/plan.md" },
     "Design": { "name": "System Design (S3 / CloudFront / Upload Flow / Security)", "status": "completed", "startedAt": "2026-05-17T21:16:00.000Z", "completedAt": "2026-05-17T21:22:00.000Z", "deliverable": "docs/sprint/11-sprint-images/design.md" },
-    "A": { "name": "AWS Infrastructure (S3 + CloudFront + IAM)", "status": "pending" },
-    "B": { "name": "Storage Adapter + Server Action + signed URL", "status": "pending" },
-    "C": { "name": "Post Image Upload UI (게시글 폼 통합)", "status": "pending" },
-    "D": { "name": "Chat Image Upload UI (Phase E image variant 활성화)", "status": "pending" },
+    "A": { "name": "AWS Infrastructure (S3 + CloudFront + IAM)", "status": "completed", "startedAt": "2026-05-17T21:30:00.000Z", "completedAt": "2026-05-18T05:43:14.000Z", "deliverable": "PR #12 — scripts/aws-bootstrap/" },
+    "B": { "name": "Storage Adapter + Server Action + signed URL", "status": "completed", "startedAt": "2026-05-18T05:43:30.000Z", "completedAt": "2026-05-18T05:55:49.000Z", "deliverable": "PR #13 — lib/storage/ + CSP + RTDB" },
+    "C": { "name": "Post Image Upload UI (게시글 폼 통합)", "status": "completed", "startedAt": "2026-05-18T05:56:00.000Z", "completedAt": "2026-05-18T06:12:20.000Z", "deliverable": "PR #14 — PostForm + error-messages + schema CDN regex" },
+    "D": { "name": "Chat Image Upload UI (Phase E image variant 활성화)", "status": "completed", "startedAt": "2026-05-18T06:20:00.000Z", "completedAt": "2026-05-18T06:27:13.000Z", "deliverable": "PR #15 — chat upload S3 전환 + ImageLightbox + image variant. RTDB rules deploy는 user-action 필요 (firebase login --reauth + deploy)" },
     "E": { "name": "Image Optimization + CDN cache", "status": "pending" },
     "F": { "name": "Quality + Launch (audits, Sentry, Lighthouse, checklist)", "status": "pending" }
   },
@@ -71,9 +101,9 @@
   "kpi": {
     "estimatedDays": 5,
     "actualDays": null,
-    "phasesComplete": 3,
+    "phasesComplete": 7,
     "phasesTotal": 9,
-    "tasksComplete": 0,
+    "tasksComplete": 22,
     "tasksTotal": 50,
     "planningSummary": {
       "prdLines": 431,

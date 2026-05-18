@@ -12,6 +12,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getAdminFirestore, hasAdminCredentials } from '@/lib/firebase/admin';
 import { ProfileEditForm } from '@/components/feature/profile-edit-form';
+import { ProfileImageUploader } from '@/components/feature/profile-image-uploader';
 import type { ProfileEditInput } from '@/lib/auth/profile-schema';
 import {
   HeroMeta,
@@ -38,6 +39,10 @@ interface UserDocData {
   readonly nickname?: string;
   readonly classId?: ProfileEditInput['classId'];
   readonly email?: string;
+  /** Sprint 11 Phase E — Google OAuth 사진 (변경 불가). */
+  readonly photoURL?: string;
+  /** Sprint 11 Phase E — 사용자 직접 업로드 사진 (CDN URL). */
+  readonly customPhotoURL?: string;
 }
 
 export default async function ProfileEditPage(): Promise<React.JSX.Element> {
@@ -87,6 +92,12 @@ export default async function ProfileEditPage(): Promise<React.JSX.Element> {
       </header>
 
       <div className="mx-auto mt-10 max-w-3xl space-y-6">
+        <ProfileImageUploader
+          nickname={nickname}
+          customPhotoURL={data.customPhotoURL ?? null}
+          googlePhotoURL={data.photoURL ?? session.user?.image ?? null}
+        />
+
         <ProfileEditForm
           initialValues={initialValues}
           readonlyGameUid={gameUid}

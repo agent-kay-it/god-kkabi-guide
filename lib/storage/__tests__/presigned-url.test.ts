@@ -141,6 +141,17 @@ describe('createPresignedUploadUrl', () => {
     expect(second.objectKey > first.objectKey).toBe(true);
   });
 
+  it('accepts profiles kind with profiles/ prefix', async () => {
+    const result = await createPresignedUploadUrl({
+      kind: 'profiles',
+      uid: 'user-abc-123',
+      contentType: 'image/webp',
+      sizeBytes: 50_000,
+    });
+    expect(result.objectKey).toMatch(/^profiles\/user-abc-123\/\d{8}\/[a-z0-9]+\.webp$/);
+    expect(result.cdnUrl).toMatch(/^https:\/\/cdn-staging\.kkaebizigi\.com\/profiles\//);
+  });
+
   it('uses correct extension per MIME (jpeg→jpg, png/webp/gif unchanged)', async () => {
     const jpg = await createPresignedUploadUrl({
       kind: 'posts',

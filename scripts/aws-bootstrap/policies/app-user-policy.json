@@ -14,9 +14,11 @@
       "Resource": [
         "arn:aws:s3:::kkaebizigi-prod/posts/*",
         "arn:aws:s3:::kkaebizigi-prod/chat/*",
+        "arn:aws:s3:::kkaebizigi-prod/profiles/*",
         "arn:aws:s3:::kkaebizigi-prod/tmp/*",
         "arn:aws:s3:::kkaebizigi-staging/posts/*",
         "arn:aws:s3:::kkaebizigi-staging/chat/*",
+        "arn:aws:s3:::kkaebizigi-staging/profiles/*",
         "arn:aws:s3:::kkaebizigi-staging/tmp/*"
       ]
     },
@@ -30,7 +32,7 @@
       ],
       "Condition": {
         "StringLike": {
-          "s3:prefix": ["posts/*", "chat/*", "tmp/*"]
+          "s3:prefix": ["posts/*", "chat/*", "profiles/*", "tmp/*"]
         }
       }
     },
