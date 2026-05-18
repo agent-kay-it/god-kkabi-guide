@@ -31,6 +31,18 @@ const nextConfig: NextConfig = {
         hostname: 'i.ytimg.com',
         pathname: '/**',
       },
+      // Sprint 11 / Phase C — kkaebizigi CloudFront CDN (prod)
+      {
+        protocol: 'https',
+        hostname: 'cdn.kkaebizigi.com',
+        pathname: '/**',
+      },
+      // Sprint 11 / Phase C — kkaebizigi CloudFront CDN (staging + dev)
+      {
+        protocol: 'https',
+        hostname: 'cdn-staging.kkaebizigi.com',
+        pathname: '/**',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
