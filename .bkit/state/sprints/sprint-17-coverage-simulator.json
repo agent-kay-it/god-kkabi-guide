@@ -1,0 +1,78 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-17-coverage-simulator",
+  "name": "Coverage + Component Tests + Dynamic CI + Simulator Polish",
+  "createdAt": "2026-05-19T14:00:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto",
+  "automationScope": "full-auto",
+  "stopAfter": "archived",
+  "phase": "design",
+  "currentPhase": "PRD/Plan/Design 완료 — F17-A 진입 대기",
+  "phaseHistory": [
+    { "phase": "prd", "enteredAt": "2026-05-19T14:00:00.000Z", "exitedAt": "2026-05-19T14:05:00.000Z", "deliverable": "docs/sprint/17-sprint-coverage-simulator/prd.md" },
+    { "phase": "plan", "enteredAt": "2026-05-19T14:05:00.000Z", "exitedAt": "2026-05-19T14:10:00.000Z", "deliverable": "docs/sprint/17-sprint-coverage-simulator/plan.md" },
+    { "phase": "design", "enteredAt": "2026-05-19T14:10:00.000Z", "exitedAt": "2026-05-19T14:15:00.000Z", "deliverable": "docs/sprint/17-sprint-coverage-simulator/design.md" }
+  ],
+  "features": [
+    { "id": "F17-A", "name": "lib/ unit test 확대 part 3 (5+ 모듈)", "priority": "P0", "status": "pending" },
+    { "id": "F17-B", "name": "components/feature/ unit test 도입 (RTL + jsdom, 5+ 컴포넌트)", "priority": "P0", "status": "pending" },
+    { "id": "F17-C", "name": "CI emulator dynamic run 첫 실행 + iterate", "priority": "P0", "status": "pending" },
+    { "id": "F17-D", "name": "빌드 시뮬레이터 점검 + synergy 확장", "priority": "P1", "status": "pending" },
+    { "id": "F17-E", "name": "Visual baseline workflow_dispatch + diff 검증", "priority": "P1", "status": "pending" },
+    { "id": "F17-F", "name": "Lighthouse perf 실측 + 5 URLs 분석", "priority": "P2", "status": "pending" },
+    { "id": "F17-G", "name": "S3 staging cutover dry-run script + 시뮬", "priority": "P2", "status": "pending" },
+    { "id": "F17-H", "name": "lib/storage/upload-*-image.ts unit test (0% → 80%+)", "priority": "P3", "status": "pending" }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": "Coverage lines 20.62% → 35%+", "status": "pending" },
+    { "id": "DoD-2", "criterion": "신규 unit test 파일 15+", "status": "pending" },
+    { "id": "DoD-3", "criterion": "신규 tests 100+", "status": "pending" },
+    { "id": "DoD-4", "criterion": "components/feature/ RTL 패턴 도입 5+ 컴포넌트", "status": "pending" },
+    { "id": "DoD-5", "criterion": "CI emulator dynamic run 첫 결과", "status": "pending" },
+    { "id": "DoD-6", "criterion": "빌드 시뮬레이터 점검 보고서 작성", "status": "pending" },
+    { "id": "DoD-7", "criterion": "Visual baseline 1차 capture", "status": "pending" },
+    { "id": "DoD-8", "criterion": "Lighthouse perf 실측 5 URLs", "status": "pending" },
+    { "id": "DoD-9", "criterion": "S3 cutover dry-run script + 시뮬", "status": "pending" },
+    { "id": "DoD-10", "criterion": "Sprint 17 종합 보고서 + Sprint 18 carry", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 2000000,
+    "phaseTimeoutHours": 240,
+    "minMatchRate": 90,
+    "expectedPRs": 8,
+    "expectedNewTests": 100,
+    "targetCoverageLines": 35
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "pending",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  },
+  "carryFrom": "sprint-16-coverage-cutover",
+  "carryItemsResolved": {
+    "rate": "6/8 carry resolved + 2 i18n removed",
+    "i18nDecision": {
+      "decision": "다국어 대응 제거",
+      "decidedAt": "2026-05-19T14:00:00.000Z",
+      "decidedBy": "kay@popupstudio.ai",
+      "reason": "갓깨비 게임이 Google Play / iOS App Store 모두 한국 스토어 전용 — 외국어 사용자 진입 가능성 낮음. i18n 인프라 dormant 유지."
+    },
+    "mapping": {
+      "Coverage 35%": "F17-A (lib/) + F17-B (components/) + F17-H (storage/upload)",
+      "CI emulator dynamic run": "F17-C",
+      "i18n Option B 부분 적용": "REMOVED",
+      "Visual baseline 첫 capture 실제 실행": "F17-E",
+      "Lighthouse perf 점수 측정": "F17-F",
+      "S3 staging cutover 실제 진행": "F17-G (dry-run only, 실 cutover 별도 sprint)",
+      "GA4 locale_switch 측정": "REMOVED",
+      "component/ test 확대": "F17-B (P0 승격)"
+    }
+  },
+  "dependsOn": ["sprint-16-coverage-cutover"]
+}
