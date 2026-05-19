@@ -199,6 +199,13 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       </head>
       <body className="antialiased">
+        {/* Sprint 15 F15-B: skip-to-content link (WCAG 2.4.1 Bypass Blocks) */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-[100] focus:rounded-md focus:bg-bronze focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink-base focus:outline-none focus:ring-2 focus:ring-bronze-soft"
+        >
+          본문으로 이동
+        </a>
         <TooltipProvider delayDuration={200}>
           <LightboxProvider>
             <AnalyticsBootstrap />
@@ -210,7 +217,10 @@ export default async function RootLayout({
               <AdSenseScript publisher={adsensePublisher} />
             ) : null}
             <TopBar session={userMenuSession} signOutAction={signOutAction} />
-            <div className={showAds && adsenseSlotSticky ? 'pt-14 pb-[80px] sm:pb-[120px]' : 'pt-14'}>
+            <div
+              id="main-content"
+              className={showAds && adsenseSlotSticky ? 'pt-14 pb-[80px] sm:pb-[120px]' : 'pt-14'}
+            >
               {children}
             </div>
             {chatSession ? <ChatWidgetLoader session={chatSession} /> : null}
