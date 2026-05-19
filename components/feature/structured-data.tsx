@@ -15,19 +15,9 @@
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kkaebizigi.com';
 const SITE_NAME = '갓깨비 키우기 비공식 팬 가이드';
 
-/**
- * `</script>` 시퀀스 안전 escape — JSON-LD 표준 권장.
- */
-function escapeJsonLd(value: unknown): string {
-  return JSON.stringify(value)
-    .replace(/</g, '\\u003c')
-    .replace(/>/g, '\\u003e')
-    .replace(/&/g, '\\u0026')
-    .replace(/'/g, '\\u0027')
-    // U+2028 / U+2029 — JSON spec 상 unescaped 시 JS literal SyntaxError 유발.
-    .replace(/\u2028/g, '\\u2028')
-    .replace(/\u2029/g, '\\u2029');
-}
+// Sprint 16 / F16-C: escapeJsonLd 가 lib/seo/json-ld.ts 로 분리 (Sprint 15 F15-I).
+// 중복 코드 제거 + lib/ 의 14 unit test 가 회귀 보호.
+import { escapeJsonLd } from '@/lib/seo/json-ld';
 
 interface JsonLdScriptProps {
   readonly id: string;
@@ -141,5 +131,3 @@ export function ArticleStructuredData({
   return <JsonLdScript id="ld-article" payload={data} />;
 }
 
-// Test 노출 — escape 검증 단위 테스트용.
-export const __escapeJsonLdForTest = escapeJsonLd;
