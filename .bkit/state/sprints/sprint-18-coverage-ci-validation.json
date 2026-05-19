@@ -1,0 +1,59 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-18-coverage-ci-validation",
+  "name": "Coverage 35% + CI Validation + Simulator Enhancement",
+  "createdAt": "2026-05-19T19:00:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto",
+  "automationScope": "full-auto",
+  "stopAfter": "archived",
+  "phase": "design",
+  "currentPhase": "PRD/Plan/Design 완료 — F18-A 진입 대기",
+  "phaseHistory": [
+    { "phase": "prd", "enteredAt": "2026-05-19T19:00:00.000Z", "exitedAt": "2026-05-19T19:05:00.000Z", "deliverable": "docs/sprint/18-sprint-coverage-ci-validation/prd.md" },
+    { "phase": "plan", "enteredAt": "2026-05-19T19:05:00.000Z", "exitedAt": "2026-05-19T19:10:00.000Z", "deliverable": "docs/sprint/18-sprint-coverage-ci-validation/plan.md" },
+    { "phase": "design", "enteredAt": "2026-05-19T19:10:00.000Z", "exitedAt": "2026-05-19T19:15:00.000Z", "deliverable": "docs/sprint/18-sprint-coverage-ci-validation/design.md" }
+  ],
+  "features": [
+    { "id": "F18-A", "name": "Coverage 25.13% → 35%+ (vitest config + lib/ 5+ 신규)", "priority": "P0", "status": "pending" },
+    { "id": "F18-B", "name": "CI E2E webServer fix + Visual baseline 실 capture", "priority": "P0", "status": "pending" },
+    { "id": "F18-C", "name": "Lighthouse 5 URLs 분석 + 개선 백로그", "priority": "P1", "status": "pending" },
+    { "id": "F18-D", "name": "시뮬레이터 시너지 매트릭스 11 → 30+ 보강", "priority": "P1", "status": "pending" },
+    { "id": "F18-E", "name": "시뮬레이터 a11y 보강 (aria-pressed / keyboard / aria-live)", "priority": "P1", "status": "pending" },
+    { "id": "F18-F", "name": "S3 cutover dry-run CI workflow 통합", "priority": "P2", "status": "pending" },
+    { "id": "F18-G", "name": "components/ 5+ 신규 RTL 테스트", "priority": "P3", "status": "pending" },
+    { "id": "F18-H", "name": "진령 채용률 차트 (마스터 V2 F3.2) 1차 구현", "priority": "마스터 V2", "status": "pending" }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": "Coverage lines 35%+", "status": "pending" },
+    { "id": "DoD-2", "criterion": "CI E2E dynamic run 첫 green", "status": "pending" },
+    { "id": "DoD-3", "criterion": "Visual baseline 1차 capture commit", "status": "pending" },
+    { "id": "DoD-4", "criterion": "Lighthouse 5 URLs 점수 기록", "status": "pending" },
+    { "id": "DoD-5", "criterion": "시뮬레이터 시너지 30+ seed", "status": "pending" },
+    { "id": "DoD-6", "criterion": "시뮬레이터 aria-pressed + keyboard", "status": "pending" },
+    { "id": "DoD-7", "criterion": "S3 cutover dry-run CI workflow", "status": "pending" },
+    { "id": "DoD-8", "criterion": "components/ test 5+ 신규", "status": "pending" },
+    { "id": "DoD-9", "criterion": "진령 채용률 차트 1차 구현", "status": "pending" },
+    { "id": "DoD-10", "criterion": "Sprint 18 종합 보고서 + Sprint 19 carry", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 2500000,
+    "phaseTimeoutHours": 240,
+    "minMatchRate": 90,
+    "expectedPRs": 8,
+    "expectedNewTests": 80,
+    "targetCoverageLines": 35
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "pending",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  },
+  "carryFrom": "sprint-17-coverage-simulator",
+  "dependsOn": ["sprint-17-coverage-simulator"]
+}
