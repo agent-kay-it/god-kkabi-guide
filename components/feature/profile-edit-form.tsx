@@ -146,10 +146,19 @@ export function ProfileEditForm({
             </p>
           </header>
 
-          {/* 변경 불가 필드 */}
+          {/* 변경 불가 필드 — Sprint 14 F14-J: 민감 식별자는 기본 마스킹 + 클릭 노출 */}
           <div className="grid gap-4 sm:grid-cols-2">
-            <ReadonlyField label="게임 UID (변경 불가)" value={readonlyGameUid} mono />
-            <ReadonlyField label="이메일 (Google)" value={readonlyEmail} />
+            <ReadonlyField
+              label="게임 UID (변경 불가)"
+              value={readonlyGameUid}
+              mono
+              mask
+            />
+            <ReadonlyField
+              label="이메일 (Google)"
+              value={readonlyEmail}
+              mask
+            />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -271,18 +280,59 @@ interface ReadonlyFieldProps {
   readonly label: string;
   readonly value: string;
   readonly mono?: boolean;
+  /**
+   * Sprint 14 F14-J (BUG-13-003 fix): 민감 식별자 마스킹.
+   * true 면 기본 마스킹 후 클릭 시 노출 (개인정보 노출 UX 개선).
+   */
+  readonly mask?: boolean;
 }
 
-function ReadonlyField({ label, value, mono = false }: ReadonlyFieldProps): React.JSX.Element {
+function maskValue(value: string): string {
+  if (!value) return '—';
+  // 이메일: 로컬 파트 첫 2자 + ***@도메인
+  const atIdx = value.indexOf('@');
+  if (atIdx > 0) {
+    const local = value.slice(0, atIdx);
+    const domain = value.slice(atIdx + 1);
+    const visible = local.slice(0, 2);
+    return `${visible}${'*'.repeat(Math.max(3, local.length - 2))}@${domain}`;
+  }
+  // 일반 값: 앞 2자 + ***
+  if (value.length <= 4) return '*'.repeat(value.length);
+  return `${value.slice(0, 2)}${'*'.repeat(value.length - 2)}`;
+}
+
+function ReadonlyField({
+  label,
+  value,
+  mono = false,
+  mask = false,
+}: ReadonlyFieldProps): React.JSX.Element {
+  const [revealed, setRevealed] = useState(false);
+  const displayValue = mask && !revealed ? maskValue(value) : value || '—';
+
   return (
     <div className="space-y-1.5">
-      <p className="text-sm font-medium text-text-soft">{label}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium text-text-soft">{label}</p>
+        {mask && value ? (
+          <button
+            type="button"
+            onClick={() => setRevealed((r) => !r)}
+            className="text-xs text-bronze-soft underline-offset-4 hover:underline"
+            aria-pressed={revealed}
+            aria-label={revealed ? `${label} 가리기` : `${label} 보기`}
+          >
+            {revealed ? '가리기' : '보기'}
+          </button>
+        ) : null}
+      </div>
       <div
         className={`rounded-md border border-ink-line bg-ink-elev/50 px-3 py-2 text-sm text-text-mute ${
           mono ? 'font-mono' : ''
         }`}
       >
-        {value || '—'}
+        {displayValue}
       </div>
     </div>
   );
