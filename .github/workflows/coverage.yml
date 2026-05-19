@@ -12,8 +12,19 @@ name: Coverage
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review]
+    # Sprint 19 F19-B — docs/markdown 전용 변경은 Coverage skip.
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'README*'
+      - 'LICENSE'
   push:
     branches: [staging, main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'README*'
+      - 'LICENSE'
 
 permissions:
   contents: read

@@ -11,8 +11,22 @@ name: E2E
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review]
+    # Sprint 19 F19-B — docs/markdown 전용 변경은 E2E skip (CI 비용 절감).
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'README*'
+      - 'LICENSE'
+      - '.github/CODEOWNERS'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
   push:
     branches: [staging, main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'README*'
+      - 'LICENSE'
   workflow_dispatch:
     inputs:
       base_url:

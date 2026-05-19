@@ -1,0 +1,93 @@
+name: E2E Smoke
+
+# Sprint 19 / F19-B — E2E smoke (1 project, 짧은 timeout).
+# 전체 E2E (e2e.yml) 는 3 projects × 60min. smoke 는 chromium-desktop × 25min.
+# CI 비용 부담 큰 시점의 fast feedback 용. 잠재 fail 의 1차 신호 + nightly 전체.
+#
+# 트리거: 작은 변경 (lib/ + types/ + components/), 빠른 검증 우선.
+# 전체 E2E (e2e.yml) 는 동시 실행되며 더 넓은 회귀 보호.
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'README*'
+      - 'LICENSE'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  smoke:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Setup Java (Firebase emulator)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright chromium
+        run: pnpm playwright install --with-deps chromium
+
+      - name: Install firebase-tools
+        run: npm install -g firebase-tools@13
+
+      - name: Disable Emulator UI in CI
+        run: |
+          node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('firebase.json','utf-8'));c.emulators.ui.enabled=false;fs.writeFileSync('firebase.json',JSON.stringify(c,null,2));"
+
+      - name: Start Firebase emulator suite
+        run: |
+          firebase emulators:start \
+            --only auth,firestore,storage,database \
+            --project demo-kkaebizigi-test \
+            > .emulator.log 2>&1 &
+          npx wait-on \
+            tcp:127.0.0.1:9099 tcp:127.0.0.1:8080 \
+            tcp:127.0.0.1:9199 tcp:127.0.0.1:9000 \
+            --timeout 120000
+
+      - name: Run smoke specs (chromium-desktop)
+        env:
+          NEXT_PUBLIC_FIREBASE_USE_EMULATOR: 'true'
+          FIREBASE_USE_EMULATOR: 'true'
+          NEXT_PUBLIC_E2E_MODE: 'true'
+          E2E_USE_EMULATOR: 'true'
+          E2E_BASE_URL: 'http://localhost:3000'
+          CI: 'true'
+        # 핵심 smoke 만 — 전체는 e2e.yml 에서. 시각 회귀 / 긴 시나리오 제외.
+        run: pnpm playwright test --project=chromium-desktop --grep-invert "@visual|@long"
+
+      - name: Show emulator log on failure
+        if: failure()
+        run: tail -100 .emulator.log || true
+
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-smoke-report
+          path: e2e/playwright-report
+          retention-days: 7
