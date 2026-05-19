@@ -105,9 +105,12 @@ export default defineConfig({
   ...(SHOULD_START_WEB_SERVER
     ? {
         webServer: {
-          // Sprint 14 F14-A — emulator + e2e mode env 자동 주입
-          command:
-            process.env.E2E_USE_EMULATOR === 'true'
+          // Sprint 14 F14-A — emulator + e2e mode env 자동 주입.
+          // Sprint 18 F18-B — CI 환경에서 tene 미설치 → next 직접 호출.
+          // 로컬에서는 pnpm dev (tene run wrapper) 가 시크릿 주입.
+          command: IS_CI
+            ? 'NEXT_PUBLIC_FIREBASE_USE_EMULATOR=true NEXT_PUBLIC_E2E_MODE=true npx next dev --turbopack -p 3000'
+            : process.env.E2E_USE_EMULATOR === 'true'
               ? 'NEXT_PUBLIC_FIREBASE_USE_EMULATOR=true NEXT_PUBLIC_E2E_MODE=true pnpm dev'
               : 'pnpm dev',
           url: 'http://localhost:3000',
