@@ -26,6 +26,7 @@ import {
   voteCoupon,
   listCoupons,
   listPendingCouponsAdmin,
+  runCouponAutoValidation,
 } from './actions';
 
 const mockedAuth = vi.mocked(auth);
@@ -332,5 +333,146 @@ describe('listPendingCouponsAdmin', () => {
     } as never);
     const result = await listPendingCouponsAdmin();
     expect(result.length).toBe(1);
+  });
+});
+
+describe('runCouponAutoValidation (F19-H 마스터 V2)', () => {
+  it('admin이 아니면 FORBIDDEN', async () => {
+    mockedAuth.mockResolvedValue({
+      user: { id: 'u1', role: 'user' },
+    } as never);
+    const result = await runCouponAutoValidation();
+    expect(result).toMatchObject({ ok: false, error: 'FORBIDDEN' });
+  });
+
+  it('admin이지만 admin creds 없으면 ADMIN_NOT_CONFIGURED', async () => {
+    mockedAuth.mockResolvedValue({
+      user: { id: 'a1', role: 'admin' },
+    } as never);
+    mockedHasAdmin.mockReturnValue(false);
+    const result = await runCouponAutoValidation();
+    expect(result).toMatchObject({ ok: false, error: 'ADMIN_NOT_CONFIGURED' });
+  });
+
+  it('happy path: 1 upvote / 1 downvote / 1 noop 처리', async () => {
+    mockedAuth.mockResolvedValue({
+      user: { id: 'a1', role: 'admin' },
+    } as never);
+
+    const NOW = Date.now();
+    const HOUR = 1000 * 60 * 60;
+    const oldEnoughCreatedAt = NOW - HOUR * 2;
+
+    const update1 = vi.fn(() => Promise.resolve());
+    const update2 = vi.fn(() => Promise.resolve());
+    const update3 = vi.fn(() => Promise.resolve());
+
+    const docs = [
+      // auto_enable: upvotes 5
+      {
+        data: () => ({
+          id: 'c1',
+          status: 'pending',
+          upvotes: 5,
+          downvotes: 0,
+          expiresAtMs: NOW + HOUR * 24,
+          reportedAt: { toMillis: () => oldEnoughCreatedAt },
+        }),
+        ref: { update: update1 },
+      },
+      // auto_disable: downvotes 8
+      {
+        data: () => ({
+          id: 'c2',
+          status: 'pending',
+          upvotes: 0,
+          downvotes: 8,
+          expiresAtMs: NOW + HOUR * 24,
+          reportedAt: { toMillis: () => oldEnoughCreatedAt },
+        }),
+        ref: { update: update2 },
+      },
+      // noop: insufficient
+      {
+        data: () => ({
+          id: 'c3',
+          status: 'pending',
+          upvotes: 1,
+          downvotes: 1,
+          expiresAtMs: NOW + HOUR * 24,
+          reportedAt: { toMillis: () => oldEnoughCreatedAt },
+        }),
+        ref: { update: update3 },
+      },
+    ];
+
+    mockedFirestore.mockReturnValue({
+      collection: vi.fn(() => ({
+        where: vi.fn(function (this: unknown) {
+          return this;
+        }),
+        orderBy: vi.fn(function (this: unknown) {
+          return this;
+        }),
+        limit: vi.fn(function (this: unknown) {
+          return this;
+        }),
+        get: vi.fn(() => Promise.resolve({ docs })),
+      })),
+    } as never);
+
+    const result = await runCouponAutoValidation();
+    expect(result).toMatchObject({
+      ok: true,
+      scanned: 3,
+      autoEnabled: 1,
+      autoDisabled: 1,
+      noop: 1,
+    });
+    expect(update1).toHaveBeenCalled();
+    expect(update2).toHaveBeenCalled();
+    expect(update3).not.toHaveBeenCalled();
+  });
+
+  it('빈 pending 목록 → scanned 0', async () => {
+    mockedAuth.mockResolvedValue({
+      user: { id: 'a1', role: 'admin' },
+    } as never);
+    mockedFirestore.mockReturnValue({
+      collection: vi.fn(() => ({
+        where: vi.fn(function (this: unknown) {
+          return this;
+        }),
+        orderBy: vi.fn(function (this: unknown) {
+          return this;
+        }),
+        limit: vi.fn(function (this: unknown) {
+          return this;
+        }),
+        get: vi.fn(() => Promise.resolve({ docs: [] })),
+      })),
+    } as never);
+
+    const result = await runCouponAutoValidation();
+    expect(result).toMatchObject({
+      ok: true,
+      scanned: 0,
+      autoEnabled: 0,
+      autoDisabled: 0,
+      noop: 0,
+    });
+  });
+
+  it('firestore throw 시 INTERNAL', async () => {
+    mockedAuth.mockResolvedValue({
+      user: { id: 'a1', role: 'admin' },
+    } as never);
+    mockedFirestore.mockImplementation(() => {
+      throw new Error('boom');
+    });
+    const consoleErr = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const result = await runCouponAutoValidation();
+    expect(result).toMatchObject({ ok: false, error: 'INTERNAL', message: 'boom' });
+    consoleErr.mockRestore();
   });
 });

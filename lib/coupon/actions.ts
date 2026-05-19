@@ -204,3 +204,91 @@ export async function listPendingCouponsAdmin(): Promise<readonly CouponDoc[]> {
     return [];
   }
 }
+
+/**
+ * 자동 검증 batch 실행 — Sprint 19 F19-H (마스터 V2 F3.4 1차).
+ *
+ * pending 쿠폰을 조회하여 lib/coupon/auto-validate 의 정책으로 일괄 판정 후
+ * 상태 업데이트. admin 전용 (운영자 수동 또는 향후 cron 트리거).
+ *
+ * 출처: docs/sprint/19-sprint-coverage-deploy/design.md §6
+ */
+export interface AutoValidateRunSummary {
+  readonly ok: true;
+  readonly scanned: number;
+  readonly autoEnabled: number;
+  readonly autoDisabled: number;
+  readonly noop: number;
+}
+
+export type AutoValidateRunResult =
+  | AutoValidateRunSummary
+  | { ok: false; error: 'FORBIDDEN' | 'ADMIN_NOT_CONFIGURED' | 'INTERNAL'; message?: string };
+
+export async function runCouponAutoValidation(): Promise<AutoValidateRunResult> {
+  const session = await auth();
+  if (session?.user?.role !== 'admin') return { ok: false, error: 'FORBIDDEN' };
+  if (!hasAdminCredentials()) return { ok: false, error: 'ADMIN_NOT_CONFIGURED' };
+
+  const { decideCouponValidation, decisionToCouponUpdate } = await import('./auto-validate');
+
+  try {
+    const db = getAdminFirestore();
+    const snap = await db
+      .collection('coupons')
+      .where('status', '==', 'pending')
+      .orderBy('reportedAt', 'desc')
+      .limit(200)
+      .get();
+
+    let autoEnabled = 0;
+    let autoDisabled = 0;
+    let noop = 0;
+    const nowMs = Date.now();
+
+    for (const docSnap of snap.docs) {
+      const d = docSnap.data() as CouponDoc & {
+        reportedAt?: { toMillis(): number };
+      };
+      const createdAtMs = d.reportedAt?.toMillis() ?? 0;
+      const decision = decideCouponValidation({
+        votesUp: d.upvotes ?? 0,
+        votesDown: d.downvotes ?? 0,
+        status: d.status,
+        createdAtMs,
+        ...(d.expiresAtMs !== undefined ? { expiresAtMs: d.expiresAtMs } : {}),
+        nowMs,
+      });
+      const update = decisionToCouponUpdate(decision);
+      if (!update) {
+        noop++;
+        continue;
+      }
+      await docSnap.ref.update({
+        ...update,
+        verifiedBy: 'system',
+        verifiedAt: FieldValue.serverTimestamp(),
+      });
+      if (decision.type === 'auto_enable') autoEnabled++;
+      else autoDisabled++;
+    }
+
+    revalidatePath('/coupon');
+    revalidatePath('/admin/coupons');
+
+    return {
+      ok: true,
+      scanned: snap.docs.length,
+      autoEnabled,
+      autoDisabled,
+      noop,
+    };
+  } catch (err) {
+    console.error('[lib/coupon/actions] runCouponAutoValidation:', err);
+    return {
+      ok: false,
+      error: 'INTERNAL',
+      message: err instanceof Error ? err.message : 'unknown',
+    };
+  }
+}
