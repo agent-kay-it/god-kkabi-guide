@@ -3,10 +3,12 @@
  */
 import { test, expect } from '@playwright/test';
 import { loginAs, logout } from '../../emulator/auth-token-helper';
+import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 test.describe('Auth — Logout', () => {
   test('로그아웃 후 보호 페이지 접근 시 /login 으로 redirect', async ({ page }) => {
     await loginAs(page, 'regular');
+    await waitForUserLoaded(page);
     await page.goto('/me');
     await expect(page.getByText('E2E Regular', { exact: false })).toBeVisible({ timeout: 10_000 });
 
@@ -19,6 +21,7 @@ test.describe('Auth — Logout', () => {
 
   test('로그아웃 후 Firebase Auth currentUser === null', async ({ page }) => {
     await loginAs(page, 'regular');
+    await waitForUserLoaded(page);
     await logout(page);
 
     const isSignedIn = await page.evaluate(async () => {

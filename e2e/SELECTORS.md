@@ -97,3 +97,21 @@ emulator 모드는 다음 env 가 모두 true 여야 함:
 - PR 의 sticky comment 에서 `playwright-report-{project}` artifact 다운로드
 - `playwright-test-results-{project}` 에서 trace.zip + video 회수
 - `npx playwright show-report e2e/playwright-report` 로 로컬 재현
+
+## 10. Sprint 16 / F16-H — wait-helper 표준 (auth specs)
+
+`e2e/tests/auth/*.spec.ts` 8 파일에 `loginAs(page, ...)` 직후
+`waitForUserLoaded(page)` 호출 일괄 적용 완료 (Sprint 16 / F16-H).
+
+**근거**: Sprint 14 의 CI 첫 run 에서 일부 spec 이 `currentUser` race 로 인해
+간헐 flake — 표준 pattern 적용으로 차단.
+
+**검증 명령**:
+
+```bash
+# 모든 auth spec 의 loginAs 다음에 waitForUserLoaded 가 있는지 확인
+grep -c "waitForUserLoaded" e2e/tests/auth/*.spec.ts
+# 모두 1 (import) + N (사용 횟수) 이어야 함
+```
+
+**향후 신규 spec 작성 시**: import 와 첫 호출 모두 잊지 말 것.

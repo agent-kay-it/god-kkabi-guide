@@ -5,10 +5,12 @@
  */
 import { test, expect } from '@playwright/test';
 import { loginAs } from '../../emulator/auth-token-helper';
+import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 test.describe('Auth — Login (Custom Token)', () => {
   test('regular 사용자가 로그인하면 /me 에서 displayName 이 노출된다', async ({ page }) => {
     await loginAs(page, 'regular');
+    await waitForUserLoaded(page);
     await page.goto('/me');
 
     await expect(page.getByText('E2E Regular', { exact: false })).toBeVisible({ timeout: 10_000 });
@@ -16,6 +18,7 @@ test.describe('Auth — Login (Custom Token)', () => {
 
   test('admin 사용자가 로그인하면 admin 권한이 부여된다', async ({ page }) => {
     await loginAs(page, 'admin');
+    await waitForUserLoaded(page);
     await page.goto('/admin');
 
     // admin 페이지 접근 가능 (302 redirect 없음)
@@ -24,6 +27,7 @@ test.describe('Auth — Login (Custom Token)', () => {
 
   test('로그인 직후 헤더에 사용자 표시가 나타난다', async ({ page }) => {
     await loginAs(page, 'regular');
+    await waitForUserLoaded(page);
     await page.goto('/');
 
     // 헤더 우상단 사용자 메뉴 / 아바타 영역 (data-testid 또는 role/text 기반)

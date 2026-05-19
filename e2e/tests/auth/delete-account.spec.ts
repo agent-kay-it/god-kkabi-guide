@@ -7,6 +7,7 @@
 import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
 import { loginAs } from '../../emulator/auth-token-helper';
+import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 function ensureAdmin(): admin.app.App {
   if (admin.apps.length > 0) return admin.app();
@@ -71,6 +72,7 @@ test.describe('Auth — Delete account (Admin cascade)', () => {
   test('seed 4 사용자 (admin/regular/banned/new) 는 이 spec 후에도 살아있다', async ({ page }) => {
     // 위 spec 의 cleanup 이 다른 사용자에게 영향 주지 않음을 보증
     await loginAs(page, 'regular');
+    await waitForUserLoaded(page);
     const uid = await page.evaluate(async () => {
       const { getAuth } = await import('firebase/auth');
       return getAuth().currentUser?.uid ?? null;

@@ -6,6 +6,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { loginAs, createCustomToken, type TestRole } from '../../emulator/auth-token-helper';
+import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 const ROLES: TestRole[] = ['admin', 'regular', 'banned', 'new'];
 
@@ -19,6 +20,7 @@ test.describe('Auth — Custom token (Admin SDK bridge)', () => {
 
     test(`loginAs('${role}') 후 currentUser.uid === e2e-${role}`, async ({ page }) => {
       await loginAs(page, role);
+      await waitForUserLoaded(page);
       const uid = await page.evaluate(async () => {
         const { getAuth } = await import('firebase/auth');
         return getAuth().currentUser?.uid ?? null;

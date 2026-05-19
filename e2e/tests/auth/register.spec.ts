@@ -6,10 +6,12 @@
  */
 import { test, expect } from '@playwright/test';
 import { loginAs } from '../../emulator/auth-token-helper';
+import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 test.describe('Auth — Register (신규 사용자 첫 진입)', () => {
   test('e2e-new 사용자는 / 진입 시 /register 로 redirect 된다', async ({ page }) => {
     await loginAs(page, 'new');
+    await waitForUserLoaded(page);
     await page.goto('/');
 
     // app middleware 가 registered=false 사용자를 /register 로 보낸다
@@ -18,6 +20,7 @@ test.describe('Auth — Register (신규 사용자 첫 진입)', () => {
 
   test('register 페이지 폼 요소가 노출된다 (서버 / 문파 / 직업)', async ({ page }) => {
     await loginAs(page, 'new');
+    await waitForUserLoaded(page);
     await page.goto('/register');
 
     // 서버 입력 (S785 등) — 라벨 기반
