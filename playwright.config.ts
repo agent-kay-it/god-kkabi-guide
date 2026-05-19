@@ -21,7 +21,12 @@ const BASE_URL =
 
 const IS_CI = !!process.env.CI;
 
-const SHOULD_START_WEB_SERVER = !IS_CI && BASE_URL.startsWith('http://localhost');
+// Sprint 18 / F18-B — webServer 기동 조건 fix.
+// 이전: CI 환경에서는 webServer 미기동 (deployed staging URL 가정).
+// 문제: E2E_BASE_URL=http://localhost:3000 + E2E_USE_EMULATOR=true 인 CI 모드에서
+//   webServer 가 미기동되어 모든 spec 이 ECONNREFUSED.
+// 수정: BASE_URL 이 localhost 이면 항상 webServer 기동 (CI/local 동일).
+const SHOULD_START_WEB_SERVER = BASE_URL.startsWith('http://localhost');
 
 // Playwright 의 build.babelPlugins 가 인식할 수 있게 tsconfig 위치 명시.
 // e2e/tsconfig.json 이 root tsconfig (moduleResolution: bundler) 와 분리되어
