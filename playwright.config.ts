@@ -41,7 +41,9 @@ export default defineConfig({
   // 병렬 + 안정성
   fullyParallel: true,
   forbidOnly: IS_CI,
-  retries: IS_CI ? 2 : 0,
+  // Sprint 15 F15-A: CI flake 강화 — retries 2 → 3 (transient 보호).
+  // 더 높이면 실 fail 의 catch 가 느려지므로 3 이 최적 균형.
+  retries: IS_CI ? 3 : 0,
   workers: IS_CI ? 2 : '50%',
 
   // 글로벌 timeout
