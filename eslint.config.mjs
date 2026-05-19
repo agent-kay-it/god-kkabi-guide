@@ -82,6 +82,8 @@ export default tseslint.config(
       'build/**',
       'next-env.d.ts',
       '**/*.config.{mjs,js,ts}',
+      // Sprint 19 / Iterate — vitest coverage 산출물 (generated, gitignore 대상).
+      'coverage/**',
     ],
   },
 );
