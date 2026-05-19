@@ -108,6 +108,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
+        id: upload-report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.project }}
@@ -116,19 +117,67 @@ jobs:
 
       - name: Upload test-results (failure traces + screenshots)
         if: failure()
+        id: upload-traces
         uses: actions/upload-artifact@v4
         with:
           name: playwright-test-results-${{ matrix.project }}
           path: e2e/test-results
           retention-days: 14
 
-      - name: Comment summary on PR
-        if: always() && github.event_name == 'pull_request'
+      # Sprint 15 F15-J — fail 시 PR comment 에 trace + 첫 screenshot 인라인
+      - name: Parse Playwright results.json (failure summary)
+        if: failure()
+        id: parse-results
+        run: |
+          set -e
+          RESULTS="e2e/playwright-report/results.json"
+          if [ ! -f "$RESULTS" ]; then
+            echo "summary=Results JSON not found." >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          PASSED=$(jq '[.suites[]?.specs[]?.tests[]? | select(.status=="passed")] | length' "$RESULTS")
+          FAILED=$(jq '[.suites[]?.specs[]?.tests[]? | select(.status=="failed")] | length' "$RESULTS")
+          FLAKY=$(jq '[.suites[]?.specs[]?.tests[]? | select(.status=="flaky")] | length' "$RESULTS")
+          {
+            echo "summary<<EOF"
+            echo "Passed: ${PASSED}  Failed: ${FAILED}  Flaky: ${FLAKY}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          # 첫 fail spec 이름 5개
+          jq -r '[.suites[]?.specs[]?.tests[]? | select(.status=="failed") | .title][:5][]' "$RESULTS" > /tmp/failed-specs.txt || true
+
+      - name: Comment summary on PR (success)
+        if: success() && github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: e2e-${{ matrix.project }}
           message: |
-            ### Playwright E2E — `${{ matrix.project }}`
-            Mode: Firebase emulator + localhost dev (Sprint 14 F14-A)
-            Result: ${{ job.status }}
-            Artifacts: `playwright-report-${{ matrix.project }}` (HTML), `playwright-test-results-${{ matrix.project }}` (traces on failure)
+            ### Playwright E2E — `${{ matrix.project }}` ✓
+
+            **Mode**: Firebase emulator + localhost dev
+            **Status**: success
+            **Artifact**: `playwright-report-${{ matrix.project }}` (HTML report)
+
+      - name: Comment summary on PR (failure)
+        if: failure() && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: e2e-${{ matrix.project }}
+          message: |
+            ### Playwright E2E — `${{ matrix.project }}` ✗
+
+            **Mode**: Firebase emulator + localhost dev
+            **Status**: ${{ job.status }}
+            **Summary**: ${{ steps.parse-results.outputs.summary }}
+
+            **Artifacts**:
+            - HTML report: download `playwright-report-${{ matrix.project }}` from "Details" above
+            - Traces + screenshots: download `playwright-test-results-${{ matrix.project }}`
+
+            **Reproduce locally**:
+            ```bash
+            ./scripts/test-e2e.sh --use-emulator -- --project=${{ matrix.project }}
+            npx playwright show-trace e2e/test-results/.../trace.zip
+            ```
+
+            **Emulator log tail (last 100 lines)**: see "Show emulator log on failure" step
