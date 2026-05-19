@@ -31,6 +31,9 @@ const ENV =
   process.env.NODE_ENV ??
   'development';
 
+// Sprint 14 / F14-A — e2e 모드에서는 Sentry init skip (테스트 console 노이즈 제거)
+const IS_E2E = process.env.NEXT_PUBLIC_E2E_MODE === 'true';
+
 // Sentry instance 캐시 — onRouterTransitionStart proxy 가 init 완료 후 사용.
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type SentryModule = typeof import('@sentry/nextjs');
@@ -77,7 +80,7 @@ async function initSentry(): Promise<void> {
   }
 }
 
-if (typeof window !== 'undefined' && DSN) {
+if (typeof window !== 'undefined' && DSN && !IS_E2E) {
   const requestIdle =
     typeof window.requestIdleCallback === 'function'
       ? window.requestIdleCallback.bind(window)
