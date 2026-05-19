@@ -1,7 +1,8 @@
 name: Lighthouse CI
 
-# Sprint 12 / F12-E-1 — Vercel preview deploy 후 자동 Lighthouse 측정 + budget 검증.
-# 결과를 GitHub PR comment 로 게시 + artifact 업로드.
+# Sprint 12 / F12-E-1 + Sprint 15 / F15-H — Vercel preview deploy 후 자동
+# Lighthouse 측정 + budget 검증 + lighthouserc.json assert preset.
+# 결과를 GitHub PR comment 로 게시 + temporary-public-storage 업로드.
 
 on:
   pull_request:
@@ -44,24 +45,43 @@ jobs:
             echo "target=${{ steps.vercel.outputs.url }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Run Lighthouse
+      - name: Run Lighthouse (with lighthouserc.json + budget)
+        # Sprint 15 F15-H — configPath 로 lighthouserc.json 의 assert preset 활용.
+        # budget 은 resource size, lighthouserc 는 score / web vitals.
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
             ${{ steps.url.outputs.target }}
             ${{ steps.url.outputs.target }}/post
             ${{ steps.url.outputs.target }}/chat
+            ${{ steps.url.outputs.target }}/me
+            ${{ steps.url.outputs.target }}/search
+          configPath: ./lighthouserc.json
           budgetPath: ./.lighthouse-budget.json
           uploadArtifacts: true
           temporaryPublicStorage: true
+          runs: 3
 
       - name: Comment results on PR
-        if: github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: lighthouse-ci
           message: |
             ### Lighthouse CI
-            Target: ${{ steps.url.outputs.target }}
-            Artifacts uploaded to action run.
-            Budget enforced via `.lighthouse-budget.json`.
+
+            **Target**: ${{ steps.url.outputs.target }}
+            **URLs**: `/`, `/post`, `/chat`, `/me`, `/search` (5 pages × 3 runs)
+
+            **Assert preset** (lighthouserc.json):
+            - Performance: warn ≥80
+            - Accessibility: **error ≥90**
+            - Best Practices: warn ≥90
+            - SEO: warn ≥90
+            - LCP < 4s, FCP < 2s, CLS < 0.1, TBT < 300ms
+
+            **Budget** (.lighthouse-budget.json):
+            - Script ≤400KB, Image ≤1500KB, Stylesheet ≤80KB, Font ≤200KB
+            - Third-party ≤25 requests
+
+            Detailed report: temporary-public-storage URL in artifacts
