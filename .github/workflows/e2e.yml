@@ -1,13 +1,12 @@
 name: E2E
 
-# Sprint 13 / F13-A-6 — Vercel preview deploy 대기 후 Playwright e2e 실행.
-# 결과 HTML report 를 artifact 로 업로드.
+# Sprint 13 / F13-A-6 + Sprint 14 / F14-A —
+# Firebase emulator suite + local Next.js dev server 위에서 Playwright e2e.
 #
 # 정책:
-#  - draft PR 제외 (perf 비용 절감)
+#  - draft PR 제외
 #  - chromium-desktop + chromium-mobile 만 실행 (CI 기본). webkit 은 nightly cron 별도
-#  - workers=2, retries=2 (config 에서 IS_CI 분기)
-#  - storageState 는 secret (Base64) 으로 주입 → CI 에서 e2e/.storage/ 복원
+#  - emulator 모드는 OAuth 우회 + 운영 데이터 격리
 
 on:
   pull_request:
@@ -17,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       base_url:
-        description: '대상 URL (default: 자동 Vercel preview)'
+        description: '대상 URL (default: localhost + emulator)'
         required: false
         type: string
 
@@ -47,51 +46,57 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
+      - name: Setup Java (Firebase emulator runtime)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright Chromium
         run: pnpm playwright install --with-deps chromium
 
-      - name: Restore storageState (admin/regular/banned/new)
-        env:
-          E2E_STORAGE_ADMIN_B64: ${{ secrets.E2E_STORAGE_ADMIN_B64 }}
-          E2E_STORAGE_REGULAR_B64: ${{ secrets.E2E_STORAGE_REGULAR_B64 }}
-          E2E_STORAGE_BANNED_B64: ${{ secrets.E2E_STORAGE_BANNED_B64 }}
-          E2E_STORAGE_NEW_B64: ${{ secrets.E2E_STORAGE_NEW_B64 }}
-        run: |
-          mkdir -p e2e/.storage
-          if [ -n "$E2E_STORAGE_ADMIN_B64" ]; then echo "$E2E_STORAGE_ADMIN_B64" | base64 -d > e2e/.storage/admin.json; fi
-          if [ -n "$E2E_STORAGE_REGULAR_B64" ]; then echo "$E2E_STORAGE_REGULAR_B64" | base64 -d > e2e/.storage/regular.json; fi
-          if [ -n "$E2E_STORAGE_BANNED_B64" ]; then echo "$E2E_STORAGE_BANNED_B64" | base64 -d > e2e/.storage/banned.json; fi
-          if [ -n "$E2E_STORAGE_NEW_B64" ]; then echo "$E2E_STORAGE_NEW_B64" | base64 -d > e2e/.storage/new.json; fi
-
-      - name: Wait for Vercel Preview
-        id: vercel
-        if: github.event_name == 'pull_request'
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+      - name: Cache firebase-tools
+        uses: actions/cache@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          max_timeout: 600
-          check_interval: 15
+          path: ~/.cache/firebase
+          key: firebase-tools-${{ runner.os }}
 
-      - name: Resolve target URL
-        id: url
+      - name: Install firebase-tools
+        run: npm install -g firebase-tools@13
+
+      - name: Start Firebase emulator suite (background)
         run: |
-          if [ -n "${{ github.event.inputs.base_url }}" ]; then
-            echo "target=${{ github.event.inputs.base_url }}" >> "$GITHUB_OUTPUT"
-          elif [ -n "${{ steps.vercel.outputs.url }}" ]; then
-            echo "target=${{ steps.vercel.outputs.url }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "target=https://staging.kkaebizigi.com" >> "$GITHUB_OUTPUT"
-          fi
+          firebase emulators:start \
+            --only auth,firestore,storage,database \
+            --project demo-kkaebizigi-test \
+            > .emulator.log 2>&1 &
+          echo "emulator pid: $!"
 
-      - name: Run Playwright (${{ matrix.project }})
+      - name: Wait for emulator ports
+        run: |
+          npx wait-on \
+            tcp:127.0.0.1:9099 \
+            tcp:127.0.0.1:8080 \
+            tcp:127.0.0.1:9199 \
+            tcp:127.0.0.1:9000 \
+            --timeout 120000
+
+      - name: Run Playwright (${{ matrix.project }}) with emulator
         env:
-          E2E_BASE_URL: ${{ steps.url.outputs.target }}
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          NEXT_PUBLIC_FIREBASE_USE_EMULATOR: 'true'
+          FIREBASE_USE_EMULATOR: 'true'
+          NEXT_PUBLIC_E2E_MODE: 'true'
+          E2E_USE_EMULATOR: 'true'
+          E2E_BASE_URL: 'http://localhost:3000'
           CI: 'true'
         run: pnpm playwright test --project=${{ matrix.project }}
+
+      - name: Show emulator log on failure
+        if: failure()
+        run: tail -100 .emulator.log || true
 
       - name: Upload Playwright report
         if: always()
@@ -116,6 +121,6 @@ jobs:
           header: e2e-${{ matrix.project }}
           message: |
             ### Playwright E2E — `${{ matrix.project }}`
-            Target: ${{ steps.url.outputs.target }}
+            Mode: Firebase emulator + localhost dev (Sprint 14 F14-A)
             Result: ${{ job.status }}
             Artifacts: `playwright-report-${{ matrix.project }}` (HTML), `playwright-test-results-${{ matrix.project }}` (traces on failure)

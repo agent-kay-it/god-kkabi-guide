@@ -40,7 +40,32 @@ interface ParsedServiceAccount {
 
 /** 빌드/런타임에서 Firebase Admin SDK 자격증명이 있는지 확인 (오류 없이) */
 export function hasAdminCredentials(): boolean {
-  return Boolean(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+  return Boolean(process.env.FIREBASE_SERVICE_ACCOUNT_JSON) || isAdminEmulator();
+}
+
+/**
+ * Sprint 14 F14-A — emulator 모드 여부 (서버측).
+ * FIREBASE_USE_EMULATOR=true 시 service account 없이도 admin SDK 가 emulator 에 연결.
+ * Admin SDK 는 다음 env 를 자동 인식:
+ *   - FIRESTORE_EMULATOR_HOST
+ *   - FIREBASE_AUTH_EMULATOR_HOST
+ *   - STORAGE_EMULATOR_HOST
+ *   - FIREBASE_DATABASE_EMULATOR_HOST
+ */
+export function isAdminEmulator(): boolean {
+  return process.env.FIREBASE_USE_EMULATOR === 'true';
+}
+
+function applyEmulatorHosts(): void {
+  if (!isAdminEmulator()) return;
+  process.env.FIRESTORE_EMULATOR_HOST =
+    process.env.FIRESTORE_EMULATOR_HOST ?? 'localhost:8080';
+  process.env.FIREBASE_AUTH_EMULATOR_HOST =
+    process.env.FIREBASE_AUTH_EMULATOR_HOST ?? 'localhost:9099';
+  process.env.STORAGE_EMULATOR_HOST =
+    process.env.STORAGE_EMULATOR_HOST ?? 'http://localhost:9199';
+  process.env.FIREBASE_DATABASE_EMULATOR_HOST =
+    process.env.FIREBASE_DATABASE_EMULATOR_HOST ?? 'localhost:9000';
 }
 
 function parseServiceAccount(): ServiceAccount {
@@ -79,6 +104,18 @@ function ensureAdminApp(): App {
   if (existing.length > 0) {
     return getApp();
   }
+
+  // Sprint 14 F14-A — emulator 모드는 service account 없이 dummy project 로 init
+  if (isAdminEmulator()) {
+    applyEmulatorHosts();
+    return initializeApp({
+      projectId: 'demo-kkaebizigi-test',
+      // emulator 의 Storage 는 dummy bucket 으로 OK
+      storageBucket: 'demo-kkaebizigi-test.appspot.com',
+      databaseURL: 'http://localhost:9000?ns=demo-kkaebizigi-test',
+    });
+  }
+
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
   const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
   const databaseURL =

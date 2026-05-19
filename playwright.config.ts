@@ -34,6 +34,10 @@ export default defineConfig({
   snapshotDir: './e2e/visual',
   outputDir: './e2e/test-results',
 
+  // Sprint 14 F14-A — emulator seed + cleanup
+  globalSetup: require.resolve('./e2e/global-setup.ts'),
+  globalTeardown: require.resolve('./e2e/global-teardown.ts'),
+
   // 병렬 + 안정성
   fullyParallel: true,
   forbidOnly: IS_CI,
@@ -94,7 +98,11 @@ export default defineConfig({
   ...(SHOULD_START_WEB_SERVER
     ? {
         webServer: {
-          command: 'pnpm dev',
+          // Sprint 14 F14-A — emulator + e2e mode env 자동 주입
+          command:
+            process.env.E2E_USE_EMULATOR === 'true'
+              ? 'NEXT_PUBLIC_FIREBASE_USE_EMULATOR=true NEXT_PUBLIC_E2E_MODE=true pnpm dev'
+              : 'pnpm dev',
           url: 'http://localhost:3000',
           reuseExistingServer: true,
           timeout: 180_000,
