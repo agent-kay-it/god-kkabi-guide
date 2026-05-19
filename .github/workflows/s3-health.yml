@@ -1,0 +1,91 @@
+name: S3 Health Check
+
+# Sprint 18 / F18-F — S3 staging cutover dry-run script 의 CI workflow 통합.
+#
+# Trigger:
+#  - workflow_dispatch (수동 실행)
+#  - 매주 월요일 01:00 UTC (10:00 KST) 자동 (cron)
+#
+# 정책:
+#  - 실 mutation 없음 (scripts/s3-cutover-dryrun.mjs 사용)
+#  - 결과 JSON 을 artifact 로 보관 (90일)
+#  - exit code 분기: 0 (pass) / 1 (fail) / 2 (warn)
+#  - fail 시 issue 자동 생성 (사용자 명시 승인 후 활성화 — 현재 미적용)
+
+on:
+  workflow_dispatch:
+    inputs:
+      verbose:
+        description: '결과 stdout 상세 출력 (default: false)'
+        required: false
+        type: boolean
+        default: false
+  schedule:
+    # 매주 월요일 01:00 UTC = 10:00 KST (운영자 검토 가능 시간대)
+    - cron: '0 1 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install deps (production + @aws-sdk)
+        run: pnpm install --frozen-lockfile
+
+      - name: Run S3 dry-run health check
+        # 시크릿은 GitHub Actions secrets 로 주입 — 본 step 의 env 에만 노출.
+        # 시크릿 값 stdout 출력 없음 (script 자체 보안 정책).
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET_POSTS: ${{ secrets.AWS_S3_BUCKET_POSTS }}
+          AWS_S3_BUCKET_CHAT: ${{ secrets.AWS_S3_BUCKET_CHAT }}
+          AWS_S3_BUCKET_PROFILES: ${{ secrets.AWS_S3_BUCKET_PROFILES }}
+        run: |
+          node scripts/s3-cutover-dryrun.mjs > /tmp/s3-health.json 2>&1 || EXIT_CODE=$?
+          EXIT_CODE=${EXIT_CODE:-0}
+          echo "Exit code: $EXIT_CODE"
+
+          # 결과 JSON 출력 (시크릿 미포함)
+          if [ "${{ inputs.verbose }}" = "true" ]; then
+            cat /tmp/s3-health.json
+          else
+            # summary 만 출력
+            cat /tmp/s3-health.json | jq -r '.summary'
+          fi
+
+          # exit code 보존 — workflow status 에 반영
+          exit $EXIT_CODE
+
+      - name: Upload health check JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s3-health-result
+          path: /tmp/s3-health.json
+          retention-days: 90
+
+      # Sprint 19+ carry — issue 자동 생성 step 추가
+      # - name: Create issue on failure
+      #   if: failure()
+      #   uses: peter-evans/create-issue-from-file@v5
+      #   with:
+      #     title: 'S3 Health Check 실패 — ${{ github.run_number }}'
+      #     content-filepath: /tmp/s3-health.json
+      #     labels: 'infrastructure, s3-health'
