@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 
 import { recordSimulatorRun } from '@/lib/simulator/actions';
 import { getSynergy } from '@/lib/simulator/synergy-matrix';
+import { buildPrefillUrlFromSynergy } from '@/lib/simulator/prefill-url';
 import {
   SYNERGY_TIER_LABEL,
   SYNERGY_TIER_COLOR,
@@ -62,12 +63,12 @@ export function SimulatorCanvas({
 
   function saveAsPost() {
     if (!synergy) return;
-    const combo = synergy.comboId;
     void logEvent('simulator_save_build', {
-      combo_id: combo,
+      combo_id: synergy.comboId,
       ...(synergy.recommendedClass ? { class_id: synergy.recommendedClass } : {}),
     });
-    router.push(`/post/new?prefill=simulator&combo=${encodeURIComponent(combo)}`);
+    // Sprint 19 F19-G — prefill URL helper 도입 (combo + class + score + tier 전달)
+    router.push(buildPrefillUrlFromSynergy(synergy));
   }
 
   function record() {
