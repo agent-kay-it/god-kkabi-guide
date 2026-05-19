@@ -1,17 +1,23 @@
 name: Lighthouse CI
 
-# Sprint 12 / F12-E-1 + Sprint 15 / F15-H — Vercel preview deploy 후 자동
-# Lighthouse 측정 + budget 검증 + lighthouserc.json assert preset.
-# 결과를 GitHub PR comment 로 게시 + temporary-public-storage 업로드.
+# Sprint 19 / F19-C — self-contained Lighthouse 측정.
+# Vercel preview deployment 의존을 제거하고 CI 내에서 build + start + measure 일체.
+#
+# 이전 (Sprint 12-18): wait-for-vercel-preview → Vercel integration 미설정 시 측정 불가
+# 신규 (Sprint 19): localhost 빌드 → 측정 → 결과 업로드 (CI self-contained)
+#
+# 측정 URL: localhost:3000 의 5 페이지 (홈/post/chat/me/search)
+# 결과: temporary-public-storage 업로드 + PR comment
 
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review]
   workflow_dispatch:
     inputs:
-      url:
-        description: '측정 URL (default: 자동 감지된 Vercel preview)'
+      runs:
+        description: '측정 횟수 per URL (default 3)'
         required: false
+        default: '3'
         type: string
 
 permissions:
@@ -22,45 +28,89 @@ jobs:
   lighthouse:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Wait for Vercel preview
-        id: vercel
-        if: github.event_name == 'pull_request'
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          max_timeout: 600
-          check_interval: 15
+          version: 9
 
-      - name: Resolve target URL
-        id: url
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (with dummy env for build-pass)
+        env:
+          # Sprint 19 F19-C — build 통과용 dummy env (실제 API 호출 X)
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: demo-kkaebizigi-test
+          NEXT_PUBLIC_FIREBASE_API_KEY: dummy
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: demo-kkaebizigi-test.firebaseapp.com
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: demo-kkaebizigi-test.appspot.com
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '0'
+          NEXT_PUBLIC_FIREBASE_APP_ID: '1:0:web:0'
+          NEXT_PUBLIC_E2E_MODE: 'true'
+          NEXT_PUBLIC_FIREBASE_USE_EMULATOR: 'true'
+          NEXTAUTH_SECRET: dummy-secret-for-ci-only
+          NEXTAUTH_URL: http://localhost:3000
+        run: pnpm build
+
+      - name: Start Next.js (background)
+        env:
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: demo-kkaebizigi-test
+          NEXT_PUBLIC_FIREBASE_API_KEY: dummy
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: demo-kkaebizigi-test.firebaseapp.com
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: demo-kkaebizigi-test.appspot.com
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '0'
+          NEXT_PUBLIC_FIREBASE_APP_ID: '1:0:web:0'
+          NEXT_PUBLIC_E2E_MODE: 'true'
+          NEXT_PUBLIC_FIREBASE_USE_EMULATOR: 'true'
+          NEXTAUTH_SECRET: dummy-secret-for-ci-only
+          NEXTAUTH_URL: http://localhost:3000
         run: |
-          if [ -n "${{ github.event.inputs.url }}" ]; then
-            echo "target=${{ github.event.inputs.url }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "target=${{ steps.vercel.outputs.url }}" >> "$GITHUB_OUTPUT"
-          fi
+          pnpm start &
+          echo $! > /tmp/next.pid
+          echo "Started Next.js (pid $(cat /tmp/next.pid))"
+
+      - name: Wait for localhost:3000 ready
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:3000 >/dev/null 2>&1; then
+              echo "Next.js ready after ${i}s"
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://localhost:3000 >/dev/null || (echo "FAIL: localhost:3000 not reachable" && exit 1)
 
       - name: Run Lighthouse (with lighthouserc.json + budget)
-        # Sprint 15 F15-H — configPath 로 lighthouserc.json 의 assert preset 활용.
-        # budget 은 resource size, lighthouserc 는 score / web vitals.
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
-            ${{ steps.url.outputs.target }}
-            ${{ steps.url.outputs.target }}/post
-            ${{ steps.url.outputs.target }}/chat
-            ${{ steps.url.outputs.target }}/me
-            ${{ steps.url.outputs.target }}/search
+            http://localhost:3000
+            http://localhost:3000/post
+            http://localhost:3000/chat
+            http://localhost:3000/me
+            http://localhost:3000/search
           configPath: ./lighthouserc.json
           budgetPath: ./.lighthouse-budget.json
           uploadArtifacts: true
           temporaryPublicStorage: true
-          runs: 3
+          runs: ${{ github.event.inputs.runs || '3' }}
+
+      - name: Stop Next.js
+        if: always()
+        run: |
+          if [ -f /tmp/next.pid ]; then
+            kill $(cat /tmp/next.pid) 2>/dev/null || true
+          fi
 
       - name: Comment results on PR
         if: always() && github.event_name == 'pull_request'
@@ -68,10 +118,10 @@ jobs:
         with:
           header: lighthouse-ci
           message: |
-            ### Lighthouse CI
+            ### Lighthouse CI (self-contained)
 
-            **Target**: ${{ steps.url.outputs.target }}
-            **URLs**: `/`, `/post`, `/chat`, `/me`, `/search` (5 pages × 3 runs)
+            **Target**: `localhost:3000` (CI build + start)
+            **URLs**: `/`, `/post`, `/chat`, `/me`, `/search` (5 pages × ${{ github.event.inputs.runs || '3' }} runs)
 
             **Assert preset** (lighthouserc.json):
             - Performance: warn ≥80
@@ -85,3 +135,5 @@ jobs:
             - Third-party ≤25 requests
 
             Detailed report: temporary-public-storage URL in artifacts
+
+            Sprint 19 F19-C — Vercel preview integration 없이 CI self-contained 측정.
