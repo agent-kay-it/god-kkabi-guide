@@ -12,6 +12,12 @@ name: Lighthouse CI
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review]
+    # Sprint 19 F19-B — docs/markdown 전용 변경은 Lighthouse skip.
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'README*'
+      - 'LICENSE'
   workflow_dispatch:
     inputs:
       runs:
