@@ -75,6 +75,13 @@ jobs:
       - name: Install firebase-tools
         run: npm install -g firebase-tools@13
 
+      - name: Disable Emulator UI in CI (Sprint 17 / F17-C)
+        # CI runner 가 port 4400 (Emulator UI) 바인딩 실패 시 emulator 전체가
+        # shutdown 됨. firebase.json 의 ui.enabled 를 false 로 동적 갱신.
+        run: |
+          node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('firebase.json','utf-8'));c.emulators.ui.enabled=false;fs.writeFileSync('firebase.json',JSON.stringify(c,null,2));"
+          cat firebase.json
+
       - name: Start Firebase emulator suite (background)
         run: |
           firebase emulators:start \
