@@ -116,3 +116,4 @@ yarn-error.log*
 .lighthouseci-mobile/
 lhci-*.html
 lhci-*.json
+coverage

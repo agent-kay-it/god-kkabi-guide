@@ -19,7 +19,30 @@ export default defineConfig({
       'components/**/*.test.ts',
       'components/**/*.test.tsx',
     ],
-    exclude: ['node_modules/**', '.next/**'],
+    exclude: ['node_modules/**', '.next/**', 'e2e/**'],
+    // Sprint 15 F15-E — coverage (v8 provider).
+    coverage: {
+      provider: 'v8',
+      include: ['lib/**/*.ts', 'hooks/**/*.ts'],
+      exclude: [
+        'lib/**/*.test.ts',
+        'lib/**/__tests__/**',
+        'hooks/**/*.test.ts',
+        'lib/**/*.d.ts',
+        'lib/firebase/admin.ts',  // server-only, e2e 에서 검증
+      ],
+      reporter: ['text', 'text-summary', 'json', 'html', 'lcov'],
+      reportsDirectory: 'coverage',
+      // Sprint 15 F15-E — 실측 baseline (12.79% lines).
+      // Sprint 16+ 에서 lib/ unit test 확대로 50% → 70% 단계적 강화.
+      // 본 threshold 는 회귀 방지선 — 현재보다 떨어지면 CI fail.
+      thresholds: {
+        lines: 10,
+        branches: 40,
+        functions: 50,
+        statements: 10,
+      },
+    },
   },
   resolve: {
     alias: {
