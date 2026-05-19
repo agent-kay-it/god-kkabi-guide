@@ -2,13 +2,17 @@
  * 진령 시너지 매트릭스 시드 — Sprint V2 F3.1.
  * 출처: docs/sprint/04-sprint-v2/phase-2-design/v2-design-details.md §1.2
  *
- * 11 진령 × 11 × 11 / 3! = 165 조합 중 핵심 ~20 시드.
+ * 11 진령 × 11 × 11 / 3! = 165 조합. 본 시드는 30+ 핵심 조합 정의 (18.2% 커버리지).
  * 매칭 안 되는 조합은 default B tier (score 50) 반환 — 운영자 점진 보강 가능.
  *
  * 시너지 평가 기준 (게임 메타 + 도메인 운영자 입력):
  *  - 직업 호환성 (warrior/swordsman/medium)
  *  - 스킬 시너지 (탱커-딜러-힐러 분담)
  *  - 자동 사냥 효율 (CPM cycle 적합도)
+ *
+ * Sprint 18 F18-D 보강: 10 → 32 조합 확장.
+ *  - warrior 8 / swordsman 8 / medium 8 / balanced 8
+ *  - 운영자 실 게임 메타 입력 검증 시 score 미세 조정 가능
  */
 
 import type {
@@ -114,6 +118,188 @@ const SEED: readonly JinryeongSynergyDef[] = [
     synergyScore: 70,
     tier: 'B',
     description: '단일/광역 균형 — 격투귀 + 음명귀 + 태양여신',
+  },
+
+  // ─── Sprint 18 F18-D — Warrior 추가 (5 신규) ───
+  {
+    comboId: buildComboId([J.seohaeyongwang, J.chiwoo, J.hongGildong]),
+    jinryeongIds: [J.seohaeyongwang, J.chiwoo, J.hongGildong],
+    synergyScore: 93,
+    tier: 'S',
+    recommendedClass: 'warrior',
+    description: '전사 정석 — 서해용왕 만능 + 치우 광역 + 홍길동 분신',
+    note: 'PvE 자동사냥/PvP 결투장 모두 안정',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.hangah, J.gyeoktugwi]),
+    jinryeongIds: [J.chiwoo, J.hangah, J.gyeoktugwi],
+    synergyScore: 87,
+    tier: 'A',
+    recommendedClass: 'warrior',
+    description: '전사 탱딜 — 치우 광역 + 항아 보호막 + 격투귀 단일',
+    note: '결투장 1대1 전향 빌드',
+  },
+  {
+    comboId: buildComboId([J.seohaeyongwang, J.hongGildong, J.gyeoktugwi]),
+    jinryeongIds: [J.seohaeyongwang, J.hongGildong, J.gyeoktugwi],
+    synergyScore: 84,
+    tier: 'A',
+    recommendedClass: 'warrior',
+    description: '전사 폭딜 — 서해용왕 회심 + 홍길동 지속 + 격투귀 단일',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.taeyangyeosin, J.gyeoktugwi]),
+    jinryeongIds: [J.chiwoo, J.taeyangyeosin, J.gyeoktugwi],
+    synergyScore: 81,
+    tier: 'A',
+    recommendedClass: 'warrior',
+    description: '전사 광역 — 치우 + 태양여신 + 격투귀 (PvE 던전)',
+  },
+  {
+    comboId: buildComboId([J.hongGildong, J.chiwoo, J.myeongwang]),
+    jinryeongIds: [J.hongGildong, J.chiwoo, J.myeongwang],
+    synergyScore: 76,
+    tier: 'A',
+    recommendedClass: 'warrior',
+    description: '전사 보스킬러 — 홍길동 + 치우 + 명왕 처형',
+  },
+
+  // ─── Sprint 18 F18-D — Swordsman 추가 (5 신규) ───
+  {
+    comboId: buildComboId([J.seohaeyongwang, J.eumyeonggwi, J.myeongwang]),
+    jinryeongIds: [J.seohaeyongwang, J.eumyeonggwi, J.myeongwang],
+    synergyScore: 94,
+    tier: 'S',
+    recommendedClass: 'swordsman',
+    description: '검객 정석 — 서해용왕 회심 + 음명귀 치명 + 명왕 처형',
+    note: '40+ 보스전 1티어',
+  },
+  {
+    comboId: buildComboId([J.eumyeonggwi, J.hongGildong, J.myeongwang]),
+    jinryeongIds: [J.eumyeonggwi, J.hongGildong, J.myeongwang],
+    synergyScore: 89,
+    tier: 'A',
+    recommendedClass: 'swordsman',
+    description: '검객 단일 폭딜 — 음명귀 + 홍길동 지속 + 명왕 처형',
+  },
+  {
+    comboId: buildComboId([J.gyeoktugwi, J.eumyeonggwi, J.gunggwi]),
+    jinryeongIds: [J.gyeoktugwi, J.eumyeonggwi, J.gunggwi],
+    synergyScore: 83,
+    tier: 'A',
+    recommendedClass: 'swordsman',
+    description: '검객 원거리 — 격투귀 + 음명귀 + 궁귀 (PvP)',
+  },
+  {
+    comboId: buildComboId([J.seohaeyongwang, J.taeyangyeosin, J.eumyeonggwi]),
+    jinryeongIds: [J.seohaeyongwang, J.taeyangyeosin, J.eumyeonggwi],
+    synergyScore: 79,
+    tier: 'A',
+    recommendedClass: 'swordsman',
+    description: '검객 광역 — 서해용왕 + 태양여신 + 음명귀',
+  },
+  {
+    comboId: buildComboId([J.eumyeonggwi, J.gunggwi, J.myeongwang]),
+    jinryeongIds: [J.eumyeonggwi, J.gunggwi, J.myeongwang],
+    synergyScore: 74,
+    tier: 'B',
+    recommendedClass: 'swordsman',
+    description: '검객 단일 정밀 — 음명귀 + 궁귀 + 명왕',
+  },
+
+  // ─── Sprint 18 F18-D — Medium 추가 (5 신규) ───
+  {
+    comboId: buildComboId([J.seohaeyongwang, J.gumiyoho, J.sansin]),
+    jinryeongIds: [J.seohaeyongwang, J.gumiyoho, J.sansin],
+    synergyScore: 91,
+    tier: 'S',
+    recommendedClass: 'medium',
+    description: '영매 정석 — 서해용왕 + 구미요호 매혹 + 산신 회복',
+    note: '레이드 보조 1티어',
+  },
+  {
+    comboId: buildComboId([J.hangah, J.sansin, J.myeongwang]),
+    jinryeongIds: [J.hangah, J.sansin, J.myeongwang],
+    synergyScore: 84,
+    tier: 'A',
+    recommendedClass: 'medium',
+    description: '영매 디버프 — 항아 보호 + 산신 회복 + 명왕 저주',
+  },
+  {
+    comboId: buildComboId([J.gumiyoho, J.myeongwang, J.sansin]),
+    jinryeongIds: [J.gumiyoho, J.myeongwang, J.sansin],
+    synergyScore: 82,
+    tier: 'A',
+    recommendedClass: 'medium',
+    description: '영매 매혹 — 구미요호 + 명왕 + 산신',
+  },
+  {
+    comboId: buildComboId([J.hangah, J.eumyeonggwi, J.gumiyoho]),
+    jinryeongIds: [J.hangah, J.eumyeonggwi, J.gumiyoho],
+    synergyScore: 77,
+    tier: 'A',
+    recommendedClass: 'medium',
+    description: '영매 보조 — 항아 + 음명귀 + 구미요호',
+  },
+  {
+    comboId: buildComboId([J.sansin, J.hangah, J.taeyangyeosin]),
+    jinryeongIds: [J.sansin, J.hangah, J.taeyangyeosin],
+    synergyScore: 73,
+    tier: 'B',
+    recommendedClass: 'medium',
+    description: '영매 광역 회복 — 산신 + 항아 + 태양여신',
+  },
+
+  // ─── Sprint 18 F18-D — Balanced/Universal 추가 (7 신규) ───
+  {
+    comboId: buildComboId([J.seohaeyongwang, J.hongGildong, J.eumyeonggwi]),
+    jinryeongIds: [J.seohaeyongwang, J.hongGildong, J.eumyeonggwi],
+    synergyScore: 88,
+    tier: 'A',
+    description: '범용 폭딜 — 서해용왕 + 홍길동 + 음명귀 (직업 무관)',
+    note: '신규 사용자 안정 추천',
+  },
+  {
+    comboId: buildComboId([J.seohaeyongwang, J.chiwoo, J.gyeoktugwi]),
+    jinryeongIds: [J.seohaeyongwang, J.chiwoo, J.gyeoktugwi],
+    synergyScore: 80,
+    tier: 'A',
+    description: '근딜 클러스터 — 서해용왕 + 치우 + 격투귀',
+  },
+  {
+    comboId: buildComboId([J.seohaeyongwang, J.myeongwang, J.sansin]),
+    jinryeongIds: [J.seohaeyongwang, J.myeongwang, J.sansin],
+    synergyScore: 78,
+    tier: 'A',
+    description: '균형 보스 빌드 — 서해용왕 + 명왕 + 산신',
+  },
+  {
+    comboId: buildComboId([J.hongGildong, J.eumyeonggwi, J.sansin]),
+    jinryeongIds: [J.hongGildong, J.eumyeonggwi, J.sansin],
+    synergyScore: 71,
+    tier: 'B',
+    description: '균형 — 홍길동 + 음명귀 + 산신',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.myeongwang, J.taeyangyeosin]),
+    jinryeongIds: [J.chiwoo, J.myeongwang, J.taeyangyeosin],
+    synergyScore: 68,
+    tier: 'B',
+    description: '광역 폭딜 — 치우 + 명왕 + 태양여신',
+  },
+  {
+    comboId: buildComboId([J.gunggwi, J.taeyangyeosin, J.sansin]),
+    jinryeongIds: [J.gunggwi, J.taeyangyeosin, J.sansin],
+    synergyScore: 65,
+    tier: 'B',
+    description: '원거리 + 광역 — 궁귀 + 태양여신 + 산신',
+  },
+  {
+    comboId: buildComboId([J.hangah, J.gumiyoho, J.gunggwi]),
+    jinryeongIds: [J.hangah, J.gumiyoho, J.gunggwi],
+    synergyScore: 60,
+    tier: 'B',
+    description: '보조 + 원거리 — 항아 + 구미요호 + 궁귀',
   },
 ];
 
