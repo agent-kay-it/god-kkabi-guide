@@ -32,7 +32,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project: [chromium-desktop, chromium-mobile]
+        # Sprint 15 F15-D — webkit-mobile (iPhone 14) project 추가.
+        # webkit 의 Firebase RTDB long-polling 호환은 emulator 9000 직접 연결로 검증.
+        project: [chromium-desktop, chromium-mobile, webkit-mobile]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,8 +57,14 @@ jobs:
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright Chromium
-        run: pnpm playwright install --with-deps chromium
+      - name: Install Playwright browser (${{ matrix.project }})
+        # Sprint 15 F15-D — project 별 분기 (chromium / webkit)
+        run: |
+          if [ "${{ matrix.project }}" = "webkit-mobile" ]; then
+            pnpm playwright install --with-deps webkit
+          else
+            pnpm playwright install --with-deps chromium
+          fi
 
       - name: Cache firebase-tools
         uses: actions/cache@v4
