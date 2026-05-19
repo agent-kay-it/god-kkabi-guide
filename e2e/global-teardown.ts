@@ -1,18 +1,55 @@
 /**
- * Sprint 14 / F14-A — Playwright Global Teardown.
+ * Sprint 14 / F14-A + F14-K — Playwright Global Teardown.
  *
  * E2E_USE_EMULATOR=true 시:
- *   - emulator 는 process exit 시 자동 종료되므로 별도 stop 불필요
- *   - [TEST-Sprint14] 데이터 cleanup 시도 (F14-K 자동화 hook)
+ *   - [TEST-Sprint14] 데이터 cleanup 실행 (안전망 — emulator 는 어차피 in-memory)
+ *   - emulator process 는 외부에서 관리
  *
  * staging URL 직접 검증 시:
  *   - cleanup 절대 실행 안 함 (운영 데이터 보호)
  */
 import admin from 'firebase-admin';
 
+const TEST_PREFIX = '[TEST-Sprint14]';
+const FIRESTORE_COLLS = ['posts', 'comments', 'reports', 'notifications', 'penalties', 'coupons'];
+const RTDB_CHANNELS = ['global', 'server-S785', 'munpa-muming'];
+
+interface PrefixDoc {
+  readonly e2eTestPrefix?: string;
+}
+
+async function cleanupFirestore(): Promise<number> {
+  let total = 0;
+  for (const coll of FIRESTORE_COLLS) {
+    const snap = await admin
+      .firestore()
+      .collection(coll)
+      .where('e2eTestPrefix', '==', TEST_PREFIX)
+      .get();
+    await Promise.all(snap.docs.map((d) => d.ref.delete()));
+    total += snap.size;
+  }
+  return total;
+}
+
+async function cleanupRtdb(): Promise<number> {
+  let total = 0;
+  for (const channel of RTDB_CHANNELS) {
+    const snap = await admin.database().ref(`messages/${channel}`).once('value');
+    const all = (snap.val() ?? {}) as Record<string, PrefixDoc>;
+    const toDelete = Object.entries(all).filter(
+      ([, v]) => v.e2eTestPrefix === TEST_PREFIX,
+    );
+    await Promise.all(
+      toDelete.map(([k]) => admin.database().ref(`messages/${channel}/${k}`).remove()),
+    );
+    total += toDelete.length;
+  }
+  return total;
+}
+
 export default async function globalTeardown(): Promise<void> {
   if (process.env.E2E_USE_EMULATOR !== 'true') {
-     
     console.log('[global-teardown] Non-emulator mode — skipping cleanup');
     return;
   }
@@ -21,15 +58,19 @@ export default async function globalTeardown(): Promise<void> {
     if (admin.apps.length === 0) {
       process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
       process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-      admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
+      process.env.FIREBASE_DATABASE_EMULATOR_HOST = 'localhost:9000';
+      admin.initializeApp({
+        projectId: 'demo-kkaebizigi-test',
+        databaseURL: 'http://localhost:9000?ns=demo-kkaebizigi-test',
+      });
     }
 
-    // F14-K 풀 cleanup 은 별도 script (scripts/cleanup-test-data.mjs).
-    // 여기선 emulator 가 in-memory 라 process exit 으로 충분 — log 만 남김.
-     
-    console.log('[global-teardown] Emulator state will be cleared on process exit');
+    const fsCount = await cleanupFirestore();
+    const rtdbCount = await cleanupRtdb();
+    console.log(
+      `[global-teardown] cleanup: firestore=${fsCount}, rtdb=${rtdbCount} (emulator state will also clear on process exit)`,
+    );
   } catch (err) {
-     
-    console.warn('[global-teardown] cleanup probe failed:', err);
+    console.warn('[global-teardown] cleanup failed:', err);
   }
 }
