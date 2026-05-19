@@ -137,9 +137,15 @@ export function SimulatorCanvas({
         </div>
       </GlassCard>
 
-      {/* 시너지 결과 */}
+      {/* 시너지 결과 — Sprint 18 F18-E a11y: aria-live polite + aria-atomic. */}
       {synergy ? (
-        <GlassCard className="space-y-3 p-5">
+        <GlassCard
+          className="space-y-3 p-5"
+          role="region"
+          aria-label="시너지 결과"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-bronze" aria-hidden />
@@ -190,13 +196,21 @@ export function SimulatorCanvas({
           </div>
         </GlassCard>
       ) : (
-        <p className="text-center text-sm text-text-mute">
-          진령 3개를 선택하면 시너지 결과가 표시됩니다.
+        <p
+          className="text-center text-sm text-text-mute"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          진령 3개를 선택하면 시너지 결과가 표시됩니다. (현재 {selected.length}/3 선택됨)
         </p>
       )}
 
-      {/* 진령 그리드 */}
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      {/* 진령 그리드 — Sprint 18 F18-E a11y: 그룹 컨텍스트 명시. */}
+      <div
+        role="group"
+        aria-label={`진령 11종 — 3개를 선택하세요 (현재 ${selected.length}/3)`}
+        className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3"
+      >
         {jinryeong.map((j) => {
           const isSelected = selected.includes(j.id);
           const isDisabled = !isSelected && selected.length >= 3;
@@ -207,6 +221,7 @@ export function SimulatorCanvas({
               onClick={() => toggle(j.id)}
               disabled={isDisabled}
               aria-pressed={isSelected}
+              aria-label={`${j.name} ${isSelected ? '선택됨' : isDisabled ? '선택 불가 (3개 한도)' : '선택 안 됨'}, ${j.role}, T${j.tier}`}
               className={cn(
                 'rounded-md border p-3 text-left transition',
                 isSelected
