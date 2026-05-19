@@ -32,7 +32,7 @@ export function B2bExportLink({ href, reportId, label }: B2bExportLinkProps): Re
       onClick={onClick}
       className="inline-flex items-center gap-1 text-bronze hover:underline"
       target="_blank"
-      rel="noreferrer"
+      rel="noopener noreferrer"
     >
       <FileDown className="h-3 w-3" aria-hidden />
       {label ?? '샘플 JSON'}
