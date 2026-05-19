@@ -62,9 +62,13 @@ describe('<MunpaCard>', () => {
     expect(ul).toBeNull();
   });
 
-  it('bullets undefined → ul 미렌더링', () => {
+  it('bullets undefined (속성 미정의) → ul 미렌더링', () => {
+    const data = makeData();
+    // bullets 속성 자체 제거
+    const dataWithoutBullets = { ...data };
+    delete (dataWithoutBullets as { bullets?: string[] }).bullets;
     const { container } = render(
-      <MunpaCard data={makeData({ bullets: undefined })} />,
+      <MunpaCard data={dataWithoutBullets as typeof data} />,
     );
     const ul = container.querySelector('ul');
     expect(ul).toBeNull();
