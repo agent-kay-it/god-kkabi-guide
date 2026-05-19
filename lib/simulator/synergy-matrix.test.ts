@@ -127,6 +127,47 @@ describe('listAllSynergies()', () => {
       expect(s.description.length).toBeGreaterThan(0);
     }
   });
+
+  // ─── Sprint 19 F19-E — 32 → 51 확장 ───
+  it('Sprint 19 F19-E — SEED 50+ 조합 정의됨', () => {
+    expect(listAllSynergies().length).toBeGreaterThanOrEqual(50);
+  });
+
+  it('Sprint 19 F19-E — 직업별 분포 (warrior 8+ / swordsman 10+ / medium 12+)', () => {
+    const all = listAllSynergies();
+    const warriorCount = all.filter((x) => x.recommendedClass === 'warrior').length;
+    const swordsmanCount = all.filter((x) => x.recommendedClass === 'swordsman').length;
+    const mediumCount = all.filter((x) => x.recommendedClass === 'medium').length;
+    expect(warriorCount).toBeGreaterThanOrEqual(8);
+    expect(swordsmanCount).toBeGreaterThanOrEqual(10);
+    expect(mediumCount).toBeGreaterThanOrEqual(12);
+  });
+
+  it('Sprint 19 F19-E — 미할당 (recommendedClass 없음) 6+ 존재', () => {
+    const all = listAllSynergies();
+    const unassigned = all.filter((x) => x.recommendedClass === undefined).length;
+    expect(unassigned).toBeGreaterThanOrEqual(6);
+  });
+
+  it('Sprint 19 F19-E — score 52-95 범위 (미할당은 60대 이하)', () => {
+    for (const s of listAllSynergies()) {
+      expect(s.synergyScore).toBeGreaterThanOrEqual(52);
+      expect(s.synergyScore).toBeLessThanOrEqual(95);
+    }
+  });
+
+  it('Sprint 19 F19-E — Sprint 18 의 32 기존 조합 score 변경 없음 (회귀)', () => {
+    // 핵심 회귀 보호: Sprint 17/18 의 시드 score 가 유지되어야 함
+    const all = listAllSynergies();
+    const chiwooHangahHong = all.find(
+      (s) =>
+        s.jinryeongIds.includes('chiwoo' as never) &&
+        s.jinryeongIds.includes('hangah' as never) &&
+        s.jinryeongIds.includes('hong_gildong' as never),
+    );
+    expect(chiwooHangahHong?.synergyScore).toBe(95);
+    expect(chiwooHangahHong?.tier).toBe('S');
+  });
 });
 
 describe('suggestClass()', () => {
