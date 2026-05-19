@@ -6,10 +6,12 @@
  */
 import { test, expect } from '@playwright/test';
 import { loginAs } from '../../emulator/auth-token-helper';
+import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 test.describe('Auth — Session expiry / refresh', () => {
   test('user.getIdToken(true) 호출 시 새 토큰이 발급된다', async ({ page }) => {
     await loginAs(page, 'regular');
+    await waitForUserLoaded(page);
 
     const { tokenA, tokenB } = await page.evaluate(async () => {
       const { getAuth } = await import('firebase/auth');
@@ -26,6 +28,7 @@ test.describe('Auth — Session expiry / refresh', () => {
 
   test('refresh 후에도 userId 는 동일하게 유지된다', async ({ page }) => {
     await loginAs(page, 'regular');
+    await waitForUserLoaded(page);
 
     const { uidA, uidB } = await page.evaluate(async () => {
       const { getAuth } = await import('firebase/auth');

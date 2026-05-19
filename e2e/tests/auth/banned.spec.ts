@@ -6,10 +6,12 @@
  */
 import { test, expect } from '@playwright/test';
 import { loginAs } from '../../emulator/auth-token-helper';
+import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 test.describe('Auth — Banned user gate', () => {
   test('banned 사용자가 로그인하면 차단 안내가 표시된다', async ({ page }) => {
     await loginAs(page, 'banned');
+    await waitForUserLoaded(page);
     await page.goto('/');
 
     // banned 안내 page or 일반 페이지에서 차단 배너 — 본 spec 은 두 케이스 모두 허용
@@ -24,6 +26,7 @@ test.describe('Auth — Banned user gate', () => {
 
   test('banned 사용자가 /post/new 접근 시 차단된다', async ({ page }) => {
     await loginAs(page, 'banned');
+    await waitForUserLoaded(page);
     await page.goto('/post/new');
 
     // /post/new 페이지가 banned 분기 또는 redirect

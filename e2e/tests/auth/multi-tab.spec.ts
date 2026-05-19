@@ -6,6 +6,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { loginAs, logout } from '../../emulator/auth-token-helper';
+import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 test.describe('Auth — Multi-tab session sync', () => {
   test('탭 1 로그인 → 탭 2 (같은 context) 도 인증 상태 공유', async ({ context }) => {
@@ -13,6 +14,7 @@ test.describe('Auth — Multi-tab session sync', () => {
     const tab2 = await context.newPage();
 
     await loginAs(tab1, 'regular');
+    await waitForUserLoaded(tab1);
 
     await tab2.goto('/me');
     await tab2.reload();
@@ -29,6 +31,7 @@ test.describe('Auth — Multi-tab session sync', () => {
     const tab2 = await context.newPage();
 
     await loginAs(tab1, 'regular');
+    await waitForUserLoaded(tab1);
     await tab2.goto('/me');
 
     await logout(tab1);
