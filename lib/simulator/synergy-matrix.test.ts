@@ -84,6 +84,49 @@ describe('listAllSynergies()', () => {
       expect(s.synergyScore).toBeGreaterThanOrEqual(85);
     }
   });
+
+  // Sprint 18 F18-D — 30+ seed coverage 검증
+  it('Sprint 18 F18-D — SEED 30+ 조합 정의됨', () => {
+    expect(listAllSynergies().length).toBeGreaterThanOrEqual(30);
+  });
+
+  it('Sprint 18 F18-D — 직업별 추천 분포 (warrior + swordsman + medium 각 5+)', () => {
+    const all = listAllSynergies();
+    const warriorCount = all.filter((x) => x.recommendedClass === 'warrior').length;
+    const swordsmanCount = all.filter((x) => x.recommendedClass === 'swordsman').length;
+    const mediumCount = all.filter((x) => x.recommendedClass === 'medium').length;
+    expect(warriorCount).toBeGreaterThanOrEqual(5);
+    expect(swordsmanCount).toBeGreaterThanOrEqual(5);
+    expect(mediumCount).toBeGreaterThanOrEqual(5);
+  });
+
+  it('Sprint 18 F18-D — comboId 중복 없음 (alpha-sorted unique key)', () => {
+    const all = listAllSynergies();
+    const ids = all.map((x) => x.comboId);
+    const unique = new Set(ids);
+    expect(unique.size).toBe(ids.length);
+  });
+
+  it('Sprint 18 F18-D — 모든 score 50-95 범위', () => {
+    for (const s of listAllSynergies()) {
+      expect(s.synergyScore).toBeGreaterThanOrEqual(50);
+      expect(s.synergyScore).toBeLessThanOrEqual(95);
+    }
+  });
+
+  it('Sprint 18 F18-D — 모든 tier 가 S/A/B/C 중 하나', () => {
+    const validTiers = ['S', 'A', 'B', 'C'];
+    for (const s of listAllSynergies()) {
+      expect(validTiers).toContain(s.tier);
+    }
+  });
+
+  it('Sprint 18 F18-D — description 비어있지 않음', () => {
+    for (const s of listAllSynergies()) {
+      expect(s.description).toBeTruthy();
+      expect(s.description.length).toBeGreaterThan(0);
+    }
+  });
 });
 
 describe('suggestClass()', () => {
