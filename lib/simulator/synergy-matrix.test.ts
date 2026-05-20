@@ -168,6 +168,47 @@ describe('listAllSynergies()', () => {
     expect(chiwooHangahHong?.synergyScore).toBe(95);
     expect(chiwooHangahHong?.tier).toBe('S');
   });
+
+  // ─── Sprint 20 F20-E — 51 → 80 확장 ───
+  it('Sprint 20 F20-E — SEED 80+ 조합 정의됨', () => {
+    expect(listAllSynergies().length).toBeGreaterThanOrEqual(80);
+  });
+
+  it('Sprint 20 F20-E — 직업별 분포 (warrior 13+ / swordsman 15+ / medium 17+)', () => {
+    const all = listAllSynergies();
+    const warriorCount = all.filter((x) => x.recommendedClass === 'warrior').length;
+    const swordsmanCount = all.filter((x) => x.recommendedClass === 'swordsman').length;
+    const mediumCount = all.filter((x) => x.recommendedClass === 'medium').length;
+    expect(warriorCount).toBeGreaterThanOrEqual(13);
+    expect(swordsmanCount).toBeGreaterThanOrEqual(15);
+    expect(mediumCount).toBeGreaterThanOrEqual(17);
+  });
+
+  it('Sprint 20 F20-E — 미할당 12+ 존재 (운영자 메타 검증 대기)', () => {
+    const all = listAllSynergies();
+    const unassigned = all.filter((x) => x.recommendedClass === undefined).length;
+    expect(unassigned).toBeGreaterThanOrEqual(12);
+  });
+
+  it('Sprint 20 F20-E — Sprint 19 51 조합 score 변경 없음 (회귀)', () => {
+    // Sprint 19 의 chiwoo + gyeoktugwi + sansin score=89 유지 확인
+    const all = listAllSynergies();
+    const sprint19 = all.find(
+      (s) =>
+        s.jinryeongIds.includes('chiwoo' as never) &&
+        s.jinryeongIds.includes('gyeoktugwi' as never) &&
+        s.jinryeongIds.includes('sansin' as never),
+    );
+    expect(sprint19?.synergyScore).toBe(89);
+    expect(sprint19?.recommendedClass).toBe('warrior');
+  });
+
+  it('Sprint 20 F20-E — 모든 score 50-95 범위', () => {
+    for (const s of listAllSynergies()) {
+      expect(s.synergyScore).toBeGreaterThanOrEqual(50);
+      expect(s.synergyScore).toBeLessThanOrEqual(95);
+    }
+  });
 });
 
 describe('suggestClass()', () => {

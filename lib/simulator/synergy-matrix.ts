@@ -19,6 +19,14 @@
  *    medium +4 (저주/회복 분기), balanced +4 (혼합 빌드),
  *    미할당 +6 (직업 추천 의도적 제거, 운영자 메타 검증 대기)
  *  - 기존 32 조합 score 변경 X (회귀 보호)
+ *
+ * Sprint 20 F20-E 보강: 51 → 80 조합 확장 (165 조합 중 48.5% 커버리지).
+ *  - warrior +5 (다양한 운영 시나리오)
+ *  - swordsman +5 (클러스터 + 처형)
+ *  - medium +5 (만능형 보강)
+ *  - balanced +8 (균형 빌드 확대)
+ *  - 미할당 +6 (운영자 메타 검증 대기)
+ *  - 기존 51 score 변경 X (회귀 보호)
  */
 
 import type {
@@ -465,6 +473,239 @@ const SEED: readonly JinryeongSynergyDef[] = [
     synergyScore: 52,
     tier: 'B',
     description: '미정 — 항아 + 명왕 + 태양여신',
+  },
+
+  // ─── Sprint 20 F20-E — Warrior 추가 (5 신규) ───
+  {
+    comboId: buildComboId([J.chiwoo, J.gyeoktugwi, J.hongGildong]),
+    jinryeongIds: [J.chiwoo, J.gyeoktugwi, J.hongGildong],
+    synergyScore: 86,
+    tier: 'A',
+    recommendedClass: 'warrior',
+    description: '전사 정석 트리플 — 치우 광역 + 격투귀 단일 + 홍길동 분신',
+    note: '안정형 PvE/PvP 추천',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gyeoktugwi, J.myeongwang]),
+    jinryeongIds: [J.chiwoo, J.gyeoktugwi, J.myeongwang],
+    synergyScore: 82,
+    tier: 'A',
+    recommendedClass: 'warrior',
+    description: '전사 처형 — 치우 광역 + 격투귀 단일 + 명왕 처형',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.hongGildong, J.sansin]),
+    jinryeongIds: [J.chiwoo, J.hongGildong, J.sansin],
+    synergyScore: 77,
+    tier: 'A',
+    recommendedClass: 'warrior',
+    description: '전사 지속 회복 — 치우 + 홍길동 + 산신',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.hangah, J.myeongwang]),
+    jinryeongIds: [J.chiwoo, J.hangah, J.myeongwang],
+    synergyScore: 73,
+    tier: 'B',
+    recommendedClass: 'warrior',
+    description: '전사 광역 처형 — 치우 + 항아 보호 + 명왕',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.hangah, J.seohaeyongwang]),
+    jinryeongIds: [J.chiwoo, J.hangah, J.seohaeyongwang],
+    synergyScore: 68,
+    tier: 'B',
+    recommendedClass: 'warrior',
+    description: '전사 만능 + 보호 — 치우 + 항아 + 서해용왕',
+  },
+
+  // ─── Sprint 20 F20-E — Swordsman 추가 (5 신규) ───
+  {
+    comboId: buildComboId([J.chiwoo, J.eumyeonggwi, J.gyeoktugwi]),
+    jinryeongIds: [J.chiwoo, J.eumyeonggwi, J.gyeoktugwi],
+    synergyScore: 84,
+    tier: 'A',
+    recommendedClass: 'swordsman',
+    description: '검객 단일 폭딜 — 치우 + 음명귀 치명 + 격투귀 처형',
+    note: '40+ 던전 단일 보스',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.eumyeonggwi, J.gunggwi]),
+    jinryeongIds: [J.chiwoo, J.eumyeonggwi, J.gunggwi],
+    synergyScore: 79,
+    tier: 'A',
+    recommendedClass: 'swordsman',
+    description: '검객 원거리 — 치우 + 음명귀 + 궁귀 (PvP 견제)',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.eumyeonggwi, J.myeongwang]),
+    jinryeongIds: [J.chiwoo, J.eumyeonggwi, J.myeongwang],
+    synergyScore: 76,
+    tier: 'A',
+    recommendedClass: 'swordsman',
+    description: '검객 처형 클러스터 — 치우 + 음명귀 + 명왕',
+  },
+  {
+    comboId: buildComboId([J.eumyeonggwi, J.gyeoktugwi, J.myeongwang]),
+    jinryeongIds: [J.eumyeonggwi, J.gyeoktugwi, J.myeongwang],
+    synergyScore: 71,
+    tier: 'B',
+    recommendedClass: 'swordsman',
+    description: '검객 단일 처형 — 음명귀 + 격투귀 + 명왕',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gunggwi, J.myeongwang]),
+    jinryeongIds: [J.chiwoo, J.gunggwi, J.myeongwang],
+    synergyScore: 66,
+    tier: 'B',
+    recommendedClass: 'swordsman',
+    description: '검객 원거리 처형 — 치우 + 궁귀 + 명왕',
+  },
+
+  // ─── Sprint 20 F20-E — Medium 추가 (5 신규) ───
+  {
+    comboId: buildComboId([J.chiwoo, J.gumiyoho, J.sansin]),
+    jinryeongIds: [J.chiwoo, J.gumiyoho, J.sansin],
+    synergyScore: 81,
+    tier: 'A',
+    recommendedClass: 'medium',
+    description: '영매 만능형 — 치우 + 구미요호 매혹 + 산신 회복',
+    note: '범용 운영',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gumiyoho, J.hangah]),
+    jinryeongIds: [J.chiwoo, J.gumiyoho, J.hangah],
+    synergyScore: 75,
+    tier: 'A',
+    recommendedClass: 'medium',
+    description: '영매 보호 — 치우 + 구미요호 + 항아',
+  },
+  {
+    comboId: buildComboId([J.gumiyoho, J.gunggwi, J.taeyangyeosin]),
+    jinryeongIds: [J.gumiyoho, J.gunggwi, J.taeyangyeosin],
+    synergyScore: 70,
+    tier: 'B',
+    recommendedClass: 'medium',
+    description: '영매 광역 — 구미요호 + 궁귀 + 태양여신',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.hangah, J.sansin]),
+    jinryeongIds: [J.chiwoo, J.hangah, J.sansin],
+    synergyScore: 65,
+    tier: 'B',
+    recommendedClass: 'medium',
+    description: '영매 단순 회복 — 치우 + 항아 + 산신',
+  },
+  {
+    comboId: buildComboId([J.gumiyoho, J.taeyangyeosin, J.sansin]),
+    jinryeongIds: [J.gumiyoho, J.taeyangyeosin, J.sansin],
+    synergyScore: 61,
+    tier: 'B',
+    recommendedClass: 'medium',
+    description: '영매 매혹 + 광역 — 구미요호 + 태양여신 + 산신',
+  },
+
+  // ─── Sprint 20 F20-E — Balanced/Universal 추가 (8 신규) ───
+  {
+    comboId: buildComboId([J.chiwoo, J.eumyeonggwi, J.sansin]),
+    jinryeongIds: [J.chiwoo, J.eumyeonggwi, J.sansin],
+    synergyScore: 80,
+    tier: 'A',
+    description: '균형 클러스터 — 치우 + 음명귀 + 산신 (직업 무관)',
+    note: '범용 안정',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.eumyeonggwi, J.taeyangyeosin]),
+    jinryeongIds: [J.chiwoo, J.eumyeonggwi, J.taeyangyeosin],
+    synergyScore: 78,
+    tier: 'A',
+    description: '균형 광역 — 치우 + 음명귀 + 태양여신',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gunggwi, J.seohaeyongwang]),
+    jinryeongIds: [J.chiwoo, J.gunggwi, J.seohaeyongwang],
+    synergyScore: 76,
+    tier: 'A',
+    description: '균형 만능 — 치우 + 궁귀 + 서해용왕',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gunggwi, J.taeyangyeosin]),
+    jinryeongIds: [J.chiwoo, J.gunggwi, J.taeyangyeosin],
+    synergyScore: 73,
+    tier: 'B',
+    description: '균형 광역 — 치우 + 궁귀 + 태양여신',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gunggwi, J.sansin]),
+    jinryeongIds: [J.chiwoo, J.gunggwi, J.sansin],
+    synergyScore: 69,
+    tier: 'B',
+    description: '균형 + 보조 — 치우 + 궁귀 + 산신',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.hangah, J.taeyangyeosin]),
+    jinryeongIds: [J.chiwoo, J.hangah, J.taeyangyeosin],
+    synergyScore: 66,
+    tier: 'B',
+    description: '균형 광역 보호 — 치우 + 항아 + 태양여신',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.hongGildong, J.taeyangyeosin]),
+    jinryeongIds: [J.chiwoo, J.hongGildong, J.taeyangyeosin],
+    synergyScore: 63,
+    tier: 'B',
+    description: '균형 광역 폭딜 — 치우 + 홍길동 + 태양여신',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.myeongwang, J.sansin]),
+    jinryeongIds: [J.chiwoo, J.myeongwang, J.sansin],
+    synergyScore: 60,
+    tier: 'B',
+    description: '균형 처형 — 치우 + 명왕 + 산신',
+  },
+
+  // ─── Sprint 20 F20-E — 미할당 (6 신규) ───
+  {
+    comboId: buildComboId([J.chiwoo, J.eumyeonggwi, J.gumiyoho]),
+    jinryeongIds: [J.chiwoo, J.eumyeonggwi, J.gumiyoho],
+    synergyScore: 65,
+    tier: 'B',
+    description: '미정 — 치우 + 음명귀 + 구미요호 (디버프 클러스터)',
+    note: '운영자 메타 검증 대기',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.eumyeonggwi, J.seohaeyongwang]),
+    jinryeongIds: [J.chiwoo, J.eumyeonggwi, J.seohaeyongwang],
+    synergyScore: 62,
+    tier: 'B',
+    description: '미정 — 치우 + 음명귀 + 서해용왕',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gumiyoho, J.gunggwi]),
+    jinryeongIds: [J.chiwoo, J.gumiyoho, J.gunggwi],
+    synergyScore: 59,
+    tier: 'B',
+    description: '미정 — 치우 + 구미요호 + 궁귀',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gumiyoho, J.gyeoktugwi]),
+    jinryeongIds: [J.chiwoo, J.gumiyoho, J.gyeoktugwi],
+    synergyScore: 56,
+    tier: 'B',
+    description: '미정 — 치우 + 구미요호 + 격투귀',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gumiyoho, J.myeongwang]),
+    jinryeongIds: [J.chiwoo, J.gumiyoho, J.myeongwang],
+    synergyScore: 54,
+    tier: 'B',
+    description: '미정 — 치우 + 구미요호 + 명왕',
+  },
+  {
+    comboId: buildComboId([J.chiwoo, J.gumiyoho, J.seohaeyongwang]),
+    jinryeongIds: [J.chiwoo, J.gumiyoho, J.seohaeyongwang],
+    synergyScore: 52,
+    tier: 'B',
+    description: '미정 — 치우 + 구미요호 + 서해용왕',
   },
 ];
 
