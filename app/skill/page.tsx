@@ -24,7 +24,28 @@ export const metadata: Metadata = {
   title: '스킬 가이드 — 코어 · 액티브 · 패시브',
   description:
     '갓깨비 키우기 직업별 스킬 31종. 전사 8 / 검객 14 / 영매 9. 코어 1 + 액티브 3~4 + 패시브 4~5 운영 원리.',
-  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
+  // Sprint 25 / F25-C: canonical + OG/Twitter override + keywords (5 페이지 강화 #1)
+  alternates: { canonical: '/skill' },
+  keywords: [
+    '갓깨비 키우기 스킬',
+    '갓깨비 코어',
+    '갓깨비 액티브 스킬',
+    '갓깨비 패시브 스킬',
+    '전사 스킬',
+    '검객 스킬',
+    '영매 스킬',
+  ],
+  openGraph: {
+    title: '스킬 가이드 — 31종 코어/액티브/패시브 운영 원리',
+    description: '갓깨비 키우기 3 직업 스킬 31종을 코어 1 + 액티브 + 패시브로 분류.',
+    url: '/skill',
+    type: 'article',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '갓깨비 키우기 스킬 가이드',
+    description: '직업별 스킬 31종 운영 원리 + 우선순위',
+  },
 };
 
 const CLASS_LABEL: Record<WikiClassId, string> = {

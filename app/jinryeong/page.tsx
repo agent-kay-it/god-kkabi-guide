@@ -35,7 +35,27 @@ export const metadata: Metadata = {
   title: '진령 — 등급보다 시너지',
   description:
     '갓깨비 키우기 진령 11종 (0~2티어). 신·요·인 3 진영 시너지. 메타 정석 프리셋과 추천 조합.',
-  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
+  // Sprint 25 / F25-C: canonical + OG/Twitter override + keywords (5 페이지 강화 #3)
+  alternates: { canonical: '/jinryeong' },
+  keywords: [
+    '갓깨비 키우기 진령',
+    '진령 11종',
+    '진령 티어',
+    '진령 시너지',
+    '신 요 인 진영',
+    '진령 프리셋',
+  ],
+  openGraph: {
+    title: '진령 가이드 — 11종 0~2티어 시너지',
+    description: '신·요·인 3 진영 시너지 매트릭스 + 메타 프리셋.',
+    url: '/jinryeong',
+    type: 'article',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '갓깨비 키우기 진령 11종',
+    description: '0~2티어 시너지 매트릭스 + 추천 조합',
+  },
 };
 
 type WikiJinryeongData = Omit<WikiJinryeongDoc, 'updatedAt'>;

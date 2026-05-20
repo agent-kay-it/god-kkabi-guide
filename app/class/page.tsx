@@ -30,7 +30,27 @@ export const metadata: Metadata = {
   title: '직업 가이드 — 전사 · 검객 · 영매',
   description:
     '갓깨비 키우기 3 직업 비교. 전사(도깨비) / 검객(무당) / 영매(저승사자). 추천 진령 조합 + 강점/약점 + 메타 티어.',
-  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
+  // Sprint 25 / F25-C: canonical + OG/Twitter override + keywords (5 페이지 강화 #2)
+  alternates: { canonical: '/class' },
+  keywords: [
+    '갓깨비 키우기 직업',
+    '갓깨비 전사',
+    '갓깨비 검객',
+    '갓깨비 영매',
+    '도깨비 무당 저승사자',
+    '직업 비교 티어',
+  ],
+  openGraph: {
+    title: '직업 가이드 — 전사 · 검객 · 영매 3종 비교',
+    description: '직업별 추천 진령 조합 + 강점/약점 + 메타 티어 — 한눈 비교.',
+    url: '/class',
+    type: 'article',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '갓깨비 키우기 직업 비교',
+    description: '전사/검객/영매 3종 + 추천 진령 + 메타 티어',
+  },
 };
 
 // V7 P5: 캐릭터 이미지 좌/우 배치 + 성별이 페이지 새로고침마다 랜덤 변경되어야 하므로

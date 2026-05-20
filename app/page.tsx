@@ -42,6 +42,7 @@ import { Reveal } from '@/components/feature/reveal';
 import {
   WebsiteStructuredData,
   BreadcrumbStructuredData,
+  VideoGameStructuredData,
 } from '@/components/feature/structured-data';
 import { WIKI_CATEGORIES } from '@/data/wiki/categories';
 import { WIKI_TIPS_SEED } from '@/data/wiki/tips';
@@ -195,6 +196,22 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       <WebsiteStructuredData url={SITE_URL} />
       <BreadcrumbStructuredData
         items={[{ position: 1, name: '홈', url: SITE_URL }]}
+      />
+      {/* Sprint 25 / F25-C — VideoGame schema (Google 게임 카드 rich result 자격). */}
+      <VideoGameStructuredData
+        url={SITE_URL}
+        game={{
+          name: '갓깨비 키우기',
+          applicationCategory: 'GameApplication',
+          operatingSystem: 'Android, iOS, Web',
+          genre: ['Idle RPG', '방치형 RPG', 'Korean Folklore'],
+          publisher: '조이시티',
+          inLanguage: 'ko-KR',
+          downloadUrl: [
+            'https://play.google.com/store/apps/details?id=com.zzsjkr.google',
+            'https://apps.apple.com/kr/app/%EA%B0%93%EA%B9%A8%EB%B9%84-%ED%82%A4%EC%9A%B0%EA%B8%B0/id6740621218',
+          ],
+        }}
       />
       {/* ============ HERO ============ */}
       {/* V7 P5: layout.tsx wrapper의 pt-14(56px)를 -mt-14로 상쇄해 hero 섹션이 viewport top(0)부터
