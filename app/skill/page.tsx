@@ -157,6 +157,45 @@ export default async function SkillPage(): Promise<React.JSX.Element> {
         </ul>
       </Note>
 
+      {/* Sprint 27 / F27-C hotfix — HowTo schema 의 가시 5단계 콘텐츠 (Google 가이드라인 준수).
+          JSON-LD step[] 과 1:1 매칭. */}
+      <section
+        aria-labelledby="howto-skill-운영"
+        className="mb-10 rounded-[var(--radius-card)] border border-bronze/25 bg-ink-elev/40 p-6"
+      >
+        <header className="mb-4">
+          <SectionEyebrow num="04b" label="How-to · 스킬 운영 가이드" />
+          <h2
+            id="howto-skill-운영"
+            className="mt-2 text-xl font-bold tracking-tight text-text"
+          >
+            갓깨비 키우기 스킬 운영 가이드 (5단계)
+          </h2>
+          <p className="mt-1 text-sm text-text-soft">
+            직업별 스킬 31종(전사 8 / 검객 14 / 영매 9)을 코어 1 + 액티브 3~4 + 패시브 4~5 로 분류하여 운영하는 5단계 절차.
+          </p>
+        </header>
+        <ol className="space-y-3 text-sm">
+          {HOWTO_STEPS.map((step, i) => (
+            <li
+              key={step.name}
+              className="flex gap-3 rounded-md border border-ink-line/40 bg-ink-card/40 p-3"
+            >
+              <span
+                aria-hidden
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-bronze/15 font-mono text-xs font-bold text-bronze-soft"
+              >
+                {i + 1}
+              </span>
+              <div className="flex flex-col gap-1">
+                <strong className="text-text">{step.name}</strong>
+                <span className="text-text-soft">{step.text}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
       <Tabs defaultValue="warrior" className="space-y-6">
         {/* V7 P5 fix v2: 컨테이너 외곽선과 박스 외곽선이 같은 layer에서 충돌하던 문제를
             컨테이너 외곽선 자체를 없애 해결 (button toggle group 패턴).
