@@ -117,7 +117,7 @@ export function recommendBuilds(
  * 전체 시너지에서 top-N 선택 (보유 진령 < 3 시).
  */
 function pickGlobalTopSynergies(
-  owned: ReadonlySet<WikiJinryeongId>,
+  _owned: ReadonlySet<WikiJinryeongId>,
   classId?: ClassId,
 ): readonly JinryeongSynergyDef[] {
   const all = listAllSynergies();
