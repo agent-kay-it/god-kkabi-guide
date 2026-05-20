@@ -21,6 +21,26 @@ import {
 export const metadata: Metadata = {
   title: '쿠폰 — 커뮤니티 검증',
   description: '사용자가 제보하고 운영자가 승인한 게임 쿠폰 목록.',
+  // Sprint 25 / F25-C: canonical + OG/Twitter override + keywords (5 페이지 강화 #4)
+  alternates: { canonical: '/coupon' },
+  keywords: [
+    '갓깨비 쿠폰',
+    '갓깨비 키우기 쿠폰',
+    '쿠폰 코드',
+    '쿠폰 검증',
+    '커뮤니티 제보 쿠폰',
+  ],
+  openGraph: {
+    title: '갓깨비 키우기 쿠폰 — 커뮤니티 검증 목록',
+    description: '사용자 제보 + 운영자 승인을 거친 검증 쿠폰. 실시간 업데이트.',
+    url: '/coupon',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '갓깨비 키우기 쿠폰 목록',
+    description: '커뮤니티 검증을 거친 활성 쿠폰',
+  },
 };
 
 export default async function CouponPage(): Promise<React.JSX.Element> {

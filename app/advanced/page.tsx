@@ -25,13 +25,34 @@ import {
   SectionTitle,
 } from '@/components/domain';
 import { Reveal } from '@/components/feature/reveal';
+import { FAQStructuredData } from '@/components/feature/structured-data';
 
 export const metadata: Metadata = {
   title: '고급 Tip 참고 — 메커니즘 디테일 | 갓깨비 키우기 가이드',
   description:
     '갓깨비 키우기 진령 소환풀 레벨업, 10회 천장, 원신 자동 변환, 진령 초기화 환급, 별 등급 vs 스킬 품급, 진령경험단 4대 수급처. 패치를 거쳐도 변하지 않는 핵심 메커니즘.',
-  // Sprint 12 / F12-D-2 — robots 는 app/layout.tsx 에서 robotsConfig 로 cascade.
+  // Sprint 25 / F25-C: OG/Twitter + keywords 강화 (5 페이지 강화 #5)
   alternates: { canonical: '/advanced' },
+  keywords: [
+    '갓깨비 키우기 고급',
+    '소환풀 레벨업',
+    '10회 천장',
+    '원신 자동 변환',
+    '진령 초기화 환급',
+    '별 등급 스킬 품급',
+    '진령경험단 수급처',
+  ],
+  openGraph: {
+    title: '고급 Tip — 메커니즘 6선',
+    description: '소환풀 / 천장 / 환급 / 별·품급 / 경험단 — 패치 안전 메커니즘.',
+    url: '/advanced',
+    type: 'article',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '갓깨비 키우기 고급 Tip — 메커니즘 디테일',
+    description: '6 메커니즘 + 직업 추천 스킬 표',
+  },
 };
 
 interface MechanismCard {
@@ -143,9 +164,45 @@ const SKILL_TABLE: readonly SkillRow[] = [
   },
 ];
 
+// Sprint 25 / F25-C — FAQ items (실제 페이지 메커니즘 카드와 1:1 매칭, Google 가이드라인 준수)
+const FAQ_ITEMS: ReadonlyArray<{ question: string; answer: string }> = [
+  {
+    question: '진령 소환풀 레벨업은 어떻게 작동하나요?',
+    answer:
+      '천음령(소환 재화)을 소모해 소환풀 레벨을 올리면 희귀 SSR 등장 확률 자체가 상승합니다. 단순히 뽑기 횟수만 늘리는 것보다 풀 레벨업이 장기적으로 더 효율적입니다.',
+  },
+  {
+    question: '10회 천장 시스템은 무엇인가요?',
+    answer:
+      '진령 소환 10회 시 SR 이상 1명 확정. 이 천장 덕분에 연속으로 SR 이하만 뽑히는 상황은 발생하지 않습니다. 9회 + 무료 보상 같은 절약 전략도 가능합니다.',
+  },
+  {
+    question: '중복 진령은 어떻게 처리되나요?',
+    answer:
+      '이미 보유한 진령을 또 뽑으면 원신으로 자동 변환됩니다. SSR은 6원신, 희귀 SSR은 30원신. 원신은 같은 진령의 별 등급 향상에 사용되므로 낭비가 아닙니다.',
+  },
+  {
+    question: '진령 초기화로 재료를 환급받을 수 있나요?',
+    answer:
+      '잘못 키운 진령은 초기화로 투입 재료 환급이 가능합니다. 메타 변화나 새 1티어 진령 획득 시 망설이지 말고 환급 후 신규 진령에 재투자하세요.',
+  },
+  {
+    question: '별 등급과 스킬 품급의 차이는?',
+    answer:
+      '별 등급은 같은 진령의 원신으로 향상되어 기본 스탯이 상승합니다. 스킬 품급은 오도과로 향상되어 패시브 효과가 강화됩니다. 두 경로는 분리되어 있습니다.',
+  },
+  {
+    question: '진령경험단은 어디서 얻나요?',
+    answer:
+      '4대 수급처: 파티 비경, 선옥상점, 자동사냥, 신병 기원. 진령 레벨업 재료의 주요 출처로, 하나만 의존하지 말고 골고루 챙기는 것이 좋습니다.',
+  },
+];
+
 export default function AdvancedPage(): React.JSX.Element {
   return (
     <main className="mx-auto max-w-screen-2xl px-5 pb-24 pt-8 sm:px-[5vw]">
+      {/* Sprint 25 / F25-C — FAQ schema (Google Rich Results "FAQ" 자격, 페이지 메커니즘 카드와 1:1) */}
+      <FAQStructuredData items={FAQ_ITEMS} />
       <Reveal>
         <header className="mb-12">
           <HeroMeta className="mb-5">

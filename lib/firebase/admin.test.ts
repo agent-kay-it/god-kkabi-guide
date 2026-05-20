@@ -29,8 +29,6 @@ import {
   hasAdminCredentials,
   isAdminEmulator,
   getAdminAuth,
-  getAdminFirestore,
-  getAdminDatabase,
   createFirebaseCustomToken,
   setUserClaims,
 } from './admin';

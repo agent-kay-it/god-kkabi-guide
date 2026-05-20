@@ -9,6 +9,8 @@ import {
   WebsiteStructuredData,
   BreadcrumbStructuredData,
   ArticleStructuredData,
+  FAQStructuredData,
+  VideoGameStructuredData,
 } from './structured-data';
 
 afterEach(() => cleanup());
@@ -123,5 +125,99 @@ describe('ArticleStructuredData', () => {
     const json = JSON.parse(container.querySelector('script')!.innerHTML);
     expect(json.mainEntityOfPage['@id']).toBe('https://x/post/p1');
     expect(json.publisher['@type']).toBe('Organization');
+  });
+});
+
+describe('FAQStructuredData (Sprint 25 F25-C)', () => {
+  it('FAQPage schema 렌더 + Question/Answer 매핑', () => {
+    const { container } = render(
+      <FAQStructuredData
+        items={[
+          { question: '진령은 어떻게 뽑나요?', answer: '천음령으로 소환합니다.' },
+          { question: '천장은 몇 회?', answer: '10회 단위 보장.' },
+        ]}
+      />,
+    );
+    const json = JSON.parse(container.querySelector('script#ld-faq')!.innerHTML);
+    expect(json['@type']).toBe('FAQPage');
+    expect(json.mainEntity.length).toBe(2);
+    expect(json.mainEntity[0]).toMatchObject({
+      '@type': 'Question',
+      name: '진령은 어떻게 뽑나요?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: '천음령으로 소환합니다.',
+      },
+    });
+  });
+
+  it('빈 items → mainEntity 빈 배열', () => {
+    const { container } = render(<FAQStructuredData items={[]} />);
+    const json = JSON.parse(container.querySelector('script#ld-faq')!.innerHTML);
+    expect(json.mainEntity).toEqual([]);
+  });
+});
+
+describe('VideoGameStructuredData (Sprint 25 F25-C)', () => {
+  it('VideoGame schema 렌더 — 최소 필드 (name 만)', () => {
+    const { container } = render(
+      <VideoGameStructuredData game={{ name: '갓깨비 키우기' }} />,
+    );
+    const json = JSON.parse(container.querySelector('script#ld-videogame')!.innerHTML);
+    expect(json['@type']).toBe('VideoGame');
+    expect(json.name).toBe('갓깨비 키우기');
+    expect(json.url).toBeTruthy();
+    // optional 필드 — 미설정 시 누락
+    expect(json.applicationCategory).toBeUndefined();
+    expect(json.operatingSystem).toBeUndefined();
+    expect(json.genre).toBeUndefined();
+    expect(json.publisher).toBeUndefined();
+    expect(json.inLanguage).toBeUndefined();
+    expect(json.downloadUrl).toBeUndefined();
+  });
+
+  it('모든 optional 필드 적용', () => {
+    const { container } = render(
+      <VideoGameStructuredData
+        url="https://x.local"
+        game={{
+          name: '갓깨비 키우기',
+          applicationCategory: 'GameApplication',
+          operatingSystem: 'Android, iOS, Web',
+          genre: ['RPG', 'Idle'],
+          publisher: '조이시티',
+          inLanguage: 'ko-KR',
+          downloadUrl: [
+            'https://play.google.com/x',
+            'https://apps.apple.com/x',
+          ],
+        }}
+      />,
+    );
+    const json = JSON.parse(container.querySelector('script#ld-videogame')!.innerHTML);
+    expect(json.url).toBe('https://x.local');
+    expect(json.applicationCategory).toBe('GameApplication');
+    expect(json.operatingSystem).toBe('Android, iOS, Web');
+    expect(json.genre).toEqual(['RPG', 'Idle']);
+    expect(json.publisher).toMatchObject({
+      '@type': 'Organization',
+      name: '조이시티',
+    });
+    expect(json.inLanguage).toBe('ko-KR');
+    expect(json.downloadUrl).toEqual([
+      'https://play.google.com/x',
+      'https://apps.apple.com/x',
+    ]);
+  });
+
+  it('빈 genre / downloadUrl 배열 → 필드 누락', () => {
+    const { container } = render(
+      <VideoGameStructuredData
+        game={{ name: 'g', genre: [], downloadUrl: [] }}
+      />,
+    );
+    const json = JSON.parse(container.querySelector('script#ld-videogame')!.innerHTML);
+    expect(json.genre).toBeUndefined();
+    expect(json.downloadUrl).toBeUndefined();
   });
 });

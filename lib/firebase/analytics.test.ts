@@ -15,10 +15,11 @@ const mockServerTimestamp = vi.fn(() => '__ts__');
 const mockGetFirestoreClient = vi.fn(() => ({ __db: true }));
 
 vi.mock('firebase/analytics', () => ({
-  getAnalytics: (...args: unknown[]) => mockGetAnalytics(...args),
-  isSupported: (...args: unknown[]) => mockIsSupported(...args),
-  logEvent: (...args: unknown[]) => mockLogEvent(...args),
-  setUserProperties: (...args: unknown[]) => mockSetUserProperties(...args),
+  getAnalytics: (...args: never[]) => (mockGetAnalytics as (...a: never[]) => unknown)(...args),
+  isSupported: (...args: never[]) => (mockIsSupported as (...a: never[]) => unknown)(...args),
+  logEvent: (...args: never[]) => (mockLogEvent as (...a: never[]) => unknown)(...args),
+  setUserProperties: (...args: never[]) =>
+    (mockSetUserProperties as (...a: never[]) => unknown)(...args),
 }));
 
 vi.mock('./client', () => ({
@@ -26,13 +27,15 @@ vi.mock('./client', () => ({
 }));
 
 vi.mock('firebase/firestore', () => ({
-  addDoc: (...args: unknown[]) => mockAddDoc(...args),
-  collection: (...args: unknown[]) => mockCollection(...args),
-  serverTimestamp: (...args: unknown[]) => mockServerTimestamp(...args),
+  addDoc: (...args: never[]) => (mockAddDoc as (...a: never[]) => unknown)(...args),
+  collection: (...args: never[]) => (mockCollection as (...a: never[]) => unknown)(...args),
+  serverTimestamp: (...args: never[]) =>
+    (mockServerTimestamp as (...a: never[]) => unknown)(...args),
 }));
 
 vi.mock('./firestore', () => ({
-  getFirestoreClient: (...args: unknown[]) => mockGetFirestoreClient(...args),
+  getFirestoreClient: (...args: never[]) =>
+    (mockGetFirestoreClient as (...a: never[]) => unknown)(...args),
 }));
 
 // Reset module cache so analyticsInstance singleton state is per-test.
@@ -118,7 +121,7 @@ describe('logEvent', () => {
     // backup 은 fire-and-forget + dynamic import 이므로 충분히 대기
     for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0));
     expect(mockAddDoc).toHaveBeenCalled();
-    const callArgs = mockAddDoc.mock.calls[0]?.[1] as Record<string, unknown>;
+    const callArgs = (mockAddDoc.mock.calls[0] as unknown[])[1] as Record<string, unknown>;
     expect(callArgs.event_name).toBe('coupon_copy');
     expect(typeof callArgs.session_id).toBe('string');
   });
@@ -189,7 +192,7 @@ describe('session id 처리', () => {
     const mod = await importFresh();
     await mod.logEvent('coupon_copy');
     await flushMicrotasks();
-    const callArgs = mockAddDoc.mock.calls[0]?.[1] as Record<string, unknown>;
+    const callArgs = (mockAddDoc.mock.calls[0] as unknown[])[1] as Record<string, unknown>;
     expect(callArgs.session_id).toBe('existing-id');
   });
 });
