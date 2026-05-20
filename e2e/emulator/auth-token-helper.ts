@@ -1,8 +1,8 @@
 /**
  * Sprint 14 / F14-A — Emulator Auth Token Helper.
- *
- * Playwright page 에서 Google OAuth 우회 → Admin SDK custom token →
- * signInWithCustomToken 으로 즉시 로그인.
+ * Sprint 28 F28-B — page.evaluate dynamic import 제거. emulator REST + NextAuth
+ * JWT 직접 발급 패턴으로 전환. 이전 패턴은 브라우저 컨텍스트에서 'firebase/auth'
+ * bare specifier 가 resolve 안 되어 1주일(Sprint 14~27) 동안 100% fail.
  *
  * 사용:
  *   import { loginAs } from '../../emulator/auth-token-helper';
@@ -34,55 +34,60 @@ export async function createCustomToken(role: TestRole): Promise<string> {
 }
 
 /**
- * Page 에 emulator 토큰으로 로그인.
+ * Page 에 emulator NextAuth session 으로 로그인.
  *
- * 절차:
- *  1. Admin SDK 로 custom token 발급
- *  2. page.goto('/')
- *  3. page.evaluate 로 signInWithCustomToken 호출
- *  4. authState 변경 대기
+ * 절차 (Sprint 28 F28-B 신규):
+ *  1. Admin SDK 로 Firebase custom token 발급 (RTDB / Storage rules 가 필요할 경우)
+ *  2. emulator REST: custom token → ID token + refresh token (Firebase Auth 측 인증)
+ *  3. /api/auth/e2e-bridge POST: uid + claims → NextAuth JWT cookie 직접 set
+ *  4. page.goto('/') 시 인증된 SSR 세션
  *
  * @param page Playwright Page
  * @param role 'admin' | 'regular' | 'banned' | 'new'
  */
 export async function loginAs(page: Page, role: TestRole): Promise<void> {
-  const token = await createCustomToken(role);
   const seed = getUserSeed(role);
 
+  // 1) emulator REST 를 통한 Firebase Auth ID token 발급
+  //    custom token 발급은 admin SDK 가 emulator host env 인식 시 자동 emulator 사용.
+  const customToken = await createCustomToken(role);
+  const signInRes = await page.context().request.post(
+    'http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=fake-api-key',
+    {
+      data: { token: customToken, returnSecureToken: true },
+      ignoreHTTPSErrors: true,
+    },
+  );
+  if (!signInRes.ok()) {
+    const errBody = await signInRes.text().catch(() => '<unreadable>');
+    throw new Error(
+      `[loginAs ${role}] emulator signInWithCustomToken failed: ${signInRes.status()} ${errBody.slice(0, 200)}`,
+    );
+  }
+
+  // 2) /api/auth/e2e-bridge → NextAuth JWT cookie set
+  const bridgeRes = await page.context().request.post('http://localhost:3000/api/auth/e2e-bridge', {
+    data: {
+      uid: seed.uid,
+      claims: seed.claims,
+    },
+  });
+  if (!bridgeRes.ok()) {
+    const errBody = await bridgeRes.text().catch(() => '<unreadable>');
+    throw new Error(
+      `[loginAs ${role}] /api/auth/e2e-bridge failed: ${bridgeRes.status()} ${errBody.slice(0, 200)}`,
+    );
+  }
+
+  // 3) cookie 가 context 에 저장됨 → 다음 navigation 시 인증된 세션
   await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-  await page.evaluate(
-    async ({ t, projectId }) => {
-      // 동적 import — emulator 모드 클라이언트의 firebase/auth 사용
-      const { getAuth, signInWithCustomToken, connectAuthEmulator } = await import(
-        'firebase/auth'
-      );
-      const { initializeApp, getApps } = await import('firebase/app');
-      const app = getApps()[0] ?? initializeApp({ projectId, apiKey: 'demo-api-key' });
-      const auth = getAuth(app);
-      try {
-        connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
-      } catch {
-        // 이미 연결됨
-      }
-      await signInWithCustomToken(auth, t);
-    },
-    { t: token, projectId: 'demo-kkaebizigi-test' },
-  );
 
-  // 로그인 후 페이지 갱신 — 인증 상태가 SSR 에 반영되도록
-  await page.reload({ waitUntil: 'domcontentloaded' });
-
-  // banned / new 는 게이트 페이지로 redirect 될 수 있음 — 호출자가 검증
-   
   console.log(`[loginAs] Logged in as ${role} (uid=${seed.uid})`);
 }
 
-/** 로그아웃 (signOut + reload) */
+/** 로그아웃 — NextAuth cookie 삭제 + reload */
 export async function logout(page: Page): Promise<void> {
-  await page.evaluate(async () => {
-    const { getAuth, signOut } = await import('firebase/auth');
-    await signOut(getAuth());
-  });
+  await page.context().clearCookies({ name: 'authjs.session-token' });
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
