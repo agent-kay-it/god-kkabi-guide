@@ -7,8 +7,9 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full-auto",
   "stopAfter": "archived",
-  "phase": "report",
-  "currentPhase": "Report 완료 — Archive 사용자 승인 대기. V3 진척 82.5%.",
+  "phase": "archived",
+  "currentPhase": "Archive 완료 (사용자 명시 승인 2026-05-20). V3 진척 82.5%.",
+  "archivedAt": "2026-05-20T10:08:00.000Z",
   "phaseHistory": [
     { "phase": "prd", "enteredAt": "2026-05-20T09:05:00.000Z", "exitedAt": "2026-05-20T09:08:00.000Z", "deliverable": "docs/sprint/23-sprint-v3-launch/prd.md" },
     { "phase": "plan", "enteredAt": "2026-05-20T09:08:00.000Z", "exitedAt": "2026-05-20T09:10:00.000Z", "deliverable": "docs/sprint/23-sprint-v3-launch/plan.md" },
@@ -16,7 +17,8 @@
     { "phase": "do", "enteredAt": "2026-05-20T09:12:00.000Z", "exitedAt": "2026-05-20T09:55:00.000Z", "deliverable": "PR #119, #120 (F23-A + F23-D+E)" },
     { "phase": "iterate", "enteredAt": "2026-05-20T09:55:00.000Z", "exitedAt": "2026-05-20T09:57:00.000Z", "deliverable": "typecheck/lint/test 1232/1232" },
     { "phase": "qa", "enteredAt": "2026-05-20T09:57:00.000Z", "exitedAt": "2026-05-20T10:02:00.000Z", "deliverable": "qa-summary.md + Chrome F23-A 통합 검증" },
-    { "phase": "report", "enteredAt": "2026-05-20T10:02:00.000Z", "exitedAt": "2026-05-20T10:05:00.000Z", "deliverable": "report.md" }
+    { "phase": "report", "enteredAt": "2026-05-20T10:02:00.000Z", "exitedAt": "2026-05-20T10:05:00.000Z", "deliverable": "report.md" },
+    { "phase": "archived", "enteredAt": "2026-05-20T10:08:00.000Z", "exitedAt": null, "deliverable": "사용자 명시 승인 (kay@popupstudio.ai 2026-05-20)" }
   ],
   "features": [
     { "id": "F23-A", "name": "NicknameChangeForm /me 통합 + F3.5 owned source", "priority": "P0 (마스터 V2 carry)", "status": "completed", "pr": 119 },
