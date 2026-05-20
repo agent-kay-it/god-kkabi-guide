@@ -20,6 +20,8 @@ export default defineConfig({
       'components/**/*.test.tsx',
       // Sprint 18 / F18-A — types/* 의 pure helper functions 검증.
       'types/**/*.test.ts',
+      // Sprint 24 F24-A — app/ 의 sitemap.ts / robots.ts 등 metadata routes.
+      'app/**/*.test.ts',
     ],
     exclude: ['node_modules/**', '.next/**', 'e2e/**'],
     // Sprint 15 F15-E — coverage (v8 provider).
