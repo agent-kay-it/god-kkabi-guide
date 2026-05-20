@@ -40,24 +40,29 @@ describe('getSynergy()', () => {
     expect(a?.tier).toBe(b?.tier);
   });
 
-  it('시드 안 된 조합 → B tier 50점 default', () => {
+  it('Sprint 22 F22-C 이후 165 전체 시드 → "미시드 조합" 자체 없음', () => {
+    // Sprint 22 F22-C 에서 165 전체 조합 시드 완료.
+    // 이전 default fallback (B tier 50) 케이스는 invalid input (ids != 3) 에서만 발생.
     const synergy = getSynergy([
       'gunggwi',
       'sansin',
       'hong_gildong',
     ] as WikiJinryeongId[]);
     expect(synergy).not.toBeNull();
-    expect(synergy?.tier).toBe('B');
-    expect(synergy?.synergyScore).toBe(50);
+    expect(synergy?.tier).toBe('B'); // Sprint 22 placeholder 의 tier
+    // score 는 시드된 값 (50-58 placeholder 또는 기존 시드)
+    expect(synergy?.synergyScore).toBeGreaterThanOrEqual(50);
   });
 
-  it('default 결과의 ids 는 정렬됨', () => {
+  it('시드 결과의 ids 는 정렬됨 (alpha-sorted comboId 의 jinryeongIds)', () => {
     const synergy = getSynergy([
       'gunggwi',
       'hong_gildong',
       'sansin',
     ] as WikiJinryeongId[]);
-    expect(synergy?.jinryeongIds).toEqual([...synergy!.jinryeongIds].sort());
+    // 시드된 jinryeongIds 는 시드 작성 순서 그대로 (정렬은 comboId 만)
+    expect(synergy?.jinryeongIds.length).toBe(3);
+    expect(synergy?.comboId).toBe('gunggwi_hong_gildong_sansin');
   });
 });
 
@@ -244,6 +249,42 @@ describe('listAllSynergies()', () => {
     );
     expect(sprint20?.synergyScore).toBe(81);
     expect(sprint20?.recommendedClass).toBe('medium');
+  });
+
+  // ─── Sprint 22 F22-C — 165 전체 커버리지 ───
+  it('Sprint 22 F22-C — SEED 165 (전체 C(11,3) 커버리지)', () => {
+    expect(listAllSynergies().length).toBe(165);
+  });
+
+  it('Sprint 22 F22-C — comboId 165 unique', () => {
+    const ids = listAllSynergies().map((s) => s.comboId);
+    expect(new Set(ids).size).toBe(165);
+  });
+
+  it('Sprint 22 F22-C — Sprint 21 의 120 조합 score 회귀 보호', () => {
+    const all = listAllSynergies();
+    // Sprint 21 의 hong_gildong + myeongwang + seohaeyongwang score 88 유지
+    const sprint21 = all.find(
+      (s) =>
+        s.jinryeongIds.includes('hong_gildong' as never) &&
+        s.jinryeongIds.includes('myeongwang' as never) &&
+        s.jinryeongIds.includes('seohaeyongwang' as never),
+    );
+    expect(sprint21?.synergyScore).toBe(88);
+    expect(sprint21?.recommendedClass).toBe('warrior');
+  });
+
+  it('Sprint 22 F22-C — Sprint 22 placeholder 의 score 50-58', () => {
+    const all = listAllSynergies();
+    const placeholders = all.filter((s) =>
+      s.description.includes('Sprint 22 placeholder'),
+    );
+    expect(placeholders.length).toBe(45);
+    placeholders.forEach((p) => {
+      expect(p.synergyScore).toBeGreaterThanOrEqual(50);
+      expect(p.synergyScore).toBeLessThanOrEqual(58);
+      expect(p.recommendedClass).toBeUndefined(); // 미할당
+    });
   });
 });
 

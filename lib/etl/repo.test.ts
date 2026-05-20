@@ -41,7 +41,9 @@ describe('upsertSignal', () => {
   });
 
   it('id 명시 → 같은 doc 에 merge', async () => {
-    const setMock = vi.fn(() => Promise.resolve());
+    const setMock = vi.fn<(data: Record<string, unknown>, opts: { merge?: boolean }) => Promise<void>>(
+      () => Promise.resolve(),
+    );
     const docRef = { id: 'fixed-id', set: setMock };
     const collectionDocMock = vi.fn(() => docRef);
     mockedFirestore.mockReturnValue({
@@ -50,7 +52,7 @@ describe('upsertSignal', () => {
     const r = await upsertSignal({ ...sampleInput, id: 'fixed-id' });
     expect(r).toMatchObject({ ok: true, id: 'fixed-id' });
     expect(collectionDocMock).toHaveBeenCalledWith('fixed-id');
-    const setArg = setMock.mock.calls[0]?.[1];
+    const setArg = setMock.mock.calls[0]![1];
     expect(setArg).toMatchObject({ merge: true });
   });
 
