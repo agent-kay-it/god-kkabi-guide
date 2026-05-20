@@ -7,18 +7,20 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full-auto",
   "stopAfter": "archived",
-  "phase": "report",
-  "currentPhase": "Report 완료 — Archive 대기 (사용자 명시 승인 필요)",
+  "phase": "archived",
+  "currentPhase": "Archive 완료 (사용자 명시 승인 2026-05-20 kay@agentkay.it)",
+  "archivedAt": "2026-05-20T21:25:00.000Z",
   "phaseHistory": [
     { "phase": "prd", "enteredAt": "2026-05-20T20:05:00.000Z", "exitedAt": "2026-05-20T20:06:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/prd.md" },
     { "phase": "plan", "enteredAt": "2026-05-20T20:06:00.000Z", "exitedAt": "2026-05-20T20:07:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/plan.md" },
     { "phase": "design", "enteredAt": "2026-05-20T20:07:00.000Z", "exitedAt": "2026-05-20T20:08:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/design.md" },
     { "phase": "do", "enteredAt": "2026-05-20T20:08:00.000Z", "exitedAt": "2026-05-20T20:17:00.000Z", "deliverable": "PR #144 (F27-A), #145 (F27-B), #146 (F27-C+D) 머지" },
     { "phase": "iterate", "enteredAt": "2026-05-20T20:17:00.000Z", "exitedAt": "2026-05-20T20:18:00.000Z", "deliverable": "typecheck/lint/test 0 fail (1515 tests)" },
-    { "phase": "qa", "enteredAt": "2026-05-20T20:18:00.000Z", "exitedAt": "2026-05-20T20:45:00.000Z", "deliverable": "qa-summary.md (Vercel rate limit, Chrome QA Sprint 28 carry)" },
-    { "phase": "report", "enteredAt": "2026-05-20T20:45:00.000Z", "exitedAt": null, "deliverable": "reports/report.md" }
+    { "phase": "qa", "enteredAt": "2026-05-20T20:18:00.000Z", "exitedAt": "2026-05-20T20:45:00.000Z", "deliverable": "qa-summary.md (Chrome QA carry: staging alias 갱신 필요)" },
+    { "phase": "report", "enteredAt": "2026-05-20T20:45:00.000Z", "exitedAt": "2026-05-20T21:20:00.000Z", "deliverable": "reports/report.md" },
+    { "phase": "archived", "enteredAt": "2026-05-20T21:25:00.000Z", "exitedAt": null, "deliverable": "사용자 명시 승인 (kay@agentkay.it 2026-05-20)" }
   ],
-  "prMerged": [143, 144, 145, 146],
+  "prMerged": [143, 144, 145, 146, 147],
   "features": [
     { "id": "F27-A", "name": "response.ts Infinity '∞' → '-1' 수정", "priority": "P0", "status": "completed" },
     { "id": "F27-B", "name": "lib/auth 33.29% → 51.34% (+18.05pt)", "priority": "P1", "status": "completed" },
