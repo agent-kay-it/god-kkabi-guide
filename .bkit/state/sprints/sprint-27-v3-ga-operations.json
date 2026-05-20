@@ -1,0 +1,52 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-27-v3-ga-operations",
+  "name": "V3 GA Operations — Infinity fix + lib/auth + HowTo/FAQ + Coverage 76",
+  "createdAt": "2026-05-20T20:05:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto",
+  "automationScope": "full-auto",
+  "stopAfter": "archived",
+  "phase": "design",
+  "currentPhase": "PRD/Plan/Design 완료 — F27-A 진입 대기",
+  "phaseHistory": [
+    { "phase": "prd", "enteredAt": "2026-05-20T20:05:00.000Z", "exitedAt": "2026-05-20T20:06:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/prd.md" },
+    { "phase": "plan", "enteredAt": "2026-05-20T20:06:00.000Z", "exitedAt": "2026-05-20T20:07:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/plan.md" },
+    { "phase": "design", "enteredAt": "2026-05-20T20:07:00.000Z", "exitedAt": "2026-05-20T20:08:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/design.md" }
+  ],
+  "features": [
+    { "id": "F27-A", "name": "response.ts Infinity 헤더 버그 수정", "priority": "P0", "status": "pending" },
+    { "id": "F27-B", "name": "lib/auth coverage 50%+", "priority": "P1", "status": "pending" },
+    { "id": "F27-C", "name": "HowTo schema + FAQ 확장 /class, /jinryeong", "priority": "P1", "status": "pending" },
+    { "id": "F27-D", "name": "Coverage 76%+ (누적 검증)", "priority": "P1", "status": "pending" }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": "response.ts Infinity 수정 + 회귀 테스트", "status": "pending" },
+    { "id": "DoD-2", "criterion": "lib/auth coverage 50%+", "status": "pending" },
+    { "id": "DoD-3", "criterion": "HowToStructuredData + 단위 테스트", "status": "pending" },
+    { "id": "DoD-4", "criterion": "/skill HowTo 주입 + Chrome view-source", "status": "pending" },
+    { "id": "DoD-5", "criterion": "FAQ schema /class, /jinryeong 확장", "status": "pending" },
+    { "id": "DoD-6", "criterion": "Coverage 76%+", "status": "pending" },
+    { "id": "DoD-7", "criterion": "Sprint 27 보고서 + Sprint 28 carry", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 4000000,
+    "phaseTimeoutHours": 360,
+    "minMatchRate": 90,
+    "expectedPRs": 6,
+    "expectedNewTests": 50,
+    "targetCoverageLines": 76
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "pending",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  },
+  "carryFrom": "sprint-26-v3-ga-readiness",
+  "dependsOn": ["sprint-26-v3-ga-readiness"]
+}
