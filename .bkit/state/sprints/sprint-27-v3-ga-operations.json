@@ -7,27 +7,32 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full-auto",
   "stopAfter": "archived",
-  "phase": "design",
-  "currentPhase": "PRD/Plan/Design 완료 — F27-A 진입 대기",
+  "phase": "report",
+  "currentPhase": "Report 완료 — Archive 대기 (사용자 명시 승인 필요)",
   "phaseHistory": [
     { "phase": "prd", "enteredAt": "2026-05-20T20:05:00.000Z", "exitedAt": "2026-05-20T20:06:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/prd.md" },
     { "phase": "plan", "enteredAt": "2026-05-20T20:06:00.000Z", "exitedAt": "2026-05-20T20:07:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/plan.md" },
-    { "phase": "design", "enteredAt": "2026-05-20T20:07:00.000Z", "exitedAt": "2026-05-20T20:08:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/design.md" }
+    { "phase": "design", "enteredAt": "2026-05-20T20:07:00.000Z", "exitedAt": "2026-05-20T20:08:00.000Z", "deliverable": "docs/sprint/27-sprint-v3-ga-operations/design.md" },
+    { "phase": "do", "enteredAt": "2026-05-20T20:08:00.000Z", "exitedAt": "2026-05-20T20:17:00.000Z", "deliverable": "PR #144 (F27-A), #145 (F27-B), #146 (F27-C+D) 머지" },
+    { "phase": "iterate", "enteredAt": "2026-05-20T20:17:00.000Z", "exitedAt": "2026-05-20T20:18:00.000Z", "deliverable": "typecheck/lint/test 0 fail (1515 tests)" },
+    { "phase": "qa", "enteredAt": "2026-05-20T20:18:00.000Z", "exitedAt": "2026-05-20T20:45:00.000Z", "deliverable": "qa-summary.md (Vercel rate limit, Chrome QA Sprint 28 carry)" },
+    { "phase": "report", "enteredAt": "2026-05-20T20:45:00.000Z", "exitedAt": null, "deliverable": "reports/report.md" }
   ],
+  "prMerged": [143, 144, 145, 146],
   "features": [
-    { "id": "F27-A", "name": "response.ts Infinity 헤더 버그 수정", "priority": "P0", "status": "pending" },
-    { "id": "F27-B", "name": "lib/auth coverage 50%+", "priority": "P1", "status": "pending" },
-    { "id": "F27-C", "name": "HowTo schema + FAQ 확장 /class, /jinryeong", "priority": "P1", "status": "pending" },
-    { "id": "F27-D", "name": "Coverage 76%+ (누적 검증)", "priority": "P1", "status": "pending" }
+    { "id": "F27-A", "name": "response.ts Infinity '∞' → '-1' 수정", "priority": "P0", "status": "completed" },
+    { "id": "F27-B", "name": "lib/auth 33.29% → 51.34% (+18.05pt)", "priority": "P1", "status": "completed" },
+    { "id": "F27-C", "name": "HowTo schema + FAQ /class, /jinryeong 확장", "priority": "P1", "status": "completed" },
+    { "id": "F27-D", "name": "Coverage 73.52% → 76.43% (+2.91pt)", "priority": "P1", "status": "completed" }
   ],
   "dod": [
-    { "id": "DoD-1", "criterion": "response.ts Infinity 수정 + 회귀 테스트", "status": "pending" },
-    { "id": "DoD-2", "criterion": "lib/auth coverage 50%+", "status": "pending" },
-    { "id": "DoD-3", "criterion": "HowToStructuredData + 단위 테스트", "status": "pending" },
-    { "id": "DoD-4", "criterion": "/skill HowTo 주입 + Chrome view-source", "status": "pending" },
-    { "id": "DoD-5", "criterion": "FAQ schema /class, /jinryeong 확장", "status": "pending" },
-    { "id": "DoD-6", "criterion": "Coverage 76%+", "status": "pending" },
-    { "id": "DoD-7", "criterion": "Sprint 27 보고서 + Sprint 28 carry", "status": "pending" }
+    { "id": "DoD-1", "criterion": "response.ts Infinity 수정 + 회귀 테스트", "status": "passed", "evidence": "lib/b2b/response.ts + 3 회귀 tests" },
+    { "id": "DoD-2", "criterion": "lib/auth coverage 50%+", "status": "passed", "evidence": "51.34%" },
+    { "id": "DoD-3", "criterion": "HowToStructuredData + 단위 테스트", "status": "passed", "evidence": "4 tests" },
+    { "id": "DoD-4", "criterion": "/skill HowTo 주입", "status": "passed", "evidence": "코드 commit; Chrome QA Sprint 28 carry (Vercel rate limit)" },
+    { "id": "DoD-5", "criterion": "FAQ /class, /jinryeong 확장", "status": "passed", "evidence": "코드 commit; Chrome QA Sprint 28 carry" },
+    { "id": "DoD-6", "criterion": "Coverage 76%+", "status": "passed", "evidence": "76.43%" },
+    { "id": "DoD-7", "criterion": "보고서 + Sprint 28 carry", "status": "passed", "evidence": "reports/report.md §5 (15 items)" }
   ],
   "kpi": {
     "tokenBudget": 4000000,
