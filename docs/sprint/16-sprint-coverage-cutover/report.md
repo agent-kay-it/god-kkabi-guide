@@ -106,7 +106,7 @@
 
 ### 4.6 Archive (다음 단계)
 
-- 사용자 (kay@popupstudio.ai) 승인 후 .bkit/state/sprints/sprint-16-coverage-cutover.json 의
+- 사용자 (kay@agentkay.it) 승인 후 .bkit/state/sprints/sprint-16-coverage-cutover.json 의
   phase: archived 처리
 
 ---
@@ -170,4 +170,4 @@
 - state JSON terminal 처리 (phase: archived, archivedAt 추가)
 - Sprint 17 의 PRD 초안 작성 (위 8 carry items 기반)
 
-사용자 (kay@popupstudio.ai) 의 명시적 승인 후 Archive 단계로 진행합니다.
+사용자 (kay@agentkay.it) 의 명시적 승인 후 Archive 단계로 진행합니다.

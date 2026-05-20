@@ -18,7 +18,7 @@
     { "phase": "iterate", "enteredAt": "2026-05-20T07:30:00.000Z", "exitedAt": "2026-05-20T07:32:00.000Z", "deliverable": "typecheck/lint 0 errors + vitest 1045/1045 pass" },
     { "phase": "qa", "enteredAt": "2026-05-20T07:32:00.000Z", "exitedAt": "2026-05-20T07:35:00.000Z", "deliverable": "docs/sprint/20-sprint-coverage-master-v2/reports/qa-summary.md" },
     { "phase": "report", "enteredAt": "2026-05-20T07:35:00.000Z", "exitedAt": "2026-05-20T07:38:00.000Z", "deliverable": "docs/sprint/20-sprint-coverage-master-v2/reports/report.md" },
-    { "phase": "archived", "enteredAt": "2026-05-20T07:40:00.000Z", "exitedAt": null, "deliverable": "사용자 명시 승인 (kay@popupstudio.ai 2026-05-20)" }
+    { "phase": "archived", "enteredAt": "2026-05-20T07:40:00.000Z", "exitedAt": null, "deliverable": "사용자 명시 승인 (kay@agentkay.it 2026-05-20)" }
   ],
   "features": [
     { "id": "F20-A", "name": "Coverage 42.54% → 53.27% (Server Action 잔여 4 모듈)", "priority": "P0", "status": "completed", "pr": 97 },

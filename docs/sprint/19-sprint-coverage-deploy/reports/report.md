@@ -6,7 +6,7 @@
 **Sprint**: 19 (sprint-19-coverage-deploy)
 **기간**: 2026-05-19 (당일 8 feature 완료)
 **Trust Level**: L4 (full-auto)
-**Archive 게이트**: 사용자 (kay@popupstudio.ai) 명시적 승인 후 진행
+**Archive 게이트**: 사용자 (kay@agentkay.it) 명시적 승인 후 진행
 
 ---
 
@@ -184,7 +184,7 @@ Sprint 19 종합:
 - ✅ Iterate — typecheck/lint/test 889/889 pass (#92)
 - ✅ QA — `reports/qa-summary.md` 완료
 - ✅ Report — 본 문서로 완료
-- ⏸️ Archive — 사용자 (kay@popupstudio.ai) 명시적 승인 후 진행
+- ⏸️ Archive — 사용자 (kay@agentkay.it) 명시적 승인 후 진행
 
 ---
 
@@ -234,4 +234,4 @@ Sprint 19 종합:
 ---
 
 **작성**: Sprint 19 sprint-orchestrator + sprint-report-writer
-**검토**: kay@popupstudio.ai (Archive 승인 게이트)
+**검토**: kay@agentkay.it (Archive 승인 게이트)

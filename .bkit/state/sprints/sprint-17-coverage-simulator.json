@@ -11,7 +11,7 @@
   "phase": "archived",
   "currentPhase": "사용자 승인 archive 완료 — Sprint 18 carry 8건 명세",
   "userApproval": {
-    "approver": "kay@popupstudio.ai",
+    "approver": "kay@agentkay.it",
     "approvedAt": "2026-05-19T18:30:00.000Z",
     "decision": "Archive 진행",
     "i18nDecision": "한국 전용 게임 — 다국어 대응 제거 (2026-05-19)"
@@ -86,7 +86,7 @@
     "i18nDecision": {
       "decision": "다국어 대응 제거",
       "decidedAt": "2026-05-19T14:00:00.000Z",
-      "decidedBy": "kay@popupstudio.ai",
+      "decidedBy": "kay@agentkay.it",
       "reason": "갓깨비 게임이 Google Play / iOS App Store 모두 한국 스토어 전용"
     },
     "mapping": {

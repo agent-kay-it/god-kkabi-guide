@@ -5,7 +5,7 @@
 **작성일**: 2026-05-20
 **Sprint**: 21
 **Trust Level**: L4 (Full-Auto)
-**Archive 게이트**: 사용자 (kay@popupstudio.ai) 명시적 승인
+**Archive 게이트**: 사용자 (kay@agentkay.it) 명시적 승인
 
 ---
 
@@ -183,7 +183,7 @@ Sprint 21 종합:
 - ✅ Iterate — typecheck/lint/test 1119/1119 pass
 - ✅ QA — `reports/qa-summary.md` + `reports/chrome-qa-result.md`
 - ✅ Report — 본 문서
-- ⏸️ Archive — 사용자 (kay@popupstudio.ai) 명시 승인 후 진행
+- ⏸️ Archive — 사용자 (kay@agentkay.it) 명시 승인 후 진행
 
 ---
 

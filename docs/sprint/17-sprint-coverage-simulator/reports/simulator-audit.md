@@ -97,7 +97,7 @@
 **3.1.1 시너지 매트릭스 데이터 보강**
 
 - 현재 11 seed → 30+ 로 확대
-- 운영자 (kay@popupstudio.ai) 의 게임 메타 입력 필요
+- 운영자 (kay@agentkay.it) 의 게임 메타 입력 필요
 - 우선순위: PvP 빌드 (warrior) 5+ / PvE 빌드 (swordsman) 5+ / 힐러 (medium) 5+
 
 **3.1.2 a11y 보강**

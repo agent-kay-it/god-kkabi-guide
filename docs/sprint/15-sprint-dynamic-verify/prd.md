@@ -120,4 +120,4 @@ run 의 dynamic 결과** 는 아직 없다. Sprint 15 의 목표는:
 | Owner | kay | Sprint 승인, prod cutover 결정 |
 | Tech Lead | Claude (AI) | 구현 + 검증 |
 | QA | Claude (AI) + 사용자 | 시나리오 검토, bug triage |
-| Operator | kay@popupstudio.ai | prod 배포 |
+| Operator | kay@agentkay.it | prod 배포 |

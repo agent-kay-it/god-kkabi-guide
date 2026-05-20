@@ -24,7 +24,7 @@ Firebase 단일 prod 정책은 emulator 분리로 해결 가능. Sprint 14 는 �
 ## 2. WHO — 영향받는 사용자
 
 - **본 사용자 (kay@agentkay.it)** — prod 출시 전 안전 검증 받음
-- **운영팀 (kay@popupstudio.ai)** — 자동 회귀 안전망 보유
+- **운영팀 (kay@agentkay.it)** — 자동 회귀 안전망 보유
 - **신규 사용자** — 안정적인 가입/사용 흐름 보장
 - **기존 사용자 (post 작성자, 채팅 사용자)** — CRUD 손상 방지
 
@@ -119,4 +119,4 @@ Firebase 단일 prod 정책은 emulator 분리로 해결 가능. Sprint 14 는 �
 | Owner | kay (사용자) | Sprint 승인, prod cutover 결정 |
 | Tech Lead | Claude (AI) | 구현 + 검증 |
 | QA | Claude (AI) + 사용자 | 시나리오 작성, bug triage |
-| Operator | kay@popupstudio.ai | prod 배포 실행 |
+| Operator | kay@agentkay.it | prod 배포 실행 |

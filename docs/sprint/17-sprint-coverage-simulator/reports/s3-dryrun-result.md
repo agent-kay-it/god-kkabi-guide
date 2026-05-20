@@ -115,7 +115,7 @@ echo "exit code: $?"
 ## 6. 본 sprint 의 실측 결과
 
 본 sprint 에서는 script 작성 만 진행 — 실 AWS staging 에서의 dry-run 은
-사용자 (kay@popupstudio.ai) 의 명시적 승인 후 별도 진행.
+사용자 (kay@agentkay.it) 의 명시적 승인 후 별도 진행.
 
 실측 단계 (사용자 직접 실행):
 

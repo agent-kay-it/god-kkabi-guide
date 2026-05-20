@@ -18,7 +18,7 @@
     { "phase": "iterate", "enteredAt": "2026-05-19T20:05:00.000Z", "exitedAt": "2026-05-19T20:08:00.000Z", "deliverable": "PR #92 eslint coverage/ ignore — 0 warnings" },
     { "phase": "qa", "enteredAt": "2026-05-19T20:08:00.000Z", "exitedAt": "2026-05-19T20:10:00.000Z", "deliverable": "docs/sprint/19-sprint-coverage-deploy/reports/qa-summary.md" },
     { "phase": "report", "enteredAt": "2026-05-19T20:10:00.000Z", "exitedAt": "2026-05-19T20:12:00.000Z", "deliverable": "docs/sprint/19-sprint-coverage-deploy/reports/report.md" },
-    { "phase": "archived", "enteredAt": "2026-05-20T00:00:00.000Z", "exitedAt": null, "deliverable": "사용자 명시 승인 (kay@popupstudio.ai 2026-05-20)" }
+    { "phase": "archived", "enteredAt": "2026-05-20T00:00:00.000Z", "exitedAt": null, "deliverable": "사용자 명시 승인 (kay@agentkay.it 2026-05-20)" }
   ],
   "features": [
     { "id": "F19-A", "name": "Coverage 28.77% → 40.23% (Server Actions mocking)", "priority": "P0", "status": "completed", "pr": 84 },

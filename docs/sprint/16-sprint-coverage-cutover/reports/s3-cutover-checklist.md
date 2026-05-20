@@ -191,4 +191,4 @@ aws cloudfront create-invalidation \
 PR 또는 GitHub issue 의 task list 로 복사하여 진행 추적. 완료 후 본 파일 갱신
 (commit history 가 cutover audit log).
 
-실제 cutover 는 **사용자 (kay@popupstudio.ai) 의 명시적 승인 후** 진행. 자동화 금지.
+실제 cutover 는 **사용자 (kay@agentkay.it) 의 명시적 승인 후** 진행. 자동화 금지.

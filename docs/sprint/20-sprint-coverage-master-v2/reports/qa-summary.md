@@ -201,4 +201,4 @@ Sprint 19 87.93% → Sprint 20 85.07% (-2.86 pt). 신규 모듈 (post/subscripti
 - ✅ Iterate — typecheck/lint/test 1045/1045 pass
 - ✅ QA — 본 보고서로 완료
 - ⏭️ Report — sprint-20 report.md
-- ⏸️ Archive — 사용자 (kay@popupstudio.ai) 명시적 승인 후 진행
+- ⏸️ Archive — 사용자 (kay@agentkay.it) 명시적 승인 후 진행
