@@ -271,6 +271,36 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
           ))}
         </div>
       </section>
+
+      {/* Sprint 27 / F27-C hotfix — FAQ schema 가시 Q&A 콘텐츠 (Google 가이드라인 준수).
+          JSON-LD mainEntity[] 과 1:1 매칭. */}
+      <section
+        aria-labelledby="faq-jinryeong"
+        className="mt-12 rounded-[var(--radius-card)] border border-bronze/25 bg-ink-elev/40 p-6"
+      >
+        <header className="mb-4">
+          <h2
+            id="faq-jinryeong"
+            className="text-xl font-bold tracking-tight text-text"
+          >
+            자주 묻는 질문 (FAQ)
+          </h2>
+          <p className="mt-1 text-sm text-text-soft">
+            신·요·인 3 진영 시너지와 운영 핵심.
+          </p>
+        </header>
+        <dl className="space-y-4">
+          {JINRYEONG_FAQ.map((qa) => (
+            <div
+              key={qa.question}
+              className="rounded-md border border-ink-line/40 bg-ink-card/40 p-4"
+            >
+              <dt className="mb-2 font-semibold text-text">Q. {qa.question}</dt>
+              <dd className="text-sm leading-relaxed text-text-soft">{qa.answer}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
     </main>
   );
 }

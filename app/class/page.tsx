@@ -222,6 +222,36 @@ export default async function ClassPage(): Promise<React.JSX.Element> {
           채팅·북마크·신고 기능도 함께 활성화됩니다.
         </Note>
       ) : null}
+
+      {/* Sprint 27 / F27-C hotfix — FAQ schema 가시 Q&A 콘텐츠 (Google 가이드라인 준수).
+          JSON-LD mainEntity[] 과 1:1 매칭. */}
+      <section
+        aria-labelledby="faq-class"
+        className="mt-12 rounded-[var(--radius-card)] border border-bronze/25 bg-ink-elev/40 p-6"
+      >
+        <header className="mb-4">
+          <h2
+            id="faq-class"
+            className="text-xl font-bold tracking-tight text-text"
+          >
+            자주 묻는 질문 (FAQ)
+          </h2>
+          <p className="mt-1 text-sm text-text-soft">
+            전사·검객·영매 3 직업 운영 핵심.
+          </p>
+        </header>
+        <dl className="space-y-4">
+          {CLASS_FAQ.map((qa) => (
+            <div
+              key={qa.question}
+              className="rounded-md border border-ink-line/40 bg-ink-card/40 p-4"
+            >
+              <dt className="mb-2 font-semibold text-text">Q. {qa.question}</dt>
+              <dd className="text-sm leading-relaxed text-text-soft">{qa.answer}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
     </main>
   );
 }
