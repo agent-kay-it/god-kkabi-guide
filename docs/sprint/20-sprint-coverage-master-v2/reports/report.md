@@ -5,7 +5,7 @@
 **작성일**: 2026-05-20
 **Sprint**: 20 (sprint-20-coverage-master-v2)
 **Trust Level**: L4 (Full-Auto)
-**Archive 게이트**: 사용자 (kay@popupstudio.ai) 명시적 승인 후 진행
+**Archive 게이트**: 사용자 (kay@agentkay.it) 명시적 승인 후 진행
 
 ---
 
@@ -173,7 +173,7 @@ Sprint 20 종합:
 - ✅ Iterate — typecheck/lint/test 1045/1045 pass + 0 warnings
 - ✅ QA — `reports/qa-summary.md` 완료
 - ✅ Report — 본 문서 완료
-- ⏸️ Archive — 사용자 (kay@popupstudio.ai) 명시적 승인 후 진행
+- ⏸️ Archive — 사용자 (kay@agentkay.it) 명시적 승인 후 진행
 
 ---
 
@@ -211,4 +211,4 @@ Sprint 20 종합:
 ---
 
 **작성**: Sprint 20 sprint-orchestrator + sprint-report-writer
-**검토**: kay@popupstudio.ai (Archive 승인 게이트)
+**검토**: kay@agentkay.it (Archive 승인 게이트)

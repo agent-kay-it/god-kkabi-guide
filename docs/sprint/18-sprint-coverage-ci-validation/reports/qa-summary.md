@@ -182,4 +182,4 @@ Lines        : 28.77% ( 2304/8008 )
 - ✅ Iterate — typecheck/lint/test 654/654 pass
 - ✅ QA — 본 보고서로 완료
 - ⏭️ Report — sprint-18 report.md 생성
-- ⏸️ Archive — 사용자 (kay@popupstudio.ai) 명시적 승인 후 진행
+- ⏸️ Archive — 사용자 (kay@agentkay.it) 명시적 승인 후 진행

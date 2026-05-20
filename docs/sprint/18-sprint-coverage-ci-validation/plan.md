@@ -87,7 +87,7 @@
 
 **Step 4**: 회귀 검증 — 기존 11 seed 의 score 유지 + 기존 unit test 12 tests pass
 
-**중요**: 운영자 (kay@popupstudio.ai) 의 게임 메타 직접 입력은 별도 sprint 의
+**중요**: 운영자 (kay@agentkay.it) 의 게임 메타 직접 입력은 별도 sprint 의
 검증 단계로 — 본 sprint 는 합리적 메타 기반 seed 작성.
 
 **예상**: 30+ seed / 1 PR

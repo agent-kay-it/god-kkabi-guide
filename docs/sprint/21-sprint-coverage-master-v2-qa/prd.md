@@ -5,7 +5,7 @@
 **작성일**: 2026-05-20
 **Sprint**: 21 (sprint-21-coverage-master-v2-qa)
 **Trust Level**: L4 (Full-Auto)
-**Archive 게이트**: 사용자 (kay@popupstudio.ai) 명시적 승인
+**Archive 게이트**: 사용자 (kay@agentkay.it) 명시적 승인
 
 ---
 

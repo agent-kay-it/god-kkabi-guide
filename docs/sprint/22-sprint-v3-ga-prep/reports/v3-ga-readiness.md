@@ -76,4 +76,4 @@ Sprint 23+ 은 V3 sprint 로 전환:
 - 운영 안정화 + 성장 전환을 동시에 진행
 - Sprint 22 의 carry 4 항목 (CI 결과 / Lighthouse / Visual baseline / Server Action 실 테스트) 은 V3 진행 중 자연스럽게 해소
 
-승인자: kay@popupstudio.ai (Trust L4 archive 게이트와 별개로 V3 진입 결정)
+승인자: kay@agentkay.it (Trust L4 archive 게이트와 별개로 V3 진입 결정)

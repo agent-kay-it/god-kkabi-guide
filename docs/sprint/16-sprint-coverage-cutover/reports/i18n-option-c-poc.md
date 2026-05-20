@@ -145,7 +145,7 @@ $ ls app/{sitemap,robots,manifest}.ts
 
 - **Option C 결정 게이트**:
   - 전제 1: Google Search Console 에 ja/en 페이지 외부 백링크 측정
-  - 전제 2: 운영자 (kay@popupstudio.ai) 가 ja/en 시장 진입 결정
+  - 전제 2: 운영자 (kay@agentkay.it) 가 ja/en 시장 진입 결정
   - 전제 3: 번역 quality 가 GA (현재 completeness 1.0 → 실 사용 검증 필요)
 - 전제 충족 시: Option C 전체 마이그레이션 (Sprint 18 P0 ~ Sprint 19 P3)
 
@@ -191,4 +191,4 @@ $ ls app/{sitemap,robots,manifest}.ts
 
 - ✅ Sprint 16 F16-F 완료 마킹
 - ⏸ Sprint 17 의 PRD 에 "Option B 부분 적용" feature 추가
-- ⏸ 사용자 (kay@popupstudio.ai) 에게 ja/en 시장 진입 의향 확인 (Sprint 17 시작 시)
+- ⏸ 사용자 (kay@agentkay.it) 에게 ja/en 시장 진입 의향 확인 (Sprint 17 시작 시)

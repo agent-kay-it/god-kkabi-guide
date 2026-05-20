@@ -125,7 +125,7 @@ Sprint 23 종합:
 - ✅ Iterate — 1232/1232 pass
 - ✅ QA — F23-A Chrome 검증 + qa-summary
 - ✅ Report — 본 문서
-- ⏸️ Archive — 사용자 (kay@popupstudio.ai) 명시 승인 후
+- ⏸️ Archive — 사용자 (kay@agentkay.it) 명시 승인 후
 
 ---
 

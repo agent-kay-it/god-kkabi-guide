@@ -103,7 +103,7 @@ Google SRE 의 4가지 핵심 시그널을 추적:
 ## 7. 책임자 (RACI)
 
 - **Responsible**: 백엔드 / 인프라 담당
-- **Accountable**: kay@popupstudio.ai
+- **Accountable**: kay@agentkay.it
 - **Consulted**: Sentry support
 - **Informed**: 운영자
 

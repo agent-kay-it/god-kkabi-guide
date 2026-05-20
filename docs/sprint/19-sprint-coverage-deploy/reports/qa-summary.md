@@ -211,4 +211,4 @@ Lines        : 42.54% ( 3544/8330 )
 - ✅ Iterate — typecheck/lint/test 889/889 pass + eslint ignore 정리 (#92)
 - ✅ QA — 본 보고서로 완료
 - ⏭️ Report — sprint-19 report.md 생성
-- ⏸️ Archive — 사용자 (kay@popupstudio.ai) 명시적 승인 후 진행
+- ⏸️ Archive — 사용자 (kay@agentkay.it) 명시적 승인 후 진행

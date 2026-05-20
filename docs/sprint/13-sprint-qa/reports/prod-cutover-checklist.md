@@ -85,7 +85,7 @@
 
 ## 6. 비상 연락처
 
-- **운영 책임**: kay@popupstudio.ai (사용자 본인)
+- **운영 책임**: kay@agentkay.it (사용자 본인)
 - **Vercel 알림 채널**: Vercel project notification (Vercel toolbar)
 - **Sentry 알림 채널**: Sentry alert rules (project: kkaebizigi)
 - **Firebase 알림 채널**: Firebase console (god-kkabi-guide)

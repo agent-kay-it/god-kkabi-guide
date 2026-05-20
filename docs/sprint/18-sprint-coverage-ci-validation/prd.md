@@ -73,7 +73,7 @@
 ### 5.1 위험
 
 1. **F17-C UI fix 효과 미달**: 첫 dispatch 후 emulator 가 여전히 fail 가능 — 추가 root cause 분석 필요
-2. **시뮬레이터 시너지 30+ seed**: 운영자 (kay@popupstudio.ai) 의 게임 메타 입력 의존 — 입력 없으면 fallback 50점 만 표시
+2. **시뮬레이터 시너지 30+ seed**: 운영자 (kay@agentkay.it) 의 게임 메타 입력 의존 — 입력 없으면 fallback 50점 만 표시
 3. **components/ coverage scope 확장**: vitest config 변경 시 기존 test 회귀 가능
 4. **마스터 V2 F3.2 차트**: chart library 선정 + 데이터 aggregation 신규 — 별도 sprint 필요할 수도
 

@@ -182,4 +182,4 @@ Lines        : 20.62% ( 1556/7544 )
 - Iterate: ✅ 완료 (static gates 통과 + matchRate 효과적으로 100%)
 - QA: ✅ 본 보고서로 완료
 - Report: ⏭️ 다음 단계 (sprint-16 report.md 생성)
-- Archive: ⏸️ 사용자 (kay@popupstudio.ai) 승인 후 진행
+- Archive: ⏸️ 사용자 (kay@agentkay.it) 승인 후 진행

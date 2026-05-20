@@ -136,4 +136,4 @@ Sprint 24 종합:
 - ✅ Iterate — 1279/1279 pass
 - ✅ QA — Chrome sitemap + robots 검증 + qa-summary
 - ✅ Report — 본 문서
-- ⏸️ Archive — 사용자 (kay@popupstudio.ai) 명시 승인 후
+- ⏸️ Archive — 사용자 (kay@agentkay.it) 명시 승인 후
