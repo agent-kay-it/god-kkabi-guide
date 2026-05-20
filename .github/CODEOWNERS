@@ -1,0 +1,14 @@
+# CODEOWNERS — Sprint 19 branch protection
+#
+# 모든 PR 의 코드 변경은 @agent-kay-it 의 승인이 필수.
+# main / staging 브랜치 보호 규칙의 require_code_owner_reviews=true 와 결합.
+#
+# 정책:
+#  - 본 파일을 통해 reviewer 가 자동 할당됨
+#  - 본인 PR 은 GitHub 정책상 self-approve 불가 (Admin bypass 허용)
+#  - 외부 contributor 의 PR 은 본 owner 의 명시적 review 가 있어야만 머지 가능
+#
+# 참조: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-security/customizing-your-repository/about-code-owners
+
+# 전체 코드베이스 owner
+* @agent-kay-it
