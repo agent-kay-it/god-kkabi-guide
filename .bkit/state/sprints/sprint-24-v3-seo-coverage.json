@@ -7,8 +7,9 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full-auto",
   "stopAfter": "archived",
-  "phase": "report",
-  "currentPhase": "Report 완료 — Archive 사용자 승인 대기",
+  "phase": "archived",
+  "currentPhase": "Archive 완료 (사용자 명시 승인 2026-05-20)",
+  "archivedAt": "2026-05-20T10:42:00.000Z",
   "phaseHistory": [
     { "phase": "prd", "enteredAt": "2026-05-20T10:10:00.000Z", "exitedAt": "2026-05-20T10:11:00.000Z", "deliverable": "docs/sprint/24-sprint-v3-seo-coverage/prd.md" },
     { "phase": "plan", "enteredAt": "2026-05-20T10:11:00.000Z", "exitedAt": "2026-05-20T10:12:00.000Z", "deliverable": "docs/sprint/24-sprint-v3-seo-coverage/plan.md" },
@@ -16,7 +17,8 @@
     { "phase": "do", "enteredAt": "2026-05-20T10:13:00.000Z", "exitedAt": "2026-05-20T10:30:00.000Z", "deliverable": "PR #124-#126 (F24-A + F24-D + F24-B/C partial)" },
     { "phase": "iterate", "enteredAt": "2026-05-20T10:30:00.000Z", "exitedAt": "2026-05-20T10:32:00.000Z", "deliverable": "typecheck/lint/test 1279/1279" },
     { "phase": "qa", "enteredAt": "2026-05-20T10:32:00.000Z", "exitedAt": "2026-05-20T10:35:00.000Z", "deliverable": "qa-summary.md + Chrome sitemap/robots 검증" },
-    { "phase": "report", "enteredAt": "2026-05-20T10:35:00.000Z", "exitedAt": "2026-05-20T10:37:00.000Z", "deliverable": "report.md" }
+    { "phase": "report", "enteredAt": "2026-05-20T10:35:00.000Z", "exitedAt": "2026-05-20T10:37:00.000Z", "deliverable": "report.md" },
+    { "phase": "archived", "enteredAt": "2026-05-20T10:42:00.000Z", "exitedAt": null, "deliverable": "사용자 명시 승인 (kay@agentkay.it 2026-05-20)" }
   ],
   "prMerged": [122, 123, 124, 125, 126],
   "features": [
