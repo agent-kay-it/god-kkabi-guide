@@ -149,9 +149,10 @@ describe('listAllSynergies()', () => {
     expect(unassigned).toBeGreaterThanOrEqual(6);
   });
 
-  it('Sprint 19 F19-E — score 52-95 범위 (미할당은 60대 이하)', () => {
+  it('Sprint 19 F19-E — score 50-95 범위 (미할당은 60대 이하)', () => {
+    // Sprint 21 F21-B 에서 미할당 score 가 50 까지 확장됨
     for (const s of listAllSynergies()) {
-      expect(s.synergyScore).toBeGreaterThanOrEqual(52);
+      expect(s.synergyScore).toBeGreaterThanOrEqual(50);
       expect(s.synergyScore).toBeLessThanOrEqual(95);
     }
   });
@@ -208,6 +209,41 @@ describe('listAllSynergies()', () => {
       expect(s.synergyScore).toBeGreaterThanOrEqual(50);
       expect(s.synergyScore).toBeLessThanOrEqual(95);
     }
+  });
+
+  // ─── Sprint 21 F21-B — 80 → 120 확장 ───
+  it('Sprint 21 F21-B — SEED 120+ 조합 정의됨 (165 중 73%+)', () => {
+    expect(listAllSynergies().length).toBeGreaterThanOrEqual(120);
+  });
+
+  it('Sprint 21 F21-B — 직업별 분포 (warrior 18+ / swordsman 19+ / medium 23+)', () => {
+    const all = listAllSynergies();
+    const warriorCount = all.filter((x) => x.recommendedClass === 'warrior').length;
+    const swordsmanCount = all.filter((x) => x.recommendedClass === 'swordsman').length;
+    const mediumCount = all.filter((x) => x.recommendedClass === 'medium').length;
+    expect(warriorCount).toBeGreaterThanOrEqual(18);
+    expect(swordsmanCount).toBeGreaterThanOrEqual(19);
+    expect(mediumCount).toBeGreaterThanOrEqual(23);
+  });
+
+  it('Sprint 21 F21-B — 미할당 24+', () => {
+    const unassigned = listAllSynergies().filter(
+      (x) => x.recommendedClass === undefined,
+    ).length;
+    expect(unassigned).toBeGreaterThanOrEqual(24);
+  });
+
+  it('Sprint 21 F21-B — Sprint 20 의 80 조합 score 회귀 보호', () => {
+    const all = listAllSynergies();
+    // Sprint 20 의 chiwoo + gumiyoho + sansin 의 score 81 유지 확인
+    const sprint20 = all.find(
+      (s) =>
+        s.jinryeongIds.includes('chiwoo' as never) &&
+        s.jinryeongIds.includes('gumiyoho' as never) &&
+        s.jinryeongIds.includes('sansin' as never),
+    );
+    expect(sprint20?.synergyScore).toBe(81);
+    expect(sprint20?.recommendedClass).toBe('medium');
   });
 });
 
