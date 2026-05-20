@@ -1,0 +1,60 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-20-coverage-master-v2",
+  "name": "Coverage 50%+ + Infrastructure 실 검증 + Master V2 가속",
+  "createdAt": "2026-05-20T07:05:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto",
+  "automationScope": "full-auto",
+  "stopAfter": "archived",
+  "phase": "design",
+  "currentPhase": "PRD/Plan/Design 완료 — F20-A 진입 대기",
+  "phaseHistory": [
+    { "phase": "prd", "enteredAt": "2026-05-20T07:00:00.000Z", "exitedAt": "2026-05-20T07:03:00.000Z", "deliverable": "docs/sprint/20-sprint-coverage-master-v2/prd.md" },
+    { "phase": "plan", "enteredAt": "2026-05-20T07:03:00.000Z", "exitedAt": "2026-05-20T07:05:00.000Z", "deliverable": "docs/sprint/20-sprint-coverage-master-v2/plan.md" },
+    { "phase": "design", "enteredAt": "2026-05-20T07:05:00.000Z", "exitedAt": "2026-05-20T07:08:00.000Z", "deliverable": "docs/sprint/20-sprint-coverage-master-v2/design.md" }
+  ],
+  "features": [
+    { "id": "F20-A", "name": "Coverage 42.54% → 50%+ (Server Action 잔여 4 모듈)", "priority": "P0", "status": "pending" },
+    { "id": "F20-B", "name": "CI E2E 실 spec 결과 확인 + 잔여 fail iterate", "priority": "P0", "status": "pending" },
+    { "id": "F20-C", "name": "Lighthouse 실 측정 결과 분석", "priority": "P0", "status": "pending" },
+    { "id": "F20-D", "name": "Visual baseline 실 capture 실행", "priority": "P1", "status": "pending" },
+    { "id": "F20-E", "name": "시뮬레이터 시너지 51 → 80+", "priority": "P2", "status": "pending" },
+    { "id": "F20-F", "name": "components/feature/ test 확대", "priority": "P2", "status": "pending" },
+    { "id": "F20-G", "name": "마스터 V2 F3.4 쿠폰 자동 검증 cron worker", "priority": "마스터 V2", "status": "pending" },
+    { "id": "F20-H", "name": "마스터 V2 F3.5 진령 추천 알고리즘 1차", "priority": "마스터 V2", "status": "pending" }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": "Coverage lines 50%+", "status": "pending" },
+    { "id": "DoD-2", "criterion": "CI E2E 모든 spec pass 또는 잔여 carry 명시", "status": "pending" },
+    { "id": "DoD-3", "criterion": "Lighthouse 5 URLs 실 측정 + 분석", "status": "pending" },
+    { "id": "DoD-4", "criterion": "Visual baseline 1차 75 snapshots commit", "status": "pending" },
+    { "id": "DoD-5", "criterion": "시뮬레이터 시너지 80+", "status": "pending" },
+    { "id": "DoD-6", "criterion": "components/feature/ test 5+ 신규", "status": "pending" },
+    { "id": "DoD-7", "criterion": "F3.4 cron worker 동작 검증", "status": "pending" },
+    { "id": "DoD-8", "criterion": "F3.5 진령 추천 1차 + 단위 테스트", "status": "pending" },
+    { "id": "DoD-9", "criterion": "Sprint 20 종합 보고서", "status": "pending" },
+    { "id": "DoD-10", "criterion": "Sprint 21 carry items", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 3000000,
+    "phaseTimeoutHours": 240,
+    "minMatchRate": 90,
+    "expectedPRs": 9,
+    "expectedNewTests": 150,
+    "targetCoverageLines": 50,
+    "masterV2Progress": "4/7 → 6/7"
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "pending",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  },
+  "carryFrom": "sprint-19-coverage-deploy",
+  "dependsOn": ["sprint-19-coverage-deploy"]
+}
