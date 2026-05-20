@@ -11,6 +11,7 @@ import {
   ArticleStructuredData,
   FAQStructuredData,
   VideoGameStructuredData,
+  HowToStructuredData,
 } from './structured-data';
 
 afterEach(() => cleanup());
@@ -219,5 +220,70 @@ describe('VideoGameStructuredData (Sprint 25 F25-C)', () => {
     const json = JSON.parse(container.querySelector('script#ld-videogame')!.innerHTML);
     expect(json.genre).toBeUndefined();
     expect(json.downloadUrl).toBeUndefined();
+  });
+});
+
+describe('HowToStructuredData (Sprint 27 F27-C)', () => {
+  it('HowTo schema 렌더 + step position 1-based', () => {
+    const { container } = render(
+      <HowToStructuredData
+        name="스킬 운영 가이드"
+        description="직업별 스킬 31종 운영"
+        steps={[
+          { name: '코어 선택', text: '직업당 코어 1개' },
+          { name: '액티브 배치', text: '3-4개 부 딜링' },
+          { name: '패시브 강화', text: '오도과로 품급 향상' },
+        ]}
+      />,
+    );
+    const json = JSON.parse(container.querySelector('script#ld-howto')!.innerHTML);
+    expect(json['@type']).toBe('HowTo');
+    expect(json.name).toBe('스킬 운영 가이드');
+    expect(json.description).toBe('직업별 스킬 31종 운영');
+    expect(json.step.length).toBe(3);
+    expect(json.step[0]).toMatchObject({
+      '@type': 'HowToStep',
+      position: 1,
+      name: '코어 선택',
+      text: '직업당 코어 1개',
+    });
+    expect(json.step[2].position).toBe(3);
+  });
+
+  it('step.url 있으면 포함, 없으면 누락', () => {
+    const { container } = render(
+      <HowToStructuredData
+        name="x"
+        description="y"
+        steps={[
+          { name: 's1', text: 't1', url: 'https://example.com/s1' },
+          { name: 's2', text: 't2' },
+        ]}
+      />,
+    );
+    const json = JSON.parse(container.querySelector('script#ld-howto')!.innerHTML);
+    expect(json.step[0].url).toBe('https://example.com/s1');
+    expect(json.step[1].url).toBeUndefined();
+  });
+
+  it('빈 steps 배열 → step 빈 배열', () => {
+    const { container } = render(
+      <HowToStructuredData name="n" description="d" steps={[]} />,
+    );
+    const json = JSON.parse(container.querySelector('script#ld-howto')!.innerHTML);
+    expect(json.step).toEqual([]);
+  });
+
+  it('script id="ld-howto"', () => {
+    const { container } = render(
+      <HowToStructuredData
+        name="n"
+        description="d"
+        steps={[{ name: 'a', text: 'b' }]}
+      />,
+    );
+    const script = container.querySelector('script#ld-howto');
+    expect(script).not.toBeNull();
+    expect(script?.getAttribute('type')).toBe('application/ld+json');
   });
 });
