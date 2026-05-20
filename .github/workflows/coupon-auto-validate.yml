@@ -1,0 +1,70 @@
+name: Coupon Auto Validation
+
+# Sprint 20 / F20-G (마스터 V2 F3.4) — pending 쿠폰 자동 검증 cron.
+# 출처: docs/sprint/20-sprint-coverage-master-v2/design.md §7
+#
+# 정책:
+#  - 6시간 마다 자동 실행 (cron '0 */6 * * *' UTC)
+#  - workflow_dispatch 수동 실행 + dry-run 옵션
+#  - TOS 안전: 실 게임 쿠폰 호출 X. 커뮤니티 vote 기반 결정.
+#  - max 200건/회
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'dry-run (실 mutation 없이 결정만 로그)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Run coupon auto validation
+        env:
+          FIREBASE_ADMIN_PROJECT_ID: ${{ secrets.FIREBASE_ADMIN_PROJECT_ID }}
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node scripts/run-coupon-auto-validate.mjs --dry
+          else
+            node scripts/run-coupon-auto-validate.mjs
+          fi
+
+      - name: Upload result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coupon-auto-validate-result
+          path: ${{ runner.temp }}/coupon-auto-validate-*.log
+          retention-days: 30
+          if-no-files-found: ignore
