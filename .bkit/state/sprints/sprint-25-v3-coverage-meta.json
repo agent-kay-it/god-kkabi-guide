@@ -1,0 +1,51 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-25-v3-coverage-meta",
+  "name": "V3 — Coverage 70 + Metadata + feature RTL 15",
+  "createdAt": "2026-05-20T10:45:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto",
+  "automationScope": "full-auto",
+  "stopAfter": "archived",
+  "phase": "design",
+  "currentPhase": "PRD/Plan/Design 완료 — F25-A 진입 대기",
+  "phaseHistory": [
+    { "phase": "prd", "enteredAt": "2026-05-20T10:45:00.000Z", "exitedAt": "2026-05-20T10:46:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/prd.md" },
+    { "phase": "plan", "enteredAt": "2026-05-20T10:46:00.000Z", "exitedAt": "2026-05-20T10:47:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/plan.md" },
+    { "phase": "design", "enteredAt": "2026-05-20T10:47:00.000Z", "exitedAt": "2026-05-20T10:48:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/design.md" }
+  ],
+  "features": [
+    { "id": "F25-A", "name": "Coverage 67.99% → 70%+", "priority": "P0", "status": "pending" },
+    { "id": "F25-B", "name": "components/feature/ test 9 → 15+", "priority": "P1", "status": "pending" },
+    { "id": "F25-C", "name": "metadata 5+ 페이지 + structured data 확대", "priority": "P1 V3", "status": "pending" }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": "Coverage lines 70%+", "status": "pending" },
+    { "id": "DoD-2", "criterion": "components/feature/ test 15+", "status": "pending" },
+    { "id": "DoD-3", "criterion": "5+ 페이지 metadata 강화", "status": "pending" },
+    { "id": "DoD-4", "criterion": "structured data 2+ 신규", "status": "pending" },
+    { "id": "DoD-5", "criterion": "Chrome QA 새 metadata view-source 검증", "status": "pending" },
+    { "id": "DoD-6", "criterion": "Sprint 25 종합 보고서", "status": "pending" },
+    { "id": "DoD-7", "criterion": "Sprint 26 carry", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 3500000,
+    "phaseTimeoutHours": 360,
+    "minMatchRate": 90,
+    "expectedPRs": 6,
+    "expectedNewTests": 80,
+    "targetCoverageLines": 70
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "pending",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  },
+  "carryFrom": "sprint-24-v3-seo-coverage",
+  "dependsOn": ["sprint-24-v3-seo-coverage"]
+}
