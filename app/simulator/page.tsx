@@ -5,11 +5,14 @@
  * Server Component:
  *  - 진령 11 시드 로드 (Firestore 또는 fallback)
  *  - SimulatorCanvas client component 호출
+ *  - Sprint 21 F21-D: 익명 사용자에게도 S tier top-3 RecommendationCard 표시
  */
 import type { Metadata } from 'next';
 
 import { listWikiJinryeong } from '@/lib/wiki/jinryeong-adapter';
 import { SimulatorCanvas } from '@/components/feature/simulator-canvas';
+import { RecommendationCard } from '@/components/feature/recommendation-card';
+import { recommendBuilds } from '@/lib/simulator/recommend';
 import {
   HeroMeta,
   HeroMetaBadge,
@@ -28,6 +31,10 @@ export const metadata: Metadata = {
 
 export default async function SimulatorPage(): Promise<React.JSX.Element> {
   const jinryeong = await listWikiJinryeong();
+
+  // Sprint 21 F21-D — 추천 빌드 (익명 사용자 default: 보유 진령 0 → top-3 S tier)
+  // V22+ 에서 로그인 사용자의 보유 진령 + 직업 source 통합 예정.
+  const recommendation = recommendBuilds({ ownedJinryeong: [] });
 
   return (
     <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
@@ -51,7 +58,10 @@ export default async function SimulatorPage(): Promise<React.JSX.Element> {
           시드 데이터가 비어 있습니다. 잠시 후 다시 시도해주세요.
         </Note>
       ) : (
-        <SimulatorCanvas jinryeong={jinryeong} />
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+          <SimulatorCanvas jinryeong={jinryeong} />
+          <RecommendationCard result={recommendation} />
+        </div>
       )}
     </main>
   );
