@@ -86,6 +86,13 @@ Google SRE 의 4가지 핵심 시그널을 추적:
 - 이메일 / 닉네임 → Sentry sendDefaultPii: false
 - 사용자 ID → Sentry.setUser({ id: uid }) 만 (이메일 X)
 
+### 4.5 B2B API 응답 헤더 관례 (Sprint 27 F27-A)
+- `X-RateLimit-Remaining`:
+  - 정수 (0 이상): 남은 요청 수
+  - `'-1'`: 무제한 (enterprise tier)
+- `meta.rateLimitRemaining` (body): 동일 값 (정수 / -1)
+- 이전: `'∞'` (U+221E) 사용 → NextResponse.json ByteString 변환 실패 (500). F27-A 에서 `'-1'` 로 수정.
+
 ---
 
 ## 5. 사용자 영향 분류

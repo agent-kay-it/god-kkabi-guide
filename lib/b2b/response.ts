@@ -45,9 +45,12 @@ function rateLimitHeaders(
   remaining: number,
   resetAtMs: number,
 ): Record<string, string> {
+  // Sprint 27 F27-A — Infinity remaining → '-1' (관례: -1 = 무제한, enterprise tier).
+  // 이전: '∞' (U+221E) 는 ASCII 가 아니어서 NextResponse.json headers Map (ByteString
+  // 만 허용) 에서 throw → 500. envelope.meta.rateLimitRemaining 도 -1 로 이미 일관.
   return {
     'X-RateLimit-Tier': tier,
-    'X-RateLimit-Remaining': Number.isFinite(remaining) ? String(remaining) : '∞',
+    'X-RateLimit-Remaining': Number.isFinite(remaining) ? String(remaining) : '-1',
     'X-RateLimit-Reset': Math.floor(resetAtMs / 1000).toString(),
   };
 }

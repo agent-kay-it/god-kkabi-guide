@@ -61,18 +61,33 @@ describe('b2bOk', () => {
     expect(res.headers.get('X-RateLimit-Reset')).toBe('2000');
   });
 
-  // NOTE: Infinity remaining 케이스 — 현재 코드는 '∞' 문자열 반환하나
-  // NextResponse.json 의 headers 는 ASCII-only. Sprint 27 carry 로 코드 수정 필요
-  // (예: '-1' 또는 매우 큰 정수 사용). 본 테스트는 일단 envelope.meta 검증.
-  it('Infinity remaining → meta.rateLimitRemaining = -1 (envelope 검증)', async () => {
+  // Sprint 27 F27-A — Infinity remaining 수정 완료. enterprise tier 정상 동작.
+  it('Infinity remaining (enterprise) → X-RateLimit-Remaining = "-1" 헤더', async () => {
     const mod = await importFresh();
-    // headers 에 ∞ 가 들어가면 NextResponse 가 throw — body 만 검증 위해 finite 사용
     const res = mod.b2bOk(
       {
         ok: true,
         clientId: 'c1',
         tier: 'enterprise',
-        remaining: 999999, // 매우 큰 finite — 실 운용 시에도 무한대신 큰수
+        remaining: Infinity,
+        resetAtMs: 0,
+      } as never,
+      {},
+      Date.now(),
+      null,
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get('X-RateLimit-Remaining')).toBe('-1');
+  });
+
+  it('Infinity remaining → meta.rateLimitRemaining = -1 (envelope 일관성)', async () => {
+    const mod = await importFresh();
+    const res = mod.b2bOk(
+      {
+        ok: true,
+        clientId: 'c1',
+        tier: 'enterprise',
+        remaining: Infinity,
         resetAtMs: 0,
       } as never,
       {},
@@ -80,7 +95,24 @@ describe('b2bOk', () => {
       null,
     );
     const body = await res.json();
-    expect(body.meta.rateLimitRemaining).toBe(999999);
+    expect(body.meta.rateLimitRemaining).toBe(-1);
+  });
+
+  it('NaN remaining → "-1" (Number.isFinite false 분기)', async () => {
+    const mod = await importFresh();
+    const res = mod.b2bOk(
+      {
+        ok: true,
+        clientId: 'c1',
+        tier: 'enterprise',
+        remaining: NaN,
+        resetAtMs: 0,
+      } as never,
+      {},
+      Date.now(),
+      null,
+    );
+    expect(res.headers.get('X-RateLimit-Remaining')).toBe('-1');
   });
 
   it('Cache-Control: private, max-age=60', async () => {
