@@ -1,0 +1,61 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-28-v3-ga-stabilization",
+  "name": "V3 GA Stabilization — staging auto-deploy + E2E fix + visible-content 회귀 방지 + coverage",
+  "createdAt": "2026-05-20T22:00:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto (단, PR merge 는 user-gated)",
+  "automationScope": "full-auto-no-merge",
+  "stopAfter": "pr-created",
+  "userRules": [
+    "PR 머지는 사용자 명시 승인 후만 진행 (memory: feedback_pr_merge_approval)"
+  ],
+  "phase": "design",
+  "currentPhase": "PRD/Plan/Design 완료 — F28-A 진입 대기",
+  "phaseHistory": [
+    { "phase": "prd", "enteredAt": "2026-05-20T22:00:00.000Z", "exitedAt": "2026-05-20T22:01:00.000Z", "deliverable": "docs/sprint/28-sprint-v3-ga-stabilization/prd.md" },
+    { "phase": "plan", "enteredAt": "2026-05-20T22:01:00.000Z", "exitedAt": "2026-05-20T22:02:00.000Z", "deliverable": "docs/sprint/28-sprint-v3-ga-stabilization/plan.md" },
+    { "phase": "design", "enteredAt": "2026-05-20T22:02:00.000Z", "exitedAt": "2026-05-20T22:03:00.000Z", "deliverable": "docs/sprint/28-sprint-v3-ga-stabilization/design.md" }
+  ],
+  "features": [
+    { "id": "F28-A", "name": "Vercel staging auto-deploy GitHub Action", "priority": "P0", "status": "pending" },
+    { "id": "F28-B", "name": "E2E auth-token-helper firebase/auth fix", "priority": "P0", "status": "pending" },
+    { "id": "F28-C", "name": "Structured data visible-content 회귀 방지 테스트", "priority": "P0", "status": "pending" },
+    { "id": "F28-D", "name": "lib/auth/auth.ts + register.ts coverage", "priority": "P1", "status": "pending" },
+    { "id": "F28-E", "name": "Chrome QA 8 페이지 7-Layer 매트릭스", "priority": "P1", "status": "pending" }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": ".github/workflows/staging-alias-sync.yml + 1 회 실행 성공", "status": "pending" },
+    { "id": "DoD-2", "criterion": "E2E auth-token-helper 수정 + 3 projects pass", "status": "pending" },
+    { "id": "DoD-3", "criterion": "visible-content 회귀 방지 테스트 +4 (skill HowTo + class/jinryeong/advanced FAQ)", "status": "pending" },
+    { "id": "DoD-4", "criterion": "lib/auth coverage 51.34% → 60%+ (전체 78%+)", "status": "pending" },
+    { "id": "DoD-5", "criterion": "Chrome QA 8 페이지 visible-text + view-source 매트릭스", "status": "pending" },
+    { "id": "DoD-6", "criterion": "Sprint 28 종합 보고서 + Sprint 29 carry", "status": "pending" },
+    { "id": "DoD-7", "criterion": "사용자 명시 승인 후 archive + 머지", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 5000000,
+    "phaseTimeoutHours": 360,
+    "minMatchRate": 90,
+    "expectedPRs": 7,
+    "expectedNewTests": 60,
+    "targetCoverageLines": 78
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "pending",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  },
+  "carryFrom": "sprint-27-v3-ga-operations",
+  "dependsOn": ["sprint-27-v3-ga-operations"],
+  "incidentsResolving": [
+    "Sprint 25~27 머지 폭주로 staging.kkaebizigi.com 4시간 옛 코드 노출",
+    "Sprint 27 F27-C visible-content 누락 (PR #149 hotfix 후 Sprint 28 에서 회귀 방지)",
+    "Sprint 14 도입 E2E auth-token-helper 1주일째 100% fail"
+  ]
+}
