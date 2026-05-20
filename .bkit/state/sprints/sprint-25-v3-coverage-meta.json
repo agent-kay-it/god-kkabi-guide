@@ -7,8 +7,9 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full-auto",
   "stopAfter": "archived",
-  "phase": "report",
-  "currentPhase": "Report 완료 — Archive 대기 (사용자 명시 승인 필요)",
+  "phase": "archived",
+  "currentPhase": "Archive 완료 (사용자 명시 승인 2026-05-20 kay@agentkay.it)",
+  "archivedAt": "2026-05-20T19:35:00.000Z",
   "phaseHistory": [
     { "phase": "prd", "enteredAt": "2026-05-20T10:45:00.000Z", "exitedAt": "2026-05-20T10:46:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/prd.md" },
     { "phase": "plan", "enteredAt": "2026-05-20T10:46:00.000Z", "exitedAt": "2026-05-20T10:47:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/plan.md" },
@@ -16,9 +17,10 @@
     { "phase": "do", "enteredAt": "2026-05-20T18:50:00.000Z", "exitedAt": "2026-05-20T19:08:00.000Z", "deliverable": "PR #131, #132, #133 머지" },
     { "phase": "iterate", "enteredAt": "2026-05-20T19:08:00.000Z", "exitedAt": "2026-05-20T19:09:00.000Z", "deliverable": "typecheck/lint/test 0 fail (1372 tests)" },
     { "phase": "qa", "enteredAt": "2026-05-20T19:09:00.000Z", "exitedAt": "2026-05-20T19:25:00.000Z", "deliverable": "qa-summary.md + Chrome 6 페이지 검증 + PR #134 회귀 수정" },
-    { "phase": "report", "enteredAt": "2026-05-20T19:25:00.000Z", "exitedAt": null, "deliverable": "reports/report.md (Sprint 25 종합 보고서)" }
+    { "phase": "report", "enteredAt": "2026-05-20T19:25:00.000Z", "exitedAt": "2026-05-20T19:30:00.000Z", "deliverable": "reports/report.md (Sprint 25 종합 보고서)" },
+    { "phase": "archived", "enteredAt": "2026-05-20T19:35:00.000Z", "exitedAt": null, "deliverable": "사용자 명시 승인 (kay@agentkay.it 2026-05-20)" }
   ],
-  "prMerged": [131, 132, 133, 134],
+  "prMerged": [131, 132, 133, 134, 135],
   "features": [
     { "id": "F25-A", "name": "Coverage 67.99% → 70.86%", "priority": "P0", "status": "completed" },
     { "id": "F25-B", "name": "components/feature/ test 10 → 15+ (16 파일)", "priority": "P1", "status": "completed" },
