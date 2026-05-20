@@ -7,26 +7,31 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full-auto",
   "stopAfter": "archived",
-  "phase": "design",
-  "currentPhase": "PRD/Plan/Design 완료 — F25-A 진입 대기",
+  "phase": "report",
+  "currentPhase": "Report 완료 — Archive 대기 (사용자 명시 승인 필요)",
   "phaseHistory": [
     { "phase": "prd", "enteredAt": "2026-05-20T10:45:00.000Z", "exitedAt": "2026-05-20T10:46:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/prd.md" },
     { "phase": "plan", "enteredAt": "2026-05-20T10:46:00.000Z", "exitedAt": "2026-05-20T10:47:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/plan.md" },
-    { "phase": "design", "enteredAt": "2026-05-20T10:47:00.000Z", "exitedAt": "2026-05-20T10:48:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/design.md" }
+    { "phase": "design", "enteredAt": "2026-05-20T10:47:00.000Z", "exitedAt": "2026-05-20T10:48:00.000Z", "deliverable": "docs/sprint/25-sprint-v3-coverage-meta/design.md" },
+    { "phase": "do", "enteredAt": "2026-05-20T18:50:00.000Z", "exitedAt": "2026-05-20T19:08:00.000Z", "deliverable": "PR #131, #132, #133 머지" },
+    { "phase": "iterate", "enteredAt": "2026-05-20T19:08:00.000Z", "exitedAt": "2026-05-20T19:09:00.000Z", "deliverable": "typecheck/lint/test 0 fail (1372 tests)" },
+    { "phase": "qa", "enteredAt": "2026-05-20T19:09:00.000Z", "exitedAt": "2026-05-20T19:25:00.000Z", "deliverable": "qa-summary.md + Chrome 6 페이지 검증 + PR #134 회귀 수정" },
+    { "phase": "report", "enteredAt": "2026-05-20T19:25:00.000Z", "exitedAt": null, "deliverable": "reports/report.md (Sprint 25 종합 보고서)" }
   ],
+  "prMerged": [131, 132, 133, 134],
   "features": [
-    { "id": "F25-A", "name": "Coverage 67.99% → 70%+", "priority": "P0", "status": "pending" },
-    { "id": "F25-B", "name": "components/feature/ test 9 → 15+", "priority": "P1", "status": "pending" },
-    { "id": "F25-C", "name": "metadata 5+ 페이지 + structured data 확대", "priority": "P1 V3", "status": "pending" }
+    { "id": "F25-A", "name": "Coverage 67.99% → 70.86%", "priority": "P0", "status": "completed" },
+    { "id": "F25-B", "name": "components/feature/ test 10 → 15+ (16 파일)", "priority": "P1", "status": "completed" },
+    { "id": "F25-C", "name": "metadata 5p + FAQ/VideoGame JSON-LD", "priority": "P1 V3", "status": "completed" }
   ],
   "dod": [
-    { "id": "DoD-1", "criterion": "Coverage lines 70%+", "status": "pending" },
-    { "id": "DoD-2", "criterion": "components/feature/ test 15+", "status": "pending" },
-    { "id": "DoD-3", "criterion": "5+ 페이지 metadata 강화", "status": "pending" },
-    { "id": "DoD-4", "criterion": "structured data 2+ 신규", "status": "pending" },
-    { "id": "DoD-5", "criterion": "Chrome QA 새 metadata view-source 검증", "status": "pending" },
-    { "id": "DoD-6", "criterion": "Sprint 25 종합 보고서", "status": "pending" },
-    { "id": "DoD-7", "criterion": "Sprint 26 carry", "status": "pending" }
+    { "id": "DoD-1", "criterion": "Coverage lines 70%+", "status": "passed", "evidence": "70.86%" },
+    { "id": "DoD-2", "criterion": "components/feature/ test 15+", "status": "passed", "evidence": "16 파일 / 118 tests" },
+    { "id": "DoD-3", "criterion": "5+ 페이지 metadata 강화", "status": "passed", "evidence": "/skill /class /jinryeong /coupon /advanced" },
+    { "id": "DoD-4", "criterion": "structured data 2+ 신규", "status": "passed", "evidence": "FAQPage + VideoGame" },
+    { "id": "DoD-5", "criterion": "Chrome QA 새 metadata view-source 검증", "status": "passed", "evidence": "qa-summary.md, staging 6 pages + JSON-LD parse" },
+    { "id": "DoD-6", "criterion": "Sprint 25 종합 보고서", "status": "passed", "evidence": "reports/report.md" },
+    { "id": "DoD-7", "criterion": "Sprint 26 carry", "status": "passed", "evidence": "report.md §6 (15 items)" }
   ],
   "kpi": {
     "tokenBudget": 3500000,
