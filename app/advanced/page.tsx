@@ -28,7 +28,7 @@ import { Reveal } from '@/components/feature/reveal';
 import { FAQStructuredData } from '@/components/feature/structured-data';
 
 export const metadata: Metadata = {
-  title: '고급 Tip 참고 — 메커니즘 디테일 | 갓깨비 키우기 가이드',
+  title: '고급 Tip 참고 — 메커니즘 디테일',
   description:
     '갓깨비 키우기 진령 소환풀 레벨업, 10회 천장, 원신 자동 변환, 진령 초기화 환급, 별 등급 vs 스킬 품급, 진령경험단 4대 수급처. 패치를 거쳐도 변하지 않는 핵심 메커니즘.',
   // Sprint 25 / F25-C: OG/Twitter + keywords 강화 (5 페이지 강화 #5)
