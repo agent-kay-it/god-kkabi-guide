@@ -11,7 +11,8 @@ import { useRouter } from 'next/navigation';
 import { Pencil, Check, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { changeNickname, NICKNAME_COOLDOWN_MS } from '@/lib/auth/change-nickname';
+import { changeNickname } from '@/lib/auth/change-nickname';
+import { NICKNAME_COOLDOWN_MS } from '@/lib/auth/cooldown';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Input } from '@/components/ui/input';
