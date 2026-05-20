@@ -1,0 +1,59 @@
+{
+  "version": "2.1.13",
+  "sprintId": "sprint-21-coverage-master-v2-qa",
+  "name": "Coverage 65%+ + Master V2 완성 + Chrome QA",
+  "createdAt": "2026-05-20T07:42:00.000Z",
+  "trustLevel": 4,
+  "trustLevelLabel": "Full-Auto",
+  "automationScope": "full-auto",
+  "stopAfter": "archived",
+  "phase": "design",
+  "currentPhase": "PRD/Plan/Design 완료 — F21-A 진입 대기",
+  "phaseHistory": [
+    { "phase": "prd", "enteredAt": "2026-05-20T07:42:00.000Z", "exitedAt": "2026-05-20T07:44:00.000Z", "deliverable": "docs/sprint/21-sprint-coverage-master-v2-qa/prd.md" },
+    { "phase": "plan", "enteredAt": "2026-05-20T07:44:00.000Z", "exitedAt": "2026-05-20T07:46:00.000Z", "deliverable": "docs/sprint/21-sprint-coverage-master-v2-qa/plan.md" },
+    { "phase": "design", "enteredAt": "2026-05-20T07:46:00.000Z", "exitedAt": "2026-05-20T07:48:00.000Z", "deliverable": "docs/sprint/21-sprint-coverage-master-v2-qa/design.md" }
+  ],
+  "features": [
+    { "id": "F21-A", "name": "Coverage 53.27% → 65%+ (lib/firebase + lib/wiki helper)", "priority": "P0", "status": "pending" },
+    { "id": "F21-B", "name": "시뮬레이터 시너지 80 → 120+", "priority": "P1", "status": "pending" },
+    { "id": "F21-C", "name": "components/feature/ test 5 → 15+", "priority": "P1", "status": "pending" },
+    { "id": "F21-D", "name": "마스터 V2 F3.5 진령 추천 UI 통합", "priority": "마스터 V2", "status": "pending" },
+    { "id": "F21-E", "name": "마스터 V2 F3.6 닉네임 변경 안내", "priority": "마스터 V2", "status": "pending" },
+    { "id": "F21-F", "name": "CI E2E / Lighthouse / Visual baseline 실 결과 분석", "priority": "P0", "status": "pending" }
+  ],
+  "dod": [
+    { "id": "DoD-1", "criterion": "Coverage lines 65%+", "status": "pending" },
+    { "id": "DoD-2", "criterion": "시뮬레이터 시너지 120+", "status": "pending" },
+    { "id": "DoD-3", "criterion": "components/feature/ test 15+", "status": "pending" },
+    { "id": "DoD-4", "criterion": "F3.5 UI 통합 + 단위 테스트", "status": "pending" },
+    { "id": "DoD-5", "criterion": "F3.6 닉네임 변경 안내 + Server Action + 테스트", "status": "pending" },
+    { "id": "DoD-6", "criterion": "CI E2E 실 결과 분석 보고서", "status": "pending" },
+    { "id": "DoD-7", "criterion": "Lighthouse 5 URLs score 분석 보고서", "status": "pending" },
+    { "id": "DoD-8", "criterion": "Chrome 7-Layer QA — 5+ 핵심 페이지 검증 보고서", "status": "pending" },
+    { "id": "DoD-9", "criterion": "마스터 V2 7/7 완성", "status": "pending" },
+    { "id": "DoD-10", "criterion": "Sprint 22 carry items", "status": "pending" }
+  ],
+  "kpi": {
+    "tokenBudget": 3500000,
+    "phaseTimeoutHours": 360,
+    "minMatchRate": 90,
+    "expectedPRs": 9,
+    "expectedNewTests": 200,
+    "targetCoverageLines": 65,
+    "chromeQAPagesValidated": 7,
+    "masterV2Progress": "6/7 → 7/7"
+  },
+  "autoPause": {
+    "armed": ["QUALITY_GATE_FAIL", "ITERATION_EXHAUSTED", "BUDGET_EXCEEDED", "PHASE_TIMEOUT"],
+    "pauseHistory": []
+  },
+  "iterateHistory": [],
+  "qualityGates": {
+    "S1_dataFlowIntegrity": "pending",
+    "S2_codeQuality": "pending",
+    "S3_perfBudget": "pending"
+  },
+  "carryFrom": "sprint-20-coverage-master-v2",
+  "dependsOn": ["sprint-20-coverage-master-v2"]
+}
