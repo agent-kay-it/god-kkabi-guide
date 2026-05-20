@@ -41,6 +41,8 @@ import {
   SectionTitle,
 } from '@/components/domain';
 import { RecentlyViewedList } from '@/components/feature/recently-viewed-list';
+import { NicknameChangeForm } from '@/components/feature/nickname-change-form';
+import { calcNicknameCooldownRemainingMs } from '@/lib/auth/cooldown';
 
 export const metadata: Metadata = {
   title: '내 정보',
@@ -68,6 +70,8 @@ interface UserDocData {
   readonly classId?: 'warrior' | 'swordsman' | 'medium';
   readonly photoURL?: string;
   readonly email?: string;
+  /** Sprint 23 F23-A — 닉네임 변경 이력 */
+  readonly nicknameChangedAtMs?: number;
 }
 
 export default async function MePage(): Promise<React.JSX.Element> {
@@ -272,6 +276,19 @@ export default async function MePage(): Promise<React.JSX.Element> {
           </div>
         </Note>
       ) : null}
+
+      {/* ─── 닉네임 변경 (Sprint 23 F23-A) ───────────────────────── */}
+      <section aria-labelledby="my-nickname" className="mt-8">
+        <h2 id="my-nickname" className="sr-only">
+          닉네임 변경
+        </h2>
+        <NicknameChangeForm
+          currentNickname={nickname}
+          cooldownRemainingMs={calcNicknameCooldownRemainingMs(
+            userDoc.nicknameChangedAtMs,
+          )}
+        />
+      </section>
 
       {/* ─── 최근 본 항목 (client) ──────────────────────────────── */}
       <section className="mt-10 border-t border-ink-line pt-8">
