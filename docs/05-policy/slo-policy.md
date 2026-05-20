@@ -57,7 +57,15 @@ Google SRE 의 4가지 핵심 시그널을 추적:
 
 ---
 
-## 4. Sentry 통합 (Sprint 24-25)
+## 4. Sentry 통합 (Sprint 24-26)
+
+### 4.0 실 통합 완료 (Sprint 26 F26-A)
+- `@sentry/nextjs` v10 설치 ✅
+- `instrumentation.ts` Next.js 16 register hook + `onRequestError` 노출 ✅
+- `sentry.client.config.ts` (Sprint 26 신규) + `sentry.server.config.ts` + `sentry.edge.config.ts` ✅
+- 16 통합 테스트 (instrumentation 10 + client-config 6) ✅
+- SENTRY_DSN secret 주입 후 production/preview 환경에서 자동 캡처
+
 
 ### 4.1 환경변수 (tene secret)
 - `NEXT_PUBLIC_SENTRY_DSN` — client SDK
@@ -93,10 +101,11 @@ Google SRE 의 4가지 핵심 시그널을 추적:
 
 ## 6. Sprint 25+ 진척 계획
 
-- Sprint 25: SENTRY_DSN 등록 후 첫 캡처 검증
-- Sprint 25: Sentry Slack integration
-- Sprint 26: V4 — 사용자 segment 별 SLO 분리 (premium vs free)
-- Sprint 27+: Sentry → Datadog 또는 Grafana 이전 검토
+- ✅ Sprint 26: @sentry/nextjs 실 통합 + sentry.client.config.ts 작성 + 16 통합 테스트
+- Sprint 27: SENTRY_DSN production 등록 + Sentry dashboard 알람 정책 운영
+- Sprint 27+: Sentry Slack integration
+- Sprint 28+: 사용자 segment 별 SLO 분리 (premium vs free)
+- Sprint 29+: Sentry → Datadog 또는 Grafana 이전 검토
 
 ---
 
