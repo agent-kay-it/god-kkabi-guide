@@ -42,7 +42,9 @@ import {
 } from '@/components/domain';
 import { RecentlyViewedList } from '@/components/feature/recently-viewed-list';
 import { NicknameChangeForm } from '@/components/feature/nickname-change-form';
+import { OwnedJinryeongPicker } from '@/components/feature/owned-jinryeong-picker';
 import { calcNicknameCooldownRemainingMs } from '@/lib/auth/cooldown';
+import { getUserOwnedJinryeong } from '@/lib/auth/user-owned';
 
 export const metadata: Metadata = {
   title: '내 정보',
@@ -86,10 +88,11 @@ export default async function MePage(): Promise<React.JSX.Element> {
     userDoc = (snap.data() ?? {}) as UserDocData;
   }
 
-  const [bookmarks, posts, subscription] = await Promise.all([
+  const [bookmarks, posts, subscription, ownedJinryeong] = await Promise.all([
     listMyBookmarks(),
     listPosts({ authorUid: uid, sort: 'latest' }),
     getActiveSubscription(),
+    getUserOwnedJinryeong(uid),
   ]);
 
   const isPremium = Boolean(subscription);
@@ -288,6 +291,20 @@ export default async function MePage(): Promise<React.JSX.Element> {
             userDoc.nicknameChangedAtMs,
           )}
         />
+      </section>
+
+      {/* ─── 보유 진령 등록 (Sprint 26 F26-B) ───────────────────────── */}
+      <section aria-labelledby="my-owned-jinryeong" className="mt-8">
+        <h2
+          id="my-owned-jinryeong"
+          className="mb-3 text-base font-bold tracking-tight text-text"
+        >
+          보유 진령
+        </h2>
+        <p className="mb-4 text-sm text-text-soft">
+          보유한 진령을 등록하면 시뮬레이터의 추천 빌드 정확도가 향상됩니다.
+        </p>
+        <OwnedJinryeongPicker initialOwned={ownedJinryeong} />
       </section>
 
       {/* ─── 최근 본 항목 (client) ──────────────────────────────── */}
