@@ -7,13 +7,18 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full-auto",
   "stopAfter": "archived",
-  "phase": "design",
-  "currentPhase": "PRD/Plan/Design 완료 — F24-A 진입 대기",
+  "phase": "report",
+  "currentPhase": "Report 완료 — Archive 사용자 승인 대기",
   "phaseHistory": [
     { "phase": "prd", "enteredAt": "2026-05-20T10:10:00.000Z", "exitedAt": "2026-05-20T10:11:00.000Z", "deliverable": "docs/sprint/24-sprint-v3-seo-coverage/prd.md" },
     { "phase": "plan", "enteredAt": "2026-05-20T10:11:00.000Z", "exitedAt": "2026-05-20T10:12:00.000Z", "deliverable": "docs/sprint/24-sprint-v3-seo-coverage/plan.md" },
-    { "phase": "design", "enteredAt": "2026-05-20T10:12:00.000Z", "exitedAt": "2026-05-20T10:13:00.000Z", "deliverable": "docs/sprint/24-sprint-v3-seo-coverage/design.md" }
+    { "phase": "design", "enteredAt": "2026-05-20T10:12:00.000Z", "exitedAt": "2026-05-20T10:13:00.000Z", "deliverable": "docs/sprint/24-sprint-v3-seo-coverage/design.md" },
+    { "phase": "do", "enteredAt": "2026-05-20T10:13:00.000Z", "exitedAt": "2026-05-20T10:30:00.000Z", "deliverable": "PR #124-#126 (F24-A + F24-D + F24-B/C partial)" },
+    { "phase": "iterate", "enteredAt": "2026-05-20T10:30:00.000Z", "exitedAt": "2026-05-20T10:32:00.000Z", "deliverable": "typecheck/lint/test 1279/1279" },
+    { "phase": "qa", "enteredAt": "2026-05-20T10:32:00.000Z", "exitedAt": "2026-05-20T10:35:00.000Z", "deliverable": "qa-summary.md + Chrome sitemap/robots 검증" },
+    { "phase": "report", "enteredAt": "2026-05-20T10:35:00.000Z", "exitedAt": "2026-05-20T10:37:00.000Z", "deliverable": "report.md" }
   ],
+  "prMerged": [122, 123, 124, 125, 126],
   "features": [
     { "id": "F24-A", "name": "SEO 강화 (sitemap.ts + metadata 강화)", "priority": "P1 V3", "status": "pending" },
     { "id": "F24-B", "name": "Coverage 67.02% → 70%+", "priority": "P0", "status": "pending" },
