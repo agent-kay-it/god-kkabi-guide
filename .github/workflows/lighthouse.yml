@@ -65,7 +65,9 @@ jobs:
           NEXT_PUBLIC_FIREBASE_USE_EMULATOR: 'true'
           NEXTAUTH_SECRET: dummy-secret-for-ci-only
           NEXTAUTH_URL: http://localhost:3000
-        run: pnpm build
+        # Sprint 28 F28 hotfix — `pnpm build` 는 tene run 래핑 → CI runner 에 tene 없음.
+        # vercel-build (= next build 직접) 사용해 ELIFECYCLE 회피.
+        run: pnpm vercel-build
 
       - name: Start Next.js (background)
         env:
@@ -79,8 +81,9 @@ jobs:
           NEXT_PUBLIC_FIREBASE_USE_EMULATOR: 'true'
           NEXTAUTH_SECRET: dummy-secret-for-ci-only
           NEXTAUTH_URL: http://localhost:3000
+        # Sprint 28 F28 hotfix — `pnpm start` 도 tene 래핑. `next start` 직접 호출.
         run: |
-          pnpm start &
+          pnpm exec next start -p 3000 &
           echo $! > /tmp/next.pid
           echo "Started Next.js (pid $(cat /tmp/next.pid))"
 
