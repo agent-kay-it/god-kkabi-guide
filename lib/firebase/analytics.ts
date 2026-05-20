@@ -18,7 +18,7 @@ import {
   type Analytics,
 } from 'firebase/analytics';
 import { isCoreBackupEvent, type GA4EventName } from '@/types/ga4';
-import { getFirebaseApp } from './client';
+import { getFirebaseApp, isFirebaseEmulator } from './client';
 
 let analyticsInstance: Analytics | null = null;
 let initPromise: Promise<Analytics | null> | null = null;
@@ -26,9 +26,17 @@ let initPromise: Promise<Analytics | null> | null = null;
 /**
  * SSR 환경 + 비지원 브라우저(Safari Private mode, IE 등)를 모두 가드.
  * 첫 호출 시점에 자동 page_view 이벤트가 발화된다 (Firebase 기본 동작).
+ *
+ * Sprint 28 F28-B — emulator 모드 가드 추가:
+ *   E2E 환경의 client SDK 는 demo API key (resolveFirebaseConfig() 의 'demo-api-key')
+ *   로 초기화되는데 Analytics 가 이 dummy key 로 실제 Google API 호출 시도 →
+ *   "400 INVALID_ARGUMENT: API key not valid" 121회 발생 + Firebase Installations
+ *   까지 cascade 60회 추가 발생.
+ *   emulator 모드에서는 Analytics 초기화 자체 차단 (page_view 추적도 불필요).
  */
 export async function getAnalyticsClient(): Promise<Analytics | null> {
   if (typeof window === 'undefined') return null;
+  if (isFirebaseEmulator()) return null;
   if (analyticsInstance) return analyticsInstance;
   if (initPromise) return initPromise;
 

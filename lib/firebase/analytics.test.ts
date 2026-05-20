@@ -22,8 +22,10 @@ vi.mock('firebase/analytics', () => ({
     (mockSetUserProperties as (...a: never[]) => unknown)(...args),
 }));
 
+const mockIsEmulator = vi.fn(() => false);
 vi.mock('./client', () => ({
   getFirebaseApp: vi.fn(() => ({ __app: 'firebase' })),
+  isFirebaseEmulator: () => mockIsEmulator(),
 }));
 
 vi.mock('firebase/firestore', () => ({
@@ -53,6 +55,7 @@ beforeEach(() => {
   mockCollection.mockClear();
   mockServerTimestamp.mockClear();
   mockGetFirestoreClient.mockClear();
+  mockIsEmulator.mockReturnValue(false);
 
   mockIsSupported.mockResolvedValue(true);
   mockGetAnalytics.mockReturnValue({ __analytics: true });
@@ -94,6 +97,23 @@ describe('getAnalyticsClient', () => {
     ]);
     expect(a).toBe(b);
     expect(mockIsSupported).toHaveBeenCalledTimes(1);
+  });
+
+  // Sprint 28 F28-B — emulator 모드 가드 회귀 방지
+  it('emulator 모드 — Analytics init 자체 차단 (isSupported 호출 X)', async () => {
+    mockIsEmulator.mockReturnValue(true);
+    const mod = await importFresh();
+    const r = await mod.getAnalyticsClient();
+    expect(r).toBeNull();
+    expect(mockIsSupported).not.toHaveBeenCalled();
+    expect(mockGetAnalytics).not.toHaveBeenCalled();
+  });
+
+  it('emulator 모드 + logEvent — fbLogEvent 호출 X (dummy key 로 google API 호출 차단)', async () => {
+    mockIsEmulator.mockReturnValue(true);
+    const mod = await importFresh();
+    await mod.logEvent('page_view', { page_title: 'home' });
+    expect(mockLogEvent).not.toHaveBeenCalled();
   });
 });
 

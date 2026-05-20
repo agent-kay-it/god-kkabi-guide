@@ -71,11 +71,21 @@ jobs:
 
       - name: Run smoke specs (chromium-desktop)
         env:
+          # Sprint 28 F28-B — emulator env 정합 (e2e.yml 과 동일 패턴)
           NEXT_PUBLIC_FIREBASE_USE_EMULATOR: 'true'
           FIREBASE_USE_EMULATOR: 'true'
           NEXT_PUBLIC_E2E_MODE: 'true'
           E2E_USE_EMULATOR: 'true'
           E2E_BASE_URL: 'http://localhost:3000'
+          NEXT_PUBLIC_FIREBASE_API_KEY: 'demo-api-key'
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: 'demo-kkaebizigi-test.firebaseapp.com'
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'demo-kkaebizigi-test'
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'demo-kkaebizigi-test.appspot.com'
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '000000000000'
+          NEXT_PUBLIC_FIREBASE_APP_ID: '1:000000000000:web:0000000000000000000000'
+          NEXT_PUBLIC_FIREBASE_DATABASE_URL: 'http://localhost:9000?ns=demo-kkaebizigi-test'
+          AUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
+          NEXTAUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           CI: 'true'
         # 핵심 smoke 만 — 전체는 e2e.yml 에서. 시각 회귀 / 긴 시나리오 제외.
         run: pnpm playwright test --project=chromium-desktop --grep-invert "@visual|@long"
