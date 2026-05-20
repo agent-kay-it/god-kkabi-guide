@@ -16,6 +16,7 @@ import {
   SectionTitle,
 } from '@/components/domain';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
+import { HowToStructuredData } from '@/components/feature/structured-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import type { WikiClassId } from '@/types/wiki';
@@ -57,6 +58,36 @@ const CLASS_LABEL: Record<WikiClassId, string> = {
 // V7 P5: 탭 트리거는 작은 inline 영역 → emoji 제거, 텍스트만.
 // (필요 시 향후 CLASS_ICON_URL을 16×16 inline Image로 추가 가능)
 
+// Sprint 27 / F27-C — HowTo schema (Google "How-to" rich result 자격).
+// 페이지 가시 콘텐츠 (코어 + 액티브 + 패시브 운영 원리) 와 1:1 매칭.
+const HOWTO_STEPS: ReadonlyArray<{ name: string; text: string }> = [
+  {
+    name: '코어 스킬 1개 선택',
+    text:
+      '각 직업의 코어 스킬 1개를 메인 딜링 축으로 설정합니다. 코어는 가장 큰 한방 데미지 또는 핵심 효과를 제공합니다.',
+  },
+  {
+    name: '액티브 스킬 3~4개 배치',
+    text:
+      '코어와 시너지가 좋은 액티브 스킬 3~4개를 부 딜링 라인업으로 구성합니다. 쿨다운과 적중률을 고려해 우선순위를 정합니다.',
+  },
+  {
+    name: '패시브 스킬 4~5개 강화',
+    text:
+      '오도과 자원을 사용해 패시브 스킬의 품급을 향상시켜 효과를 강화합니다. 패시브는 항상 발동되므로 장기 누적 효과가 큽니다.',
+  },
+  {
+    name: '스킬 트리 정착',
+    text:
+      '메타가 변경되거나 새 진령을 획득하면 스킬 트리를 초기화해 자원을 환급받고 새 스킬에 재투자합니다.',
+  },
+  {
+    name: '진령 시너지 반영',
+    text:
+      '/jinryeong 페이지의 진영 시너지 매트릭스를 참고해 현재 보유 진령과 가장 잘 어울리는 스킬 조합으로 최종 조정합니다.',
+  },
+];
+
 export default async function SkillPage(): Promise<React.JSX.Element> {
   const allSkills = await listWikiSkills();
   const byClass = {
@@ -67,6 +98,12 @@ export default async function SkillPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
+      {/* Sprint 27 / F27-C — HowTo schema (Google rich result 자격) */}
+      <HowToStructuredData
+        name="갓깨비 키우기 스킬 운영 가이드"
+        description="직업별 스킬 31종(전사 8 / 검객 14 / 영매 9)을 코어 1 + 액티브 3~4 + 패시브 4~5 로 분류하여 운영"
+        steps={HOWTO_STEPS}
+      />
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 스킬</HeroMetaBadge>

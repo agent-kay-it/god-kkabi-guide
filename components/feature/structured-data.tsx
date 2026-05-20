@@ -96,6 +96,41 @@ export interface ArticlePost {
   readonly updatedAtMs?: number;
 }
 
+export interface HowToStep {
+  readonly name: string;
+  readonly text: string;
+  readonly url?: string;
+}
+
+/**
+ * HowTo schema — Sprint 27 / F27-C.
+ * Google Rich Results "How-to" 자격. 페이지에 실제 단계가 보여야 함 (Google 가이드라인).
+ */
+export function HowToStructuredData({
+  name,
+  description,
+  steps,
+}: {
+  readonly name: string;
+  readonly description: string;
+  readonly steps: readonly HowToStep[];
+}): React.JSX.Element {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name,
+    description,
+    step: steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+      ...(s.url ? { url: s.url } : {}),
+    })),
+  };
+  return <JsonLdScript id="ld-howto" payload={data} />;
+}
+
 export interface FAQItem {
   readonly question: string;
   readonly answer: string;

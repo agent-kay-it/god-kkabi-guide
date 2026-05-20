@@ -21,6 +21,7 @@ import {
 import { FeaturedJinryeongZoomable } from '@/components/feature/featured-jinryeong-zoomable';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
+import { FAQStructuredData } from '@/components/feature/structured-data';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -72,6 +73,26 @@ const TIER_LABEL: Record<0 | 1 | 2, string> = {
   2: 'T2',
 };
 
+// Sprint 27 / F27-C — FAQ schema (3 진영 시너지).
+// 페이지의 신·요·인 진영 분류 (data/wiki/jinryeong faction) 와 1:1 매칭.
+const JINRYEONG_FAQ: ReadonlyArray<{ question: string; answer: string }> = [
+  {
+    question: '신(神) 진영의 특징은 무엇인가요?',
+    answer:
+      '신 진영은 음영귀, 명왕 같은 진령으로 구성되며, 강력한 단일 데미지와 천상 효과를 제공합니다. 보스전과 PvP에서 우수한 성능을 발휘합니다.',
+  },
+  {
+    question: '요(妖) 진영의 추천 조합은 무엇인가요?',
+    answer:
+      '요 진영은 서해용왕(0티어), 구미요호 등의 진령이 핵심입니다. 어둠 + 속성 시너지가 강력하며, 다수 적과의 광역 전투에 효과적입니다.',
+  },
+  {
+    question: '인(人) 진영은 어떻게 운영하나요?',
+    answer:
+      '인 진영은 홍길동(0티어), 항아, 치우 등 안정적인 DPS 위주의 진령입니다. 균형 잡힌 효과와 자동 사냥에서 꾸준한 효율을 보장합니다.',
+  },
+];
+
 export default async function JinryeongPage(): Promise<React.JSX.Element> {
   const allJinryeong = await listWikiJinryeong();
   const session = await auth();
@@ -84,6 +105,8 @@ export default async function JinryeongPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
+      {/* Sprint 27 / F27-C — FAQ schema */}
+      <FAQStructuredData items={JINRYEONG_FAQ} />
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 진령</HeroMetaBadge>

@@ -23,6 +23,7 @@ import {
 } from '@/components/domain';
 import { WikiCardTracker } from '@/components/feature/wiki-card-tracker';
 import { BookmarkButton } from '@/components/feature/bookmark-button';
+import { FAQStructuredData } from '@/components/feature/structured-data';
 import { Button } from '@/components/ui/button';
 import { CLASS_ICON_URL, type WikiClassDoc } from '@/types/wiki';
 
@@ -101,6 +102,26 @@ const CLASS_STATS: Record<
   ],
 };
 
+// Sprint 27 / F27-C — FAQ schema (직업별 운영 핵심).
+// 페이지 가시 콘텐츠(3 ClassCard) 의 강점/약점/추천 진령 정보와 1:1 매칭.
+const CLASS_FAQ: ReadonlyArray<{ question: string; answer: string }> = [
+  {
+    question: '전사(도깨비)는 어떤 강점이 있나요?',
+    answer:
+      '전사는 직접 타격 + 천탈창경 코어 스킬을 바탕으로 안정적인 DPS를 제공합니다. 자동 사냥과 보스전 모두에서 균등하게 활약하며, 초보자에게 추천되는 직업입니다.',
+  },
+  {
+    question: '검객(무당)의 추천 진령은 무엇인가요?',
+    answer:
+      '검객은 광역과 단일 모두에 강하며, 0티어 진령(홍길동, 서해용왕)과 호환성이 매우 높습니다. 핵심 진영은 신·인 중심이며, 보조로 요 진영도 효과적입니다.',
+  },
+  {
+    question: '영매(저승사자)는 어떻게 운영하나요?',
+    answer:
+      '영매는 원거리 + 디버프 위주의 직업입니다. 보조 효과를 가진 진령과 시너지가 좋으며, 파티 콘텐츠에서 우수한 성능을 발휘합니다. 음영귀, 명왕 같은 신 진영 진령과 잘 어울립니다.',
+  },
+];
+
 export default async function ClassPage(): Promise<React.JSX.Element> {
   const classes = await listWikiClasses();
   const session = await auth();
@@ -114,6 +135,8 @@ export default async function ClassPage(): Promise<React.JSX.Element> {
 
   return (
     <main className="mx-auto max-w-screen-2xl px-5 pb-20 pt-8 sm:px-[5vw]">
+      {/* Sprint 27 / F27-C — FAQ schema */}
+      <FAQStructuredData items={CLASS_FAQ} />
       <header>
         <HeroMeta className="mb-5">
           <HeroMetaBadge>위키 / 직업</HeroMetaBadge>
