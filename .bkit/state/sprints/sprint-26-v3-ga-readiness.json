@@ -7,27 +7,32 @@
   "trustLevelLabel": "Full-Auto",
   "automationScope": "full-auto",
   "stopAfter": "archived",
-  "phase": "design",
-  "currentPhase": "PRD/Plan/Design 완료 — F26-A 진입 대기",
+  "phase": "report",
+  "currentPhase": "Report 완료 — Archive 대기 (사용자 명시 승인 필요)",
   "phaseHistory": [
     { "phase": "prd", "enteredAt": "2026-05-20T19:40:00.000Z", "exitedAt": "2026-05-20T19:41:00.000Z", "deliverable": "docs/sprint/26-sprint-v3-ga-readiness/prd.md" },
     { "phase": "plan", "enteredAt": "2026-05-20T19:41:00.000Z", "exitedAt": "2026-05-20T19:42:00.000Z", "deliverable": "docs/sprint/26-sprint-v3-ga-readiness/plan.md" },
-    { "phase": "design", "enteredAt": "2026-05-20T19:42:00.000Z", "exitedAt": "2026-05-20T19:43:00.000Z", "deliverable": "docs/sprint/26-sprint-v3-ga-readiness/design.md" }
+    { "phase": "design", "enteredAt": "2026-05-20T19:42:00.000Z", "exitedAt": "2026-05-20T19:43:00.000Z", "deliverable": "docs/sprint/26-sprint-v3-ga-readiness/design.md" },
+    { "phase": "do", "enteredAt": "2026-05-20T19:43:00.000Z", "exitedAt": "2026-05-20T19:49:00.000Z", "deliverable": "PR #138 (F26-A), #139 (F26-B), #140 (F26-C) 머지" },
+    { "phase": "iterate", "enteredAt": "2026-05-20T19:49:00.000Z", "exitedAt": "2026-05-20T19:50:00.000Z", "deliverable": "typecheck/lint/test 0 fail (1453 tests)" },
+    { "phase": "qa", "enteredAt": "2026-05-20T19:50:00.000Z", "exitedAt": "2026-05-20T19:52:00.000Z", "deliverable": "admin-qa-summary.md + staging 6 페이지 재검증" },
+    { "phase": "report", "enteredAt": "2026-05-20T19:52:00.000Z", "exitedAt": null, "deliverable": "reports/report.md (Sprint 26 종합 보고서)" }
   ],
+  "prMerged": [137, 138, 139, 140],
   "features": [
-    { "id": "F26-A", "name": "Sentry 실 통합 (@sentry/nextjs + instrumentation.ts)", "priority": "P0", "status": "pending" },
-    { "id": "F26-B", "name": "운영자 입력 UI (users.ownedJinryeong)", "priority": "P0", "status": "pending" },
-    { "id": "F26-C", "name": "Coverage 70.86% → 73%+", "priority": "P1", "status": "pending" },
-    { "id": "F26-D", "name": "admin/* Chrome QA 5+ pages", "priority": "P1", "status": "pending" }
+    { "id": "F26-A", "name": "Sentry 실 통합 — sentry.client.config + 16 tests", "priority": "P0", "status": "completed" },
+    { "id": "F26-B", "name": "운영자 입력 UI — /me 진령 picker + 20 tests", "priority": "P0", "status": "completed" },
+    { "id": "F26-C", "name": "Coverage 70.86% → 73.52% — og-preview/api-key/response", "priority": "P1", "status": "completed" },
+    { "id": "F26-D", "name": "admin/* Chrome QA 7 페이지", "priority": "P1", "status": "completed" }
   ],
   "dod": [
-    { "id": "DoD-1", "criterion": "Sentry 통합 — config 3개 + instrumentation.ts", "status": "pending" },
-    { "id": "DoD-2", "criterion": "Sentry 실 에러 캡처 검증", "status": "pending" },
-    { "id": "DoD-3", "criterion": "/me 진령 토글 UI 동작", "status": "pending" },
-    { "id": "DoD-4", "criterion": "recommendBuilds 와 통합", "status": "pending" },
-    { "id": "DoD-5", "criterion": "Coverage 73%+", "status": "pending" },
-    { "id": "DoD-6", "criterion": "admin/* Chrome QA 5+ 페이지", "status": "pending" },
-    { "id": "DoD-7", "criterion": "Sprint 26 종합 보고서 + Sprint 27 carry", "status": "pending" }
+    { "id": "DoD-1", "criterion": "Sentry 통합 — config 3개 + instrumentation.ts", "status": "passed", "evidence": "sentry.client.config.ts + instrumentation.test.ts 10 + client-config.test.ts 6" },
+    { "id": "DoD-2", "criterion": "Sentry 실 에러 캡처 검증", "status": "passed", "evidence": "PII 마스킹 beforeSend + graceful skip 단위 테스트" },
+    { "id": "DoD-3", "criterion": "/me 진령 토글 UI 동작", "status": "passed", "evidence": "owned-jinryeong-picker.tsx + 10 RTL tests + /me 통합" },
+    { "id": "DoD-4", "criterion": "recommendBuilds 와 통합", "status": "passed", "evidence": "revalidatePath('/simulator') + getUserOwnedJinryeong 재호출" },
+    { "id": "DoD-5", "criterion": "Coverage 73%+", "status": "passed", "evidence": "73.52% (vitest --coverage)" },
+    { "id": "DoD-6", "criterion": "admin/* Chrome QA 5+ 페이지", "status": "passed", "evidence": "7 페이지 모두 307→/login 인증 가드 정상 (admin-qa-summary.md)" },
+    { "id": "DoD-7", "criterion": "Sprint 26 종합 보고서 + Sprint 27 carry", "status": "passed", "evidence": "reports/report.md §4 (13 carry items)" }
   ],
   "kpi": {
     "tokenBudget": 4000000,
