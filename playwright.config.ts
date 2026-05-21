@@ -123,15 +123,20 @@ export default defineConfig({
         webServer: {
           // Sprint 14 F14-A — emulator + e2e mode env 자동 주입.
           // Sprint 18 F18-B — CI 환경에서 tene 미설치 → next 직접 호출.
-          // 로컬에서는 pnpm dev (tene run wrapper) 가 시크릿 주입.
+          // Sprint 28 F28-B 단계 22 — `next build && next start` 로 변경.
+          //   dev mode + turbopack 에서 connectXxxEmulator 가 internal apiHost reroute
+          //   안 주는 알려진 이슈. production-style build 는 NEXT_PUBLIC_ inline 안정 +
+          //   emulator wire 정상 동작. 빌드 시간 ~1분 추가하지만 client SDK 안정.
+          //   webServer.timeout 도 build+start 위해 충분히 증가.
           command: IS_CI
-            ? 'npx next dev --turbopack -p 3000'
+            ? 'npx next build && npx next start -p 3000'
             : process.env.E2E_USE_EMULATOR === 'true'
               ? 'pnpm dev'
               : 'pnpm dev',
           url: 'http://localhost:3000',
           reuseExistingServer: true,
-          timeout: 180_000,
+          // Sprint 28 F28-B 단계 22 — next build 시간 추가로 timeout 증가 (180s → 360s).
+          timeout: 360_000,
           env: {
             // 1) 현재 process env 모두 상속 (workflow env block 의 NEXT_PUBLIC_*, AUTH_SECRET, …)
             //    Record<string, string> 강제 캐스팅 (process.env 의 일부 undefined 제거).

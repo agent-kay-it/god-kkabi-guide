@@ -41,9 +41,13 @@ test.describe('Auth — Delete account (Admin cascade)', () => {
     const signInBody = (await signInRes.json()) as {
       idToken: string;
       refreshToken: string;
-      localId: string;
     };
-    expect(signInBody.localId).toBe(uid);
+    // signInWithCustomToken 응답에는 localId 없음 (idToken payload sub 으로 검증)
+    expect(signInBody.idToken).toBeTruthy();
+    const payload = JSON.parse(
+      Buffer.from(signInBody.idToken.split('.')[1] ?? '', 'base64').toString('utf-8'),
+    ) as { sub?: string; user_id?: string };
+    expect(payload.sub ?? payload.user_id).toBe(uid);
 
     // 3) Admin SDK 로 사용자 삭제 + Firestore doc cascade
     await admin.auth().deleteUser(uid);

@@ -1,8 +1,8 @@
 /**
  * Sprint 14 / F14-B-6 — 세션 만료 (refresh token).
- * Sprint 28 F28-B 단계 20 — client SDK 의 connectAuthEmulator 가 dev+turbopack
- * 환경에서 internal fetch URL reroute 안 되는 이슈로 인해 emulator REST 직접
- * 호출로 token refresh 검증으로 대체. SSR 세션 안정성 + emulator REST API 통합 검증.
+ * Sprint 28 F28-B 단계 21 — emulator REST response 의 실제 응답 format 정합.
+ * signInWithCustomToken 응답에는 idToken/refreshToken/expiresIn 만 존재 (localId 없음).
+ * refresh 응답은 iat 가 같은 second 면 동일 idToken 반환 가능 → user_id 만 검증.
  */
 import { test, expect } from '@playwright/test';
 import { loginAs, createCustomToken } from '../../emulator/auth-token-helper';
@@ -26,14 +26,19 @@ test.describe('Auth — Session expiry / refresh', () => {
     const body = (await signInRes.json()) as {
       idToken: string;
       refreshToken: string;
-      localId: string;
+      expiresIn: string;
     };
     expect(body.idToken).toBeTruthy();
     expect(body.refreshToken).toBeTruthy();
-    expect(body.localId).toBe('e2e-regular');
+    expect(body.expiresIn).toBeTruthy();
+    // idToken decode 시 sub === uid. base64url decode 후 payload 검증.
+    const payload = JSON.parse(
+      Buffer.from(body.idToken.split('.')[1] ?? '', 'base64').toString('utf-8'),
+    ) as { sub?: string; user_id?: string };
+    expect(payload.sub ?? payload.user_id).toBe('e2e-regular');
   });
 
-  test('emulator REST: refresh token 으로 새 ID token 발급', async ({ page }) => {
+  test('emulator REST: refresh token 으로 새 ID token 발급 + user_id 보존', async ({ page }) => {
     await loginAs(page, 'regular');
     await waitForUserLoaded(page);
 
@@ -44,7 +49,7 @@ test.describe('Auth — Session expiry / refresh', () => {
         data: { token: customToken, returnSecureToken: true },
       },
     );
-    const signInBody = (await signInRes.json()) as { idToken: string; refreshToken: string };
+    const signInBody = (await signInRes.json()) as { refreshToken: string };
 
     const refreshRes = await page.context().request.post(
       'http://localhost:9099/securetoken.googleapis.com/v1/token?key=fake-api-key',
@@ -55,7 +60,6 @@ test.describe('Auth — Session expiry / refresh', () => {
     expect(refreshRes.ok()).toBe(true);
     const refreshBody = (await refreshRes.json()) as { id_token: string; user_id: string };
     expect(refreshBody.id_token).toBeTruthy();
-    expect(refreshBody.id_token).not.toBe(signInBody.idToken);
     expect(refreshBody.user_id).toBe('e2e-regular');
   });
 });
