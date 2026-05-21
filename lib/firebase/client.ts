@@ -146,3 +146,19 @@ export function getFirebaseApp(): FirebaseApp {
   void wireEmulatorsIfEnabled(app);
   return app;
 }
+
+// Sprint 28 F28-B 단계 2 — emulator 모드에서 module load 시점에 자동 init.
+//
+// 이전 결함: E2E spec 의 loginAs() 가 page.goto('/') 후 window.__e2eFirebase 대기.
+// 그러나 홈 페이지 / 가 firebase client SDK 를 즉시 사용 안 함 → getFirebaseApp()
+// 미호출 → wireEmulatorsIfEnabled() 미실행 → window.__e2eFirebase 노출 안 됨 →
+// waitForE2eFirebase timeout 60초 → loginAs throw → 모든 spec cascade fail.
+//
+// 해결: emulator 모드에서는 module load 직후 (페이지 진입 시 client.ts 가 import 되면)
+// 자동으로 getFirebaseApp() 호출 → wireEmulatorsIfEnabled() 자동 실행 → window 노출.
+//
+// 보안: production / staging 은 isFirebaseEmulator() === false → 이 분기 실행 안 됨.
+// typeof window check: SSR 시점 (server-side) 에는 실행 안 됨.
+if (typeof window !== 'undefined' && isFirebaseEmulator()) {
+  void getFirebaseApp();
+}
