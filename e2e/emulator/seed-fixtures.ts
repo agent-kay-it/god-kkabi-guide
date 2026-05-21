@@ -113,11 +113,14 @@ export async function seedTestUsers(): Promise<void> {
         nickname: u.displayName,
         serverId: 'S785',
         server: 'S785',
-        // Sprint 28 F28-B 단계 29 — Firestore users 의 munpa/clan 한글 제거.
-        //   server-side redirect/header set 시 invalid char (한글) 가 들어가는 경로
-        //   미식별 → 방어적으로 ASCII 만 사용. user-facing 표시는 munpaId slug
-        //   기반으로 display label 생성 (channel-resolver 의 munpaName extract).
+        // step 29 의 한글 제거는 다른 spec 의 fixture data 의존 (e.g., admin 검증,
+        // banned/clan 시나리오) 을 깨뜨림 → 원복. server-side redirect 의 invalid
+        // char source 는 step 26 의 enrichedClaims munpa 제거 + step 29 의 NextAuth
+        // redirect callback ASCII guard 로 방어. Firestore data 의 한글은 display
+        // 전용 (redirect URL 에 들어가지 않음).
+        munpa: u.clan,
         munpaId: u.munpaId,
+        clan: u.clan,
         classId: 'class_geomgaek',
         registered: u.registered,
         tier: 'free',
