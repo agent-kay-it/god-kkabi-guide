@@ -57,9 +57,31 @@ function readFirebaseEnv(): FirebaseEnv {
   };
 }
 
-/** Sprint 14 F14-A — emulator 모드 여부 (서버/클라이언트 양쪽에서 일관) */
+/**
+ * Sprint 14 F14-A — emulator 모드 여부 (서버/클라이언트 양쪽에서 일관)
+ *
+ * Sprint 28 F28-B 단계 15 — hostname-based fallback.
+ * 이전: process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR === 'true' 만 검사.
+ *   문제: Next.js dev mode + turbopack 환경에서 NEXT_PUBLIC_ env 가 client bundle
+ *   에 inline 안 되는 경우 존재 (E2E webServer.env 명시했음에도 fail).
+ *   결과: client-side isFirebaseEmulator() === false → wireEmulatorsIfEnabled 의
+ *   module-load IIFE skip → emulator wire 미실행 → client SDK 가 production
+ *   endpoint 사용 → auth/network-request-failed 4+ spec, chat/post seed render
+ *   fail 7+ spec, storage download timeout 2 spec.
+ * 수정: hostname=localhost + NODE_ENV!==production 인 경우 emulator 강제. production
+ *   build 는 NODE_ENV=production 으로 fallback skip → 영향 0.
+ */
 export function isFirebaseEmulator(): boolean {
-  return process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR === 'true';
+  if (process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR === 'true') return true;
+  // Sprint 28 F28-B 단계 15 — NODE_ENV === 'development' 에서만 fallback.
+  // 'test' (vitest jsdom) 는 strict 단위 테스트 보호. 'production' 도 skip.
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    const { hostname, port } = window.location;
+    if ((hostname === 'localhost' || hostname === '127.0.0.1') && port === '3000') {
+      return true;
+    }
+  }
+  return false;
 }
 
 function resolveFirebaseConfig(): FirebaseOptions {
