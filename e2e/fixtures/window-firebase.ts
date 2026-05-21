@@ -55,15 +55,14 @@ export async function waitForE2eFirebase(page: Page, timeoutMs = 10000): Promise
     { timeout: timeoutMs },
   );
 
-  // 명시 connectAuthEmulator/... 호출 — 이미 wired 면 silent throw → catch 무시.
-  // Next.js dev + turbopack 의 module evaluation 순서 race condition 대응 (단계 5
-  // sync wire 가 안 동작하는 잔여 케이스 보호).
-  await page.evaluate(() => {
+  // 명시 connectAuthEmulator/... 호출 + emulator config 검증.
+  // wire 호출 결과를 직접 확인하여 spec fail 시 root cause 식별.
+  const wireDiag = await page.evaluate(() => {
     const fb = (window as unknown as {
       __e2eFirebase?: {
         app: unknown;
         auth?: {
-          getAuth: (app: unknown) => unknown;
+          getAuth: (app: unknown) => { emulatorConfig?: unknown };
           connectAuthEmulator: (auth: unknown, url: string, opts?: unknown) => void;
         };
         firestore?: {
@@ -80,22 +79,49 @@ export async function waitForE2eFirebase(page: Page, timeoutMs = 10000): Promise
         };
       };
     }).__e2eFirebase;
-    if (!fb) return;
+    const errors: string[] = [];
+    if (!fb) return { hasFb: false, authEmulator: null, errors: ['no __e2eFirebase'] };
     try {
       fb.auth?.connectAuthEmulator(fb.auth.getAuth(fb.app), 'http://localhost:9099', {
         disableWarnings: true,
       });
-    } catch {
-      // already wired or instance used
+    } catch (e) {
+      errors.push(`auth: ${e instanceof Error ? e.message : String(e)}`);
     }
     try {
       fb.firestore?.connectFirestoreEmulator(fb.firestore.getFirestore(fb.app), 'localhost', 8080);
-    } catch {}
+    } catch (e) {
+      errors.push(`firestore: ${e instanceof Error ? e.message : String(e)}`);
+    }
     try {
       fb.storage?.connectStorageEmulator(fb.storage.getStorage(fb.app), 'localhost', 9199);
-    } catch {}
+    } catch (e) {
+      errors.push(`storage: ${e instanceof Error ? e.message : String(e)}`);
+    }
     try {
       fb.database?.connectDatabaseEmulator(fb.database.getDatabase(fb.app), 'localhost', 9000);
-    } catch {}
+    } catch (e) {
+      errors.push(`database: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    const authInstance = fb.auth?.getAuth(fb.app);
+    return {
+      hasFb: true,
+      authEmulator: authInstance?.emulatorConfig ?? null,
+      errors,
+      env: {
+        nodeEnv: process.env.NODE_ENV,
+        emulatorEnv: process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR ?? null,
+      },
+      location: {
+        hostname: window.location.hostname,
+        port: window.location.port,
+      },
+    };
   });
+  // emulator config 가 null 이면 connectAuthEmulator 가 효과 없음 = client 가 production endpoint 사용.
+  if (!wireDiag.authEmulator) {
+    throw new Error(
+      `[waitForE2eFirebase] auth emulator not wired — diagnostic: ${JSON.stringify(wireDiag)}`,
+    );
+  }
 }
