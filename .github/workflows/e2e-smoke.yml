@@ -86,6 +86,12 @@ jobs:
           NEXT_PUBLIC_FIREBASE_DATABASE_URL: 'http://localhost:9000?ns=demo-kkaebizigi-test'
           AUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           NEXTAUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
+          # Sprint 28 F28-B 단계 23 — admin SDK emulator host 정합 (e2e.yml 과 동일).
+          FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080'
+          FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099'
+          FIREBASE_DATABASE_EMULATOR_HOST: '127.0.0.1:9000'
+          STORAGE_EMULATOR_HOST: 'http://127.0.0.1:9199'
+          GCLOUD_PROJECT: 'demo-kkaebizigi-test'
           CI: 'true'
         # 핵심 smoke 만 — 전체는 e2e.yml 에서. 시각 회귀 / 긴 시나리오 제외.
         # Sprint 28 F28-B 단계 14 — visual baseline (e2e/tests/visual/) 도 명시 제외.

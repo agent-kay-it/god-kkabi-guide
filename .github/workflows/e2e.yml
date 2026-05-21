@@ -135,6 +135,15 @@ jobs:
           NEXT_PUBLIC_FIREBASE_DATABASE_URL: 'http://localhost:9000?ns=demo-kkaebizigi-test'
           AUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           NEXTAUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
+          # Sprint 28 F28-B 단계 23 — admin SDK / client SDK 의 emulator host env 정합.
+          # production build webServer (next start) 의 server-side rendering 시 admin SDK
+          # 가 emulator host 인식해야 server-side data fetch 정상. firebase-admin SDK 가
+          # 자동 인식하는 standard env names.
+          FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080'
+          FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099'
+          FIREBASE_DATABASE_EMULATOR_HOST: '127.0.0.1:9000'
+          STORAGE_EMULATOR_HOST: 'http://127.0.0.1:9199'
+          GCLOUD_PROJECT: 'demo-kkaebizigi-test'
           CI: 'true'
         # Sprint 28 F28-B 단계 14 — visual regression CI 자동 run 제외.
         # `--update-snapshots=missing` 만으로는 missing baseline 시 actual 저장 후에도
