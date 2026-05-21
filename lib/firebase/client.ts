@@ -118,27 +118,43 @@ function wireEmulatorsIfEnabled(app: FirebaseApp): void {
 
   emulatorWired = true;
 
-  try {
+  // Sprint 28 F28-B 단계 9 — connectAuthEmulator throw 시 actual error 진단.
+  // 단계 5 sync wire 후에도 auth/network-request-failed 12회 잔존 → 어떤 throw 가
+  // silent catch 됨을 의미. window.__e2eFirebaseWireErrors 에 노출하여 spec 또는
+  // chrome devtools 에서 actual cause 확인.
+  const wireErrors: { module: string; error: string; stack?: string }[] = [];
+  function tryWire(name: string, fn: () => void): void {
+    try {
+      fn();
+    } catch (e) {
+      const err = e instanceof Error ? e : new Error(String(e));
+      const entry: { module: string; error: string; stack?: string } = {
+        module: name,
+        error: err.message,
+      };
+      if (err.stack !== undefined) entry.stack = err.stack;
+      wireErrors.push(entry);
+    }
+  }
+
+  tryWire('auth', () =>
     authMod.connectAuthEmulator(authMod.getAuth(app), 'http://localhost:9099', {
       disableWarnings: true,
-    });
-  } catch {
-    // already wired or instance used — best effort
-  }
-  try {
-    firestoreMod.connectFirestoreEmulator(firestoreMod.getFirestore(app), 'localhost', 8080);
-  } catch {
-    // already wired or instance used — best effort
-  }
-  try {
-    storageMod.connectStorageEmulator(storageMod.getStorage(app), 'localhost', 9199);
-  } catch {
-    // already wired or instance used — best effort
-  }
-  try {
-    databaseMod.connectDatabaseEmulator(databaseMod.getDatabase(app), 'localhost', 9000);
-  } catch {
-    // already wired or instance used — best effort
+    }),
+  );
+  tryWire('firestore', () =>
+    firestoreMod.connectFirestoreEmulator(firestoreMod.getFirestore(app), 'localhost', 8080),
+  );
+  tryWire('storage', () =>
+    storageMod.connectStorageEmulator(storageMod.getStorage(app), 'localhost', 9199),
+  );
+  tryWire('database', () =>
+    databaseMod.connectDatabaseEmulator(databaseMod.getDatabase(app), 'localhost', 9000),
+  );
+
+  if (wireErrors.length > 0) {
+    // CI artifact trace 에 console error 가 capture 됨 + spec 에서 직접 읽기 가능
+    console.error('[F28-B] emulator wire errors:', wireErrors);
   }
 
   // Sprint 28 F28-B 단계 2 — E2E 전용 window expose.
@@ -155,6 +171,7 @@ function wireEmulatorsIfEnabled(app: FirebaseApp): void {
     storage: storageMod,
     database: databaseMod,
   };
+  (window as unknown as { __e2eFirebaseWireErrors?: unknown }).__e2eFirebaseWireErrors = wireErrors;
 }
 
 export function getFirebaseApp(): FirebaseApp {
