@@ -3,6 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../../emulator/admin-helper';
 import {
   seedPost,
   cleanupTestPosts,
@@ -27,10 +28,7 @@ test('게시물 본문이 수정되고 updatedAt 이 갱신된다', async ({ pag
   await new Promise((r) => setTimeout(r, 1100));
 
   // Admin SDK 로 직접 수정 (UI flow 는 별도 spec)
-  if (admin.apps.length === 0) {
-    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-    admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
-  }
+  ensureE2eAdmin(); // Sprint 28 F28-B 단계 2 — 공유 helper
   await admin
     .firestore()
     .collection('posts')

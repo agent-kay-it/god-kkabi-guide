@@ -81,12 +81,62 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   // 3) cookie 가 context 에 저장됨 → 다음 navigation 시 인증된 세션
   await page.goto('/', { waitUntil: 'domcontentloaded' });
 
+  // 4) Sprint 28 F28-B 단계 2 — client-side Firebase Auth signInWithCustomToken
+  //    추가 호출 (window.__e2eFirebase 사용).
+  //    이전: spec 의 page.evaluate 가 `await import('firebase/auth')` 호출 →
+  //    브라우저 컨텍스트에서 bare specifier resolve 실패 (Sprint 14~28 1주일째).
+  //    해결: lib/firebase/client.ts emulator 분기에서 window.__e2eFirebase 노출 →
+  //    여기서 그 namespace 통해 client signInWithCustomToken 호출 →
+  //    4 auth spec (currentUser / getIdToken 검증) 의 의의 보존.
+  await page.waitForFunction(
+    () => {
+      const fb = (window as unknown as { __e2eFirebase?: { auth?: unknown } }).__e2eFirebase;
+      return Boolean(fb?.auth);
+    },
+    { timeout: 10_000 },
+  );
+  await page.evaluate(
+    async (t) => {
+      const fb = (window as unknown as {
+        __e2eFirebase: {
+          app: unknown;
+          auth: {
+            getAuth: (app: unknown) => unknown;
+            signInWithCustomToken: (auth: unknown, token: string) => Promise<unknown>;
+          };
+        };
+      }).__e2eFirebase;
+      const auth = fb.auth.getAuth(fb.app);
+      await fb.auth.signInWithCustomToken(auth, t);
+    },
+    customToken,
+  );
+
 
   console.log(`[loginAs] Logged in as ${role} (uid=${seed.uid})`);
 }
 
-/** 로그아웃 — NextAuth cookie 삭제 + reload */
+/** 로그아웃 — NextAuth cookie 삭제 + Firebase client Auth signOut + reload */
 export async function logout(page: Page): Promise<void> {
+  // 1) Firebase client Auth signOut (window.__e2eFirebase 사용)
+  await page.evaluate(async () => {
+    const fb = (window as unknown as {
+      __e2eFirebase?: {
+        auth?: {
+          getAuth: () => unknown;
+          signOut: (auth: unknown) => Promise<void>;
+        };
+      };
+    }).__e2eFirebase;
+    if (fb?.auth) {
+      try {
+        await fb.auth.signOut(fb.auth.getAuth());
+      } catch {
+        // 이미 signed out 또는 module 누락
+      }
+    }
+  });
+  // 2) NextAuth cookie 삭제
   await page.context().clearCookies({ name: 'authjs.session-token' });
   await page.reload({ waitUntil: 'domcontentloaded' });
 }

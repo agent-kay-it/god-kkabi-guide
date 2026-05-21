@@ -1,5 +1,7 @@
 /**
  * Sprint 14 / F14-B-8 — 회원탈퇴 + 데이터 cascade.
+ * Sprint 28 F28-B 단계 2 — page.evaluate bare specifier 'firebase/auth' 제거.
+ * window.__e2eFirebase namespace + admin app race condition fix (공유 helper).
  *
  * Firebase Admin SDK 로 사용자 삭제 → Firestore users/{uid} cascade 검증.
  * 실제 UI flow (회원탈퇴 버튼) 는 F14-E (Profile specs) 에서 별도 검증.
@@ -8,12 +10,11 @@ import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
 import { loginAs } from '../../emulator/auth-token-helper';
 import { waitForUserLoaded } from '../../fixtures/wait-helpers';
+import { waitForE2eFirebase } from '../../fixtures/window-firebase';
+import { ensureE2eAdmin } from '../../emulator/admin-helper';
 
 function ensureAdmin(): admin.app.App {
-  if (admin.apps.length > 0) return admin.app();
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-  process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-  return admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
+  return ensureE2eAdmin();
 }
 
 test.describe('Auth — Delete account (Admin cascade)', () => {
@@ -29,26 +30,32 @@ test.describe('Auth — Delete account (Admin cascade)', () => {
       e2eSeedId: 'sprint-14-delete-account',
     });
 
-    // 2) loginAs 헬퍼로는 직접 못 함 (seed 리스트에 없음). 직접 custom token.
+    // 2) page 진입 → window.__e2eFirebase 노출 대기 → custom token 으로 client sign-in
     const token = await admin.auth().createCustomToken(uid);
     await page.goto('/');
+    await waitForE2eFirebase(page);
     await page.evaluate(
-      async ({ t, projectId }) => {
-        const { getAuth, signInWithCustomToken, connectAuthEmulator } = await import(
-          'firebase/auth'
-        );
-        const { initializeApp, getApps } = await import('firebase/app');
-        const app = getApps()[0] ?? initializeApp({ projectId, apiKey: 'demo-api-key' });
-        const auth = getAuth(app);
-        try { connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true }); } catch {}
-        await signInWithCustomToken(auth, t);
+      async (t) => {
+        const fb = (window as unknown as {
+          __e2eFirebase: {
+            app: unknown;
+            auth: {
+              getAuth: (app: unknown) => unknown;
+              signInWithCustomToken: (auth: unknown, token: string) => Promise<unknown>;
+            };
+          };
+        }).__e2eFirebase;
+        const auth = fb.auth.getAuth(fb.app);
+        await fb.auth.signInWithCustomToken(auth, t);
       },
-      { t: token, projectId: 'demo-kkaebizigi-test' },
+      token,
     );
 
-    const beforeUid = await page.evaluate(async () => {
-      const { getAuth } = await import('firebase/auth');
-      return getAuth().currentUser?.uid ?? null;
+    const beforeUid = await page.evaluate(() => {
+      const fb = (window as unknown as {
+        __e2eFirebase: { auth: { getAuth: () => { currentUser: { uid: string } | null } } };
+      }).__e2eFirebase;
+      return fb.auth.getAuth().currentUser?.uid ?? null;
     });
     expect(beforeUid).toBe(uid);
 
@@ -58,10 +65,20 @@ test.describe('Auth — Delete account (Admin cascade)', () => {
 
     // 4) 토큰 강제 refresh → 실패해야 (사용자 삭제됨)
     const stillSignedIn = await page.evaluate(async () => {
-      const { getAuth } = await import('firebase/auth');
+      const fb = (window as unknown as {
+        __e2eFirebase: {
+          auth: {
+            getAuth: () => {
+              currentUser: {
+                getIdToken: (forceRefresh?: boolean) => Promise<string>;
+              } | null;
+            };
+          };
+        };
+      }).__e2eFirebase;
       try {
-        await getAuth().currentUser?.getIdToken(true);
-        return getAuth().currentUser !== null;
+        await fb.auth.getAuth().currentUser?.getIdToken(true);
+        return fb.auth.getAuth().currentUser !== null;
       } catch {
         return false;
       }
@@ -73,9 +90,12 @@ test.describe('Auth — Delete account (Admin cascade)', () => {
     // 위 spec 의 cleanup 이 다른 사용자에게 영향 주지 않음을 보증
     await loginAs(page, 'regular');
     await waitForUserLoaded(page);
-    const uid = await page.evaluate(async () => {
-      const { getAuth } = await import('firebase/auth');
-      return getAuth().currentUser?.uid ?? null;
+    await waitForE2eFirebase(page);
+    const uid = await page.evaluate(() => {
+      const fb = (window as unknown as {
+        __e2eFirebase: { auth: { getAuth: () => { currentUser: { uid: string } | null } } };
+      }).__e2eFirebase;
+      return fb.auth.getAuth().currentUser?.uid ?? null;
     });
     expect(uid).toBe('e2e-regular');
   });

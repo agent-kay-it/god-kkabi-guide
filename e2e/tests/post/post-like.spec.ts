@@ -3,6 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../../emulator/admin-helper';
 import { seedPost, cleanupTestPosts, getPost } from '../../fixtures/test-post-helpers';
 
 test.afterAll(async () => {
@@ -15,10 +16,7 @@ test('좋아요 시 likeCount + 1, 토글 시 -1', async ({ page }) => {
   await page.goto(`/post/${postId}`);
   await page.waitForLoadState('networkidle');
 
-  if (admin.apps.length === 0) {
-    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-    admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
-  }
+  ensureE2eAdmin(); // Sprint 28 F28-B 단계 2 — 공유 helper
 
   // Admin SDK 로 직접 increment (UI flow 는 별도)
   await admin
