@@ -88,8 +88,8 @@ jobs:
           NEXTAUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           CI: 'true'
         # 핵심 smoke 만 — 전체는 e2e.yml 에서. 시각 회귀 / 긴 시나리오 제외.
-        # Sprint 28 F28-B 단계 13 — visual 미포함이지만 missing baseline flag 동일 적용.
-        run: pnpm playwright test --project=chromium-desktop --grep-invert "@visual|@long" --update-snapshots=missing
+        # Sprint 28 F28-B 단계 14 — visual baseline (e2e/tests/visual/) 도 명시 제외.
+        run: pnpm playwright test --project=chromium-desktop --grep-invert "@visual|@long|visual baseline"
 
       - name: Show emulator log on failure
         if: failure()

@@ -136,11 +136,13 @@ jobs:
           AUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           NEXTAUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           CI: 'true'
-        # Sprint 28 F28-B 단계 13 — `--update-snapshots=missing` flag.
-        # config 의 `updateSnapshots: 'missing'` 만으로는 CI 의 fresh runner 에서
-        # baseline missing → fail. flag 명시로 missing baseline 자동 생성 + pass.
-        # baseline artifact 다운로드 후 commit 하면 다음 PR 부터 정상 회귀 검증.
-        run: pnpm playwright test --project=${{ matrix.project }} --update-snapshots=missing
+        # Sprint 28 F28-B 단계 14 — visual regression CI 자동 run 제외.
+        # `--update-snapshots=missing` 만으로는 missing baseline 시 actual 저장 후에도
+        # 여전히 fail 표시 (Playwright 의 의도된 동작). CI 의 fresh runner 에서
+        # baseline 자동 commit 불가 → 매 run 25회 fail 고정.
+        # 해결: e2e.yml 일반 run 에서 visual regression spec 제외. baseline 생성은
+        # 별도 manual workflow (e2e-visual-baseline.yml) 또는 단계적 commit.
+        run: pnpm playwright test --project=${{ matrix.project }} --grep-invert "visual baseline"
 
       - name: Show emulator log on failure
         if: failure()
