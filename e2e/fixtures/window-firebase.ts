@@ -36,8 +36,13 @@ export interface E2eFirebaseNamespace {
 
 /**
  * page.evaluate 호출 전에 window.__e2eFirebase 가 준비될 때까지 대기.
- * lib/firebase/client.ts 의 wireEmulatorsIfEnabled() 가 async 라서 모든
- * firebase module 이 노출될 때까지 race 가능.
+ * lib/firebase/client.ts 의 wireEmulatorsIfEnabled() 가 동기 sync 라서 module
+ * load 후 즉시 노출.
+ *
+ * Sprint 28 F28-B 단계 16 — wire 진단.
+ * window.__e2eFirebaseWireErrors 가 length>0 면 connectXxxEmulator throw 가 발생.
+ * 그 경우 client SDK 가 production endpoint 사용 → spec 호출 시 fail. 명시적으로
+ * spec 가 fail 하면서 wire errors 를 message 에 포함 → CI artifact 에 진단 evidence.
  */
 export async function waitForE2eFirebase(page: Page, timeoutMs = 10000): Promise<void> {
   await page.waitForFunction(
@@ -47,4 +52,14 @@ export async function waitForE2eFirebase(page: Page, timeoutMs = 10000): Promise
     },
     { timeout: timeoutMs },
   );
+
+  // 진단: wire error 가 있으면 명시 fail (silent catch 의 root cause 추적).
+  const wireErrors = await page.evaluate(() => {
+    return (window as unknown as { __e2eFirebaseWireErrors?: unknown[] }).__e2eFirebaseWireErrors ?? [];
+  });
+  if (Array.isArray(wireErrors) && wireErrors.length > 0) {
+    throw new Error(
+      `[waitForE2eFirebase] emulator wire errors detected: ${JSON.stringify(wireErrors)}`,
+    );
+  }
 }
