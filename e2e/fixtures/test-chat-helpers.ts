@@ -5,18 +5,17 @@
  * 모든 메시지에 [TEST-Sprint14] 프리픽스 + e2eSeedId.
  */
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../emulator/admin-helper';
 
 export const TEST_PREFIX = '[TEST-Sprint14]';
 export const SEED_ID = 'sprint-14-d-chat';
 
+// Sprint 28 F28-B 단계 2 — admin app race condition fix.
+// 이전: 본 파일과 auth-token-helper.ts 가 각자 admin.initializeApp 호출 →
+// 먼저 init 된 app 이 누락된 config (storageBucket) 로 재사용되어 cleanupTest*
+// 가 throw. 공유 helper 사용으로 통합.
 function ensureAdmin(): admin.app.App {
-  if (admin.apps.length > 0) return admin.app();
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-  process.env.FIREBASE_DATABASE_EMULATOR_HOST = 'localhost:9000';
-  return admin.initializeApp({
-    projectId: 'demo-kkaebizigi-test',
-    databaseURL: 'http://localhost:9000?ns=demo-kkaebizigi-test',
-  });
+  return ensureE2eAdmin();
 }
 
 export type ChannelType = 'global' | 'server-S785' | 'munpa-muming';

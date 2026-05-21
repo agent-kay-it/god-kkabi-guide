@@ -3,6 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../../emulator/admin-helper';
 import {
   seedMessage,
   cleanupTestMessages,
@@ -11,10 +12,7 @@ import {
 
 test.afterAll(async () => {
   await cleanupTestMessages();
-  if (admin.apps.length === 0) {
-    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-    admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
-  }
+  ensureE2eAdmin(); // Sprint 28 F28-B 단계 2 — 공유 helper
   const snap = await admin
     .firestore()
     .collection('reports')
@@ -26,10 +24,7 @@ test.afterAll(async () => {
 test('채팅 메시지 신고 시 reports collection 에 entry 생성', async () => {
   const messageId = await seedMessage({ body: `${TEST_PREFIX} report target` });
 
-  if (admin.apps.length === 0) {
-    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-    admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
-  }
+  ensureE2eAdmin(); // Sprint 28 F28-B 단계 2 — 공유 helper
   await admin.firestore().collection('reports').add({
     targetType: 'chat-message',
     targetId: messageId,

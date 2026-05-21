@@ -7,6 +7,7 @@
 import { test, expect } from '@playwright/test';
 import { loginAs, createCustomToken, type TestRole } from '../../emulator/auth-token-helper';
 import { waitForUserLoaded } from '../../fixtures/wait-helpers';
+import { waitForE2eFirebase } from '../../fixtures/window-firebase';
 
 const ROLES: TestRole[] = ['admin', 'regular', 'banned', 'new'];
 
@@ -21,9 +22,13 @@ test.describe('Auth — Custom token (Admin SDK bridge)', () => {
     test(`loginAs('${role}') 후 currentUser.uid === e2e-${role}`, async ({ page }) => {
       await loginAs(page, role);
       await waitForUserLoaded(page);
-      const uid = await page.evaluate(async () => {
-        const { getAuth } = await import('firebase/auth');
-        return getAuth().currentUser?.uid ?? null;
+      // Sprint 28 F28-B 단계 2 — window.__e2eFirebase 사용 (bare import 제거)
+      await waitForE2eFirebase(page);
+      const uid = await page.evaluate(() => {
+        const fb = (window as unknown as {
+          __e2eFirebase: { auth: { getAuth: () => { currentUser: { uid: string } | null } } };
+        }).__e2eFirebase;
+        return fb.auth.getAuth().currentUser?.uid ?? null;
       });
       expect(uid).toBe(`e2e-${role}`);
     });

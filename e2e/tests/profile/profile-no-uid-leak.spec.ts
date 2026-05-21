@@ -6,13 +6,12 @@
  */
 import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../../emulator/admin-helper';
 import { loginAs } from '../../emulator/auth-token-helper';
 
 function ensureAdmin(): admin.app.App {
-  if (admin.apps.length > 0) return admin.app();
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-  process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-  return admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
+  // Sprint 28 F28-B 단계 2 — 공유 helper (admin app race condition fix)
+  return ensureE2eAdmin();
 }
 
 test('/me/profile 진입 시 게임 UID 가 마스킹된다', async ({ page }) => {

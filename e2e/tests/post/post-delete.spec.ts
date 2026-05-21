@@ -3,6 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../../emulator/admin-helper';
 import {
   seedPost,
   seedComment,
@@ -22,10 +23,7 @@ test('게시물 삭제 시 detail page 가 404 / not-found', async ({ page }) =>
   await page.waitForLoadState('networkidle');
 
   // 삭제
-  if (admin.apps.length === 0) {
-    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-    admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
-  }
+  ensureE2eAdmin(); // Sprint 28 F28-B 단계 2 — 공유 helper
   await admin.firestore().collection('posts').doc(postId).delete();
 
   // cascade: 댓글 subcollection 도 명시적으로 cleanup (실 서비스는 Cloud Function)

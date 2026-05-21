@@ -91,26 +91,50 @@ async function wireEmulatorsIfEnabled(app: FirebaseApp): Promise<void> {
 
   emulatorWired = true;
 
-  try {
-    const { connectAuthEmulator, getAuth } = await import('firebase/auth');
-    connectAuthEmulator(getAuth(app), 'http://localhost:9099', {
-      disableWarnings: true,
-    });
-  } catch {
-    // 이미 연결됨 / 모듈 없음 — 무시
+  // 모든 firebase client SDK 모듈 동적 import (next build 가 chunk 로 번들)
+  const authMod = await import('firebase/auth').catch(() => null);
+  const firestoreMod = await import('firebase/firestore').catch(() => null);
+  const storageMod = await import('firebase/storage').catch(() => null);
+  const databaseMod = await import('firebase/database').catch(() => null);
+
+  // emulator 연결 (이미 연결됐으면 throw — silent ignore)
+  if (authMod) {
+    try {
+      authMod.connectAuthEmulator(authMod.getAuth(app), 'http://localhost:9099', {
+        disableWarnings: true,
+      });
+    } catch {}
   }
-  try {
-    const { connectFirestoreEmulator, getFirestore } = await import('firebase/firestore');
-    connectFirestoreEmulator(getFirestore(app), 'localhost', 8080);
-  } catch {}
-  try {
-    const { connectStorageEmulator, getStorage } = await import('firebase/storage');
-    connectStorageEmulator(getStorage(app), 'localhost', 9199);
-  } catch {}
-  try {
-    const { connectDatabaseEmulator, getDatabase } = await import('firebase/database');
-    connectDatabaseEmulator(getDatabase(app), 'localhost', 9000);
-  } catch {}
+  if (firestoreMod) {
+    try {
+      firestoreMod.connectFirestoreEmulator(firestoreMod.getFirestore(app), 'localhost', 8080);
+    } catch {}
+  }
+  if (storageMod) {
+    try {
+      storageMod.connectStorageEmulator(storageMod.getStorage(app), 'localhost', 9199);
+    } catch {}
+  }
+  if (databaseMod) {
+    try {
+      databaseMod.connectDatabaseEmulator(databaseMod.getDatabase(app), 'localhost', 9000);
+    } catch {}
+  }
+
+  // Sprint 28 F28-B 단계 2 — E2E 전용 window expose.
+  // 이전: Playwright spec 의 page.evaluate 안에서 `await import('firebase/auth')`
+  //       시 bare module specifier resolve 실패 → 1주일째 broken (8회 잔존).
+  // 해결: emulator 모드 (Production 영향 0) 에서만 client.ts 가 이미 번들된 module 을
+  //       window.__e2eFirebase 에 노출. spec 의 page.evaluate 는 bare import 대신
+  //       이 namespace 사용.
+  // 보안: production / staging 에서는 isFirebaseEmulator() === false → expose 안 함.
+  (window as unknown as { __e2eFirebase?: unknown }).__e2eFirebase = {
+    app,
+    auth: authMod,
+    firestore: firestoreMod,
+    storage: storageMod,
+    database: databaseMod,
+  };
 }
 
 export function getFirebaseApp(): FirebaseApp {
@@ -121,4 +145,20 @@ export function getFirebaseApp(): FirebaseApp {
   // 비동기 wire — emulator 모드일 때만 의미 있음, fire-and-forget
   void wireEmulatorsIfEnabled(app);
   return app;
+}
+
+// Sprint 28 F28-B 단계 2 — emulator 모드에서 module load 시점에 자동 init.
+//
+// 이전 결함: E2E spec 의 loginAs() 가 page.goto('/') 후 window.__e2eFirebase 대기.
+// 그러나 홈 페이지 / 가 firebase client SDK 를 즉시 사용 안 함 → getFirebaseApp()
+// 미호출 → wireEmulatorsIfEnabled() 미실행 → window.__e2eFirebase 노출 안 됨 →
+// waitForE2eFirebase timeout 60초 → loginAs throw → 모든 spec cascade fail.
+//
+// 해결: emulator 모드에서는 module load 직후 (페이지 진입 시 client.ts 가 import 되면)
+// 자동으로 getFirebaseApp() 호출 → wireEmulatorsIfEnabled() 자동 실행 → window 노출.
+//
+// 보안: production / staging 은 isFirebaseEmulator() === false → 이 분기 실행 안 됨.
+// typeof window check: SSR 시점 (server-side) 에는 실행 안 됨.
+if (typeof window !== 'undefined' && isFirebaseEmulator()) {
+  void getFirebaseApp();
 }

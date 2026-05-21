@@ -3,6 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../../emulator/admin-helper';
 import {
   seedPost,
   seedComment,
@@ -36,10 +37,7 @@ test('댓글 삭제 시 detail page 에서 사라진다', async ({ page }) => {
     timeout: 10_000,
   });
 
-  if (admin.apps.length === 0) {
-    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-    admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
-  }
+  ensureE2eAdmin(); // Sprint 28 F28-B 단계 2 — 공유 helper
   await admin
     .firestore()
     .collection('posts')
