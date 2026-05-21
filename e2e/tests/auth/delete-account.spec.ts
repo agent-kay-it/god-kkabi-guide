@@ -1,14 +1,14 @@
 /**
  * Sprint 14 / F14-B-8 — 회원탈퇴 + 데이터 cascade.
- * Sprint 28 F28-B 단계 2 — page.evaluate bare specifier 'firebase/auth' 제거.
- * window.__e2eFirebase namespace + admin app race condition fix (공유 helper).
+ * Sprint 28 F28-B 단계 5/6 — lib/firebase/client.ts 동기 wire 보장 후 spec 내부
+ * 명시적 client sign-in 패턴. loginAs 는 NextAuth cookie 만 set.
  *
  * Firebase Admin SDK 로 사용자 삭제 → Firestore users/{uid} cascade 검증.
  * 실제 UI flow (회원탈퇴 버튼) 는 F14-E (Profile specs) 에서 별도 검증.
  */
 import { test, expect } from '@playwright/test';
 import admin from 'firebase-admin';
-import { loginAs } from '../../emulator/auth-token-helper';
+import { loginAs, createCustomToken } from '../../emulator/auth-token-helper';
 import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 import { waitForE2eFirebase } from '../../fixtures/window-firebase';
 import { ensureE2eAdmin } from '../../emulator/admin-helper';
@@ -87,10 +87,29 @@ test.describe('Auth — Delete account (Admin cascade)', () => {
   });
 
   test('seed 4 사용자 (admin/regular/banned/new) 는 이 spec 후에도 살아있다', async ({ page }) => {
-    // 위 spec 의 cleanup 이 다른 사용자에게 영향 주지 않음을 보증
+    // Sprint 28 F28-B 단계 6 — loginAs 는 SSR cookie 만 set → client uid 검증을
+    // 위해선 spec 안에서 명시적 sign-in. emulator endpoint 사용 (단계 5 동기 wire).
     await loginAs(page, 'regular');
     await waitForUserLoaded(page);
     await waitForE2eFirebase(page);
+
+    const token = await createCustomToken('regular');
+    await page.evaluate(
+      async (t) => {
+        const fb = (window as unknown as {
+          __e2eFirebase: {
+            app: unknown;
+            auth: {
+              getAuth: (app: unknown) => unknown;
+              signInWithCustomToken: (auth: unknown, token: string) => Promise<unknown>;
+            };
+          };
+        }).__e2eFirebase;
+        await fb.auth.signInWithCustomToken(fb.auth.getAuth(fb.app), t);
+      },
+      token,
+    );
+
     const uid = await page.evaluate(() => {
       const fb = (window as unknown as {
         __e2eFirebase: { auth: { getAuth: () => { currentUser: { uid: string } | null } } };

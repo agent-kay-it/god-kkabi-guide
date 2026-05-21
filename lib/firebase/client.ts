@@ -11,6 +11,17 @@
  *  - NEXT_PUBLIC_FIREBASE_USE_EMULATOR=true 시 demo-kkaebizigi-test 더미 프로젝트
  *  - Auth/Firestore/Storage/RTDB 모두 localhost 포트로 자동 연결
  *  - default false (staging+prod 영향 없음)
+ *
+ * Sprint 28 (F28-B 단계 5) — 동기 emulator wire:
+ *  - 기존: dynamic import + fire-and-forget. getFirebaseApp() return 시점에
+ *    connectAuthEmulator 미실행 → 다른 모듈이 getAuth(app) 호출 시 production
+ *    endpoint 로 internal init 후 lock → 이후 connectAuthEmulator 가 throw →
+ *    silent ignore → client Auth 가 production fetch → auth/network-request-failed.
+ *  - 해결: static top-level import + 동기 wire. getFirebaseApp() return 시점에
+ *    모든 emulator 가 wired. production 에선 isFirebaseEmulator() === false →
+ *    wireEmulatorsIfEnabled 가 즉시 return → connect 호출 안 됨.
+ *  - bundle: 4 모듈은 이미 lib/firebase/{auth,firestore,storage,realtime-db}.ts
+ *    에서 사용되므로 client bundle 에 동일하게 포함. 변화 없음.
  */
 import {
   getApp,
@@ -19,6 +30,10 @@ import {
   type FirebaseApp,
   type FirebaseOptions,
 } from 'firebase/app';
+import * as authMod from 'firebase/auth';
+import * as firestoreMod from 'firebase/firestore';
+import * as storageMod from 'firebase/storage';
+import * as databaseMod from 'firebase/database';
 
 interface FirebaseEnv {
   readonly apiKey: string | undefined;
@@ -85,40 +100,45 @@ function resolveFirebaseConfig(): FirebaseOptions {
 /** emulator 연결 1회만 시도 (HMR 재실행 시 중복 throw 방지) */
 let emulatorWired = false;
 
-async function wireEmulatorsIfEnabled(app: FirebaseApp): Promise<void> {
+/**
+ * Sprint 28 F28-B 단계 5 — 동기 emulator wire.
+ *
+ * 이전 dynamic import + async fire-and-forget 패턴은 다음 race condition 유발:
+ *  1. getFirebaseApp() 호출 → app 생성 → void wireEmulatorsIfEnabled(app) (fire-and-forget)
+ *  2. caller 가 곧바로 getAuth(app) 호출 (예: lib/firebase/auth.ts)
+ *  3. internal Auth 인스턴스가 production endpoint 로 init + lock
+ *  4. 그 후 connectAuthEmulator(...) 호출 시 throw "Cannot connect ... after used"
+ *  5. silent ignore → client SDK 가 production fetch → auth/network-request-failed
+ *
+ * 동기 wire 로 race window 제거.
+ */
+function wireEmulatorsIfEnabled(app: FirebaseApp): void {
   if (!isFirebaseEmulator() || emulatorWired) return;
   if (typeof window === 'undefined') return; // client only
 
   emulatorWired = true;
 
-  // 모든 firebase client SDK 모듈 동적 import (next build 가 chunk 로 번들)
-  const authMod = await import('firebase/auth').catch(() => null);
-  const firestoreMod = await import('firebase/firestore').catch(() => null);
-  const storageMod = await import('firebase/storage').catch(() => null);
-  const databaseMod = await import('firebase/database').catch(() => null);
-
-  // emulator 연결 (이미 연결됐으면 throw — silent ignore)
-  if (authMod) {
-    try {
-      authMod.connectAuthEmulator(authMod.getAuth(app), 'http://localhost:9099', {
-        disableWarnings: true,
-      });
-    } catch {}
+  try {
+    authMod.connectAuthEmulator(authMod.getAuth(app), 'http://localhost:9099', {
+      disableWarnings: true,
+    });
+  } catch {
+    // already wired or instance used — best effort
   }
-  if (firestoreMod) {
-    try {
-      firestoreMod.connectFirestoreEmulator(firestoreMod.getFirestore(app), 'localhost', 8080);
-    } catch {}
+  try {
+    firestoreMod.connectFirestoreEmulator(firestoreMod.getFirestore(app), 'localhost', 8080);
+  } catch {
+    // already wired or instance used — best effort
   }
-  if (storageMod) {
-    try {
-      storageMod.connectStorageEmulator(storageMod.getStorage(app), 'localhost', 9199);
-    } catch {}
+  try {
+    storageMod.connectStorageEmulator(storageMod.getStorage(app), 'localhost', 9199);
+  } catch {
+    // already wired or instance used — best effort
   }
-  if (databaseMod) {
-    try {
-      databaseMod.connectDatabaseEmulator(databaseMod.getDatabase(app), 'localhost', 9000);
-    } catch {}
+  try {
+    databaseMod.connectDatabaseEmulator(databaseMod.getDatabase(app), 'localhost', 9000);
+  } catch {
+    // already wired or instance used — best effort
   }
 
   // Sprint 28 F28-B 단계 2 — E2E 전용 window expose.
@@ -142,8 +162,8 @@ export function getFirebaseApp(): FirebaseApp {
     return getApp();
   }
   const app = initializeApp(resolveFirebaseConfig());
-  // 비동기 wire — emulator 모드일 때만 의미 있음, fire-and-forget
-  void wireEmulatorsIfEnabled(app);
+  // Sprint 28 F28-B 단계 5 — 동기 wire (race condition 제거)
+  wireEmulatorsIfEnabled(app);
   return app;
 }
 
@@ -160,5 +180,5 @@ export function getFirebaseApp(): FirebaseApp {
 // 보안: production / staging 은 isFirebaseEmulator() === false → 이 분기 실행 안 됨.
 // typeof window check: SSR 시점 (server-side) 에는 실행 안 됨.
 if (typeof window !== 'undefined' && isFirebaseEmulator()) {
-  void getFirebaseApp();
+  getFirebaseApp();
 }
