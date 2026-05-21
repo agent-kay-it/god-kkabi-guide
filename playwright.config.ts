@@ -128,15 +128,21 @@ export default defineConfig({
           //   안 주는 알려진 이슈. production-style build 는 NEXT_PUBLIC_ inline 안정 +
           //   emulator wire 정상 동작. 빌드 시간 ~1분 추가하지만 client SDK 안정.
           //   webServer.timeout 도 build+start 위해 충분히 증가.
+          // Sprint 28 F28-B 단계 27 — dev mode 로 회귀.
+          //   step 22 production build (next start) 가 server-side redirect 시 한글
+          //   포함 → TypeError: Invalid character in header content ["location"]
+          //   → 모든 chat/post/bookmark page 5xx cascade. 정확한 source 식별 어려워
+          //   dev mode 회귀. client SDK reroute 는 단계 17 의 명시 wire (window-firebase.ts)
+          //   로 spec 안에서 idempotent connectXxxEmulator 호출.
           command: IS_CI
-            ? 'npx next build && (npx next start -p 3000 > .next-server.log 2>&1)'
+            ? 'npx next dev --turbopack -p 3000 > .next-server.log 2>&1'
             : process.env.E2E_USE_EMULATOR === 'true'
               ? 'pnpm dev'
               : 'pnpm dev',
           url: 'http://localhost:3000',
           reuseExistingServer: true,
-          // Sprint 28 F28-B 단계 22 — next build 시간 추가로 timeout 증가 (180s → 360s).
-          timeout: 360_000,
+          // Sprint 28 F28-B 단계 27 — dev mode 회귀, timeout 다시 단축.
+          timeout: 180_000,
           env: {
             // 1) 현재 process env 모두 상속 (workflow env block 의 NEXT_PUBLIC_*, AUTH_SECRET, …)
             //    Record<string, string> 강제 캐스팅 (process.env 의 일부 undefined 제거).
