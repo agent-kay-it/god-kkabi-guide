@@ -46,9 +46,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Sprint 15 F15-D — webkit-mobile (iPhone 14) project 추가.
-        # webkit 의 Firebase RTDB long-polling 호환은 emulator 9000 직접 연결로 검증.
-        project: [chromium-desktop, chromium-mobile, webkit-mobile]
+        # Sprint 28 F28-B 단계 29 — CI 부담 감축.
+        # webkit-mobile 제외: chromium 과 동일 root cause 의 cascade fail 만 발생.
+        # webkit-specific 회귀 검증은 nightly cron 또는 manual workflow_dispatch 로 별도.
+        project: [chromium-desktop, chromium-mobile]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

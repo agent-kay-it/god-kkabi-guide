@@ -124,6 +124,35 @@ export const authConfig: NextAuthConfig = {
      * Session 콜백 — 클라이언트 노출용 (useSession()).
      * NextAuth v5 discriminated union 회피를 위해 명시 캐스트.
      */
+    /**
+     * Sprint 28 F28-B 단계 29 — defensive redirect callback (ASCII guard).
+     * NextAuth v5 의 signIn/signOut redirect 호출 시 location header 에 invalid
+     * character (한글 등) 포함되어 'Invalid character in header content' throw 방지.
+     * production 영향 0: 표준 callback URL 동작 + 추가 sanitize layer.
+     */
+    redirect({ url, baseUrl }) {
+      try {
+        const absoluteUrl = url.startsWith('/') ? new URL(url, baseUrl).toString() : url;
+        // ASCII-printable (0x20-0x7E) + path/query 의 일부 special char 만 허용.
+        // 한글, 제어 문자, 0xFF 이상 → baseUrl 로 fallback.
+        if (!/^[\x20-\x7E]+$/.test(absoluteUrl)) {
+          // server-side log: 진단 evidence 확보 (production 영향 0)
+          console.warn('[NextAuth redirect] non-ASCII URL detected, fallback to baseUrl:', url);
+          return baseUrl;
+        }
+        // same-origin check
+        try {
+          const parsed = new URL(absoluteUrl);
+          if (parsed.origin !== new URL(baseUrl).origin) return baseUrl;
+        } catch {
+          return baseUrl;
+        }
+        return absoluteUrl;
+      } catch {
+        return baseUrl;
+      }
+    },
+
     session(params) {
       const session = params.session as Session;
       const token = params.token as JWT | undefined;
