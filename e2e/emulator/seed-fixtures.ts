@@ -23,6 +23,9 @@ export interface TestUserSeed {
   readonly claims: Record<string, unknown>;
   readonly registered: boolean;
   readonly clan: string | null;
+  // Sprint 28 F28-B 단계 11 — munpaId slug (한글 clan 의 영문 slug).
+  // chat-channel-clan spec 의 `/chat/munpa-muming` route 가 사용.
+  readonly munpaId: string | null;
 }
 
 export const TEST_USERS: readonly TestUserSeed[] = [
@@ -33,6 +36,7 @@ export const TEST_USERS: readonly TestUserSeed[] = [
     claims: { role: 'admin', registered: true },
     registered: true,
     clan: '관리자',
+    munpaId: 'admin',
   },
   {
     uid: 'e2e-regular',
@@ -41,6 +45,7 @@ export const TEST_USERS: readonly TestUserSeed[] = [
     claims: { role: 'user', registered: true },
     registered: true,
     clan: '무명',
+    munpaId: 'muming',
   },
   {
     uid: 'e2e-banned',
@@ -49,6 +54,7 @@ export const TEST_USERS: readonly TestUserSeed[] = [
     claims: { role: 'banned', registered: true, bannedReason: 'e2e test' },
     registered: true,
     clan: null,
+    munpaId: null,
   },
   {
     uid: 'e2e-new',
@@ -57,6 +63,7 @@ export const TEST_USERS: readonly TestUserSeed[] = [
     claims: { registered: false },
     registered: false,
     clan: null,
+    munpaId: null,
   },
 ];
 
@@ -100,7 +107,14 @@ export async function seedTestUsers(): Promise<void> {
         uid: u.uid,
         email: u.email,
         displayName: u.displayName,
+        // Sprint 28 F28-B 단계 11 — nickname / serverId / munpa 필드 추가.
+        // 이전: Firestore users 에 nickname/serverId/munpa 없음 → /me 페이지의
+        //   `userDoc.nickname` undefined → toBeVisible('E2E Regular') fail (10+ specs).
+        nickname: u.displayName,
+        serverId: 'S785',
         server: 'S785',
+        munpa: u.clan,
+        munpaId: u.munpaId,
         clan: u.clan,
         classId: 'class_geomgaek',
         registered: u.registered,

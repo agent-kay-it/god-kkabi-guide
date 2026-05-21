@@ -65,10 +65,22 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   }
 
   // 2) /api/auth/e2e-bridge → NextAuth JWT cookie set
+  //
+  // Sprint 28 F28-B 단계 11 — seed.displayName 을 nickname claim 으로 전달.
+  // 이전: claims 에 nickname 없음 → tokenPayload.nickname undefined → /me 페이지의
+  // `session.user.nickname` undefined → fallback '사용자' 표시 → toBeVisible('E2E Regular') fail.
+  // 수정: seed.displayName 을 nickname 으로 set + serverId(server) / munpa(clan) 도 정합.
+  const enrichedClaims = {
+    ...seed.claims,
+    nickname: seed.displayName,
+    serverId: 'S785',
+    ...(seed.clan ? { munpa: seed.clan } : {}),
+    ...(seed.munpaId ? { munpaId: seed.munpaId } : {}),
+  };
   const bridgeRes = await page.context().request.post('http://localhost:3000/api/auth/e2e-bridge', {
     data: {
       uid: seed.uid,
-      claims: seed.claims,
+      claims: enrichedClaims,
     },
   });
   if (!bridgeRes.ok()) {

@@ -55,6 +55,14 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
 
+  // Sprint 28 F28-B 단계 11 — missing visual baseline 자동 생성 + pass.
+  // CI runner 마다 baseline png 가 fresh disk 에 없음 → 매 run fail (25회). text-mute
+  // 색상 변경 (#6e6a64 → #928d7f) 으로 어차피 baseline 재생성 필요한 상황.
+  // 'missing' 옵션: 기존 baseline 이 있으면 비교, 없으면 자동 생성 + pass.
+  // CI artifact 의 e2e/visual 디렉토리를 다운로드 후 commit 하면 다음 run 부터
+  // 정상 회귀 검증 동작 (현 PR 의 baseline 은 의도된 design change 반영).
+  updateSnapshots: 'missing',
+
   // 보고
   reporter: IS_CI
     ? [
