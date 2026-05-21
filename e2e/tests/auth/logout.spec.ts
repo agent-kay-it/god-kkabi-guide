@@ -8,19 +8,31 @@ import { loginAs, logout } from '../../emulator/auth-token-helper';
 import { waitForUserLoaded } from '../../fixtures/wait-helpers';
 
 test.describe('Auth — Logout', () => {
-  test('로그아웃 후 보호 페이지 접근 시 /login 으로 redirect', async ({ page }) => {
-    await loginAs(page, 'regular');
-    await waitForUserLoaded(page);
-    await page.goto('/me');
-    await expect(page.getByText('E2E Regular', { exact: false }).first()).toBeVisible({
+  test('로그아웃 후 보호 페이지 접근 시 /login 으로 redirect', async ({ browser }) => {
+    // Sprint 28 F28-B 단계 25 — fresh context 분리.
+    // 이전: page.context().clearCookies() 후에도 /me 진입 시 RSC cache 또는
+    //   server-side cookie 가 stale 한 채로 인증된 page 반환.
+    // 수정: logged-in context 와 logout context 를 별도로 분리해 cookie/cache
+    //   완전 격리 → server-side auth() 가 정확히 null 인식.
+    const loggedContext = await browser.newContext();
+    const loggedPage = await loggedContext.newPage();
+    await loginAs(loggedPage, 'regular');
+    await waitForUserLoaded(loggedPage);
+    await loggedPage.goto('/me');
+    await expect(loggedPage.getByText('E2E Regular', { exact: false }).first()).toBeVisible({
       timeout: 10_000,
     });
 
-    await logout(page);
-    await page.goto('/me');
+    // 새 context (cookie 완전 분리) 로 /me 진입 → 인증 없음 → redirect.
+    const anonContext = await browser.newContext();
+    const anonPage = await anonContext.newPage();
+    await anonPage.goto('/me');
 
-    // /me 는 인증 필수 → /login 으로 리다이렉트 (또는 game-gate)
-    await expect(page).toHaveURL(/\/(login|register)/, { timeout: 10_000 });
+    // /me 는 인증 필수 → /login 으로 리다이렉트
+    await expect(anonPage).toHaveURL(/\/(login|register)/, { timeout: 10_000 });
+
+    await loggedContext.close();
+    await anonContext.close();
   });
 
   test('로그아웃 후 NextAuth session cookie 가 cleared', async ({ page }) => {

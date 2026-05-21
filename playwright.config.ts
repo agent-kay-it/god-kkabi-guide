@@ -129,7 +129,7 @@ export default defineConfig({
           //   emulator wire 정상 동작. 빌드 시간 ~1분 추가하지만 client SDK 안정.
           //   webServer.timeout 도 build+start 위해 충분히 증가.
           command: IS_CI
-            ? 'npx next build && npx next start -p 3000'
+            ? 'npx next build && (npx next start -p 3000 > .next-server.log 2>&1)'
             : process.env.E2E_USE_EMULATOR === 'true'
               ? 'pnpm dev'
               : 'pnpm dev',

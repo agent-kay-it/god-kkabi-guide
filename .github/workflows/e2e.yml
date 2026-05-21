@@ -162,6 +162,12 @@ jobs:
         if: failure()
         run: tail -100 .emulator.log || true
 
+      - name: Show Next.js server log on failure
+        if: failure()
+        run: |
+          ls -la *.log 2>/dev/null || true
+          tail -200 .next-server.log 2>/dev/null || echo "no .next-server.log captured"
+
       - name: Upload Playwright report
         if: always()
         id: upload-report
