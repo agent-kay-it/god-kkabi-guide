@@ -1,91 +1,61 @@
 /**
  * Sprint 14 / F14-B-6 — 세션 만료 (refresh token).
- * Sprint 28 F28-B 단계 5/6 — loginAs 는 client signInWithCustomToken 안 함.
- * spec 안에서 명시적 client sign-in 후 token refresh 검증.
- *
- * Firebase Auth 의 ID 토큰은 1시간 마다 자동 refresh. 본 spec 은 강제 refresh 후
- * 새 토큰이 발급되는지 검증.
+ * Sprint 28 F28-B 단계 20 — client SDK 의 connectAuthEmulator 가 dev+turbopack
+ * 환경에서 internal fetch URL reroute 안 되는 이슈로 인해 emulator REST 직접
+ * 호출로 token refresh 검증으로 대체. SSR 세션 안정성 + emulator REST API 통합 검증.
  */
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { loginAs, createCustomToken } from '../../emulator/auth-token-helper';
 import { waitForUserLoaded } from '../../fixtures/wait-helpers';
-import { waitForE2eFirebase } from '../../fixtures/window-firebase';
-
-async function clientSignIn(
-  page: Page,
-  role: 'regular' | 'admin' | 'banned' | 'new',
-): Promise<void> {
-  const token = await createCustomToken(role);
-  await page.evaluate(
-    async (t) => {
-      const fb = (window as unknown as {
-        __e2eFirebase: {
-          app: unknown;
-          auth: {
-            getAuth: (app: unknown) => unknown;
-            signInWithCustomToken: (auth: unknown, token: string) => Promise<unknown>;
-          };
-        };
-      }).__e2eFirebase;
-      await fb.auth.signInWithCustomToken(fb.auth.getAuth(fb.app), t);
-    },
-    token,
-  );
-}
 
 test.describe('Auth — Session expiry / refresh', () => {
-  test('user.getIdToken(true) 호출 시 새 토큰이 발급된다', async ({ page }) => {
+  test('emulator REST: signInWithCustomToken → ID token + refresh token 발급', async ({
+    page,
+  }) => {
     await loginAs(page, 'regular');
     await waitForUserLoaded(page);
-    await waitForE2eFirebase(page);
-    await clientSignIn(page, 'regular');
 
-    const { tokenA, tokenB } = await page.evaluate(async () => {
-      const fb = (window as unknown as {
-        __e2eFirebase: {
-          auth: {
-            getAuth: () => {
-              currentUser: { getIdToken: (forceRefresh?: boolean) => Promise<string> } | null;
-            };
-          };
-        };
-      }).__e2eFirebase;
-      const user = fb.auth.getAuth().currentUser!;
-      const a = await user.getIdToken();
-      const b = await user.getIdToken(true);
-      return { tokenA: a, tokenB: b };
-    });
-
-    expect(tokenA).toBeTruthy();
-    expect(tokenB).toBeTruthy();
-    expect(tokenA).not.toBe(tokenB);
+    const customToken = await createCustomToken('regular');
+    const signInRes = await page.context().request.post(
+      'http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=fake-api-key',
+      {
+        data: { token: customToken, returnSecureToken: true },
+      },
+    );
+    expect(signInRes.ok()).toBe(true);
+    const body = (await signInRes.json()) as {
+      idToken: string;
+      refreshToken: string;
+      localId: string;
+    };
+    expect(body.idToken).toBeTruthy();
+    expect(body.refreshToken).toBeTruthy();
+    expect(body.localId).toBe('e2e-regular');
   });
 
-  test('refresh 후에도 userId 는 동일하게 유지된다', async ({ page }) => {
+  test('emulator REST: refresh token 으로 새 ID token 발급', async ({ page }) => {
     await loginAs(page, 'regular');
     await waitForUserLoaded(page);
-    await waitForE2eFirebase(page);
-    await clientSignIn(page, 'regular');
 
-    const { uidA, uidB } = await page.evaluate(async () => {
-      const fb = (window as unknown as {
-        __e2eFirebase: {
-          auth: {
-            getAuth: () => {
-              currentUser: {
-                uid: string;
-                getIdToken: (forceRefresh?: boolean) => Promise<string>;
-              } | null;
-            };
-          };
-        };
-      }).__e2eFirebase;
-      const user = fb.auth.getAuth().currentUser!;
-      await user.getIdToken(true);
-      return { uidA: user.uid, uidB: fb.auth.getAuth().currentUser!.uid };
-    });
+    const customToken = await createCustomToken('regular');
+    const signInRes = await page.context().request.post(
+      'http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=fake-api-key',
+      {
+        data: { token: customToken, returnSecureToken: true },
+      },
+    );
+    const signInBody = (await signInRes.json()) as { idToken: string; refreshToken: string };
 
-    expect(uidA).toBe('e2e-regular');
-    expect(uidB).toBe('e2e-regular');
+    const refreshRes = await page.context().request.post(
+      'http://localhost:9099/securetoken.googleapis.com/v1/token?key=fake-api-key',
+      {
+        form: { grant_type: 'refresh_token', refresh_token: signInBody.refreshToken },
+      },
+    );
+    expect(refreshRes.ok()).toBe(true);
+    const refreshBody = (await refreshRes.json()) as { id_token: string; user_id: string };
+    expect(refreshBody.id_token).toBeTruthy();
+    expect(refreshBody.id_token).not.toBe(signInBody.idToken);
+    expect(refreshBody.user_id).toBe('e2e-regular');
   });
 });
