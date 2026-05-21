@@ -102,6 +102,14 @@ export default defineConfig({
 
   // 로컬에서 baseURL 이 localhost 일 때 dev server 자동 기동.
   // staging URL 사용 시 webServer key 자체 omit (이미 deployed).
+  //
+  // Sprint 28 F28-B 단계 7 — webServer env 명시화.
+  //  이전: command 의 inline prefix env (`KEY=VALUE next dev`). spawn 환경에
+  //    따라 inherit 보장 안 됨 → server runtime 에 NEXT_PUBLIC_FIREBASE_USE_EMULATOR
+  //    set 안 됨 → e2e-bridge route 의 isE2eEnvironment() === false → 404 응답 →
+  //    loginAs 의 모든 spec 실패. 본 CI 로그에서 fallback HTML 응답 확인.
+  //  수정: Playwright `env` 옵션에 명시. GitHub Actions step env 의 모든 값을
+  //    그대로 server runtime 에 전달. inline prefix env 제거.
   ...(SHOULD_START_WEB_SERVER
     ? {
         webServer: {
@@ -109,13 +117,30 @@ export default defineConfig({
           // Sprint 18 F18-B — CI 환경에서 tene 미설치 → next 직접 호출.
           // 로컬에서는 pnpm dev (tene run wrapper) 가 시크릿 주입.
           command: IS_CI
-            ? 'NEXT_PUBLIC_FIREBASE_USE_EMULATOR=true NEXT_PUBLIC_E2E_MODE=true npx next dev --turbopack -p 3000'
+            ? 'npx next dev --turbopack -p 3000'
             : process.env.E2E_USE_EMULATOR === 'true'
-              ? 'NEXT_PUBLIC_FIREBASE_USE_EMULATOR=true NEXT_PUBLIC_E2E_MODE=true pnpm dev'
+              ? 'pnpm dev'
               : 'pnpm dev',
           url: 'http://localhost:3000',
           reuseExistingServer: true,
           timeout: 180_000,
+          env: {
+            // 1) 현재 process env 모두 상속 (workflow env block 의 NEXT_PUBLIC_*, AUTH_SECRET, …)
+            //    Record<string, string> 강제 캐스팅 (process.env 의 일부 undefined 제거).
+            ...Object.fromEntries(
+              Object.entries(process.env).filter(([, v]) => typeof v === 'string'),
+            ),
+            // 2) 명시 override (workflow env 미설정 시 fallback)
+            NEXT_PUBLIC_FIREBASE_USE_EMULATOR:
+              process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR ??
+              (IS_CI || process.env.E2E_USE_EMULATOR === 'true' ? 'true' : ''),
+            NEXT_PUBLIC_E2E_MODE:
+              process.env.NEXT_PUBLIC_E2E_MODE ??
+              (IS_CI || process.env.E2E_USE_EMULATOR === 'true' ? 'true' : ''),
+            FIREBASE_USE_EMULATOR:
+              process.env.FIREBASE_USE_EMULATOR ??
+              (IS_CI || process.env.E2E_USE_EMULATOR === 'true' ? 'true' : ''),
+          },
         },
       }
     : {}),
