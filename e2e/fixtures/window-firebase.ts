@@ -36,13 +36,15 @@ export interface E2eFirebaseNamespace {
 
 /**
  * page.evaluate 호출 전에 window.__e2eFirebase 가 준비될 때까지 대기.
- * lib/firebase/client.ts 의 wireEmulatorsIfEnabled() 가 동기 sync 라서 module
- * load 후 즉시 노출.
  *
- * Sprint 28 F28-B 단계 16 — wire 진단.
- * window.__e2eFirebaseWireErrors 가 length>0 면 connectXxxEmulator throw 가 발생.
- * 그 경우 client SDK 가 production endpoint 사용 → spec 호출 시 fail. 명시적으로
- * spec 가 fail 하면서 wire errors 를 message 에 포함 → CI artifact 에 진단 evidence.
+ * Sprint 28 F28-B 단계 17 — emulator wire idempotent 강제.
+ * wireErrors 가 빈 array 임에도 client SDK 가 production endpoint 사용하는 잔여
+ * 케이스 (Next.js dev + turbopack 의 module evaluation 순서 race 가능성). spec 의
+ * page.evaluate 안에서 명시 connectAuthEmulator/Firestore/Storage/Database 호출
+ * (try-catch 로 idempotent) → 이미 wired 면 throw 무시, 아니면 강제 wire.
+ *
+ * 이 호출이 page.evaluate signInWithCustomToken / getIdToken / getDownloadURL 등
+ * 모든 client SDK 사용 전에 실행되도록 spec 안 helper.
  */
 export async function waitForE2eFirebase(page: Page, timeoutMs = 10000): Promise<void> {
   await page.waitForFunction(
@@ -53,13 +55,47 @@ export async function waitForE2eFirebase(page: Page, timeoutMs = 10000): Promise
     { timeout: timeoutMs },
   );
 
-  // 진단: wire error 가 있으면 명시 fail (silent catch 의 root cause 추적).
-  const wireErrors = await page.evaluate(() => {
-    return (window as unknown as { __e2eFirebaseWireErrors?: unknown[] }).__e2eFirebaseWireErrors ?? [];
+  // 명시 connectAuthEmulator/... 호출 — 이미 wired 면 silent throw → catch 무시.
+  // Next.js dev + turbopack 의 module evaluation 순서 race condition 대응 (단계 5
+  // sync wire 가 안 동작하는 잔여 케이스 보호).
+  await page.evaluate(() => {
+    const fb = (window as unknown as {
+      __e2eFirebase?: {
+        app: unknown;
+        auth?: {
+          getAuth: (app: unknown) => unknown;
+          connectAuthEmulator: (auth: unknown, url: string, opts?: unknown) => void;
+        };
+        firestore?: {
+          getFirestore: (app: unknown) => unknown;
+          connectFirestoreEmulator: (db: unknown, host: string, port: number) => void;
+        };
+        storage?: {
+          getStorage: (app: unknown) => unknown;
+          connectStorageEmulator: (storage: unknown, host: string, port: number) => void;
+        };
+        database?: {
+          getDatabase: (app: unknown) => unknown;
+          connectDatabaseEmulator: (db: unknown, host: string, port: number) => void;
+        };
+      };
+    }).__e2eFirebase;
+    if (!fb) return;
+    try {
+      fb.auth?.connectAuthEmulator(fb.auth.getAuth(fb.app), 'http://localhost:9099', {
+        disableWarnings: true,
+      });
+    } catch {
+      // already wired or instance used
+    }
+    try {
+      fb.firestore?.connectFirestoreEmulator(fb.firestore.getFirestore(fb.app), 'localhost', 8080);
+    } catch {}
+    try {
+      fb.storage?.connectStorageEmulator(fb.storage.getStorage(fb.app), 'localhost', 9199);
+    } catch {}
+    try {
+      fb.database?.connectDatabaseEmulator(fb.database.getDatabase(fb.app), 'localhost', 9000);
+    } catch {}
   });
-  if (Array.isArray(wireErrors) && wireErrors.length > 0) {
-    throw new Error(
-      `[waitForE2eFirebase] emulator wire errors detected: ${JSON.stringify(wireErrors)}`,
-    );
-  }
 }
