@@ -5,15 +5,14 @@
  * UI flow 자체의 검증은 각 spec 의 본문에서.
  */
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../emulator/admin-helper';
 
 export const TEST_PREFIX = '[TEST-Sprint14]';
 export const SEED_ID = 'sprint-14-c-post';
 
+// Sprint 28 F28-B 단계 2 — admin app race condition fix.
 function ensureAdmin(): admin.app.App {
-  if (admin.apps.length > 0) return admin.app();
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-  process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-  return admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
+  return ensureE2eAdmin();
 }
 
 export interface SeedPostOptions {

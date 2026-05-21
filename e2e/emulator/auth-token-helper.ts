@@ -11,6 +11,7 @@
 import admin from 'firebase-admin';
 import type { Page } from '@playwright/test';
 import { TEST_USERS, type TestUserSeed } from './seed-fixtures';
+import { ensureE2eAdmin } from './admin-helper';
 
 export type TestRole = 'admin' | 'regular' | 'banned' | 'new';
 
@@ -21,14 +22,12 @@ function getUserSeed(role: TestRole): TestUserSeed {
   return seed;
 }
 
-function ensureAdminApp(): admin.app.App {
-  if (admin.apps.length > 0) return admin.app();
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-  return admin.initializeApp({ projectId: 'demo-kkaebizigi-test' });
-}
-
 export async function createCustomToken(role: TestRole): Promise<string> {
-  ensureAdminApp();
+  // Sprint 28 F28-B 단계 2 — admin app race condition fix.
+  // 이전: ensureAdminApp() 가 databaseURL/storageBucket 없이 init → 이후 다른
+  // helper 의 admin.database() / admin.storage() 호출 시 "Can't determine URL"
+  // 또는 "Bucket name not specified" 에러 (90회). 공유 helper 로 모든 config 통합.
+  ensureE2eAdmin();
   const seed = getUserSeed(role);
   return admin.auth().createCustomToken(seed.uid, seed.claims);
 }

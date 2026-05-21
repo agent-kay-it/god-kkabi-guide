@@ -9,6 +9,7 @@
  *   - cleanup 절대 실행 안 함 (운영 데이터 보호)
  */
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from './emulator/admin-helper';
 
 const TEST_PREFIX = '[TEST-Sprint14]';
 const FIRESTORE_COLLS = ['posts', 'comments', 'reports', 'notifications', 'penalties', 'coupons'];
@@ -55,15 +56,8 @@ export default async function globalTeardown(): Promise<void> {
   }
 
   try {
-    if (admin.apps.length === 0) {
-      process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-      process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-      process.env.FIREBASE_DATABASE_EMULATOR_HOST = 'localhost:9000';
-      admin.initializeApp({
-        projectId: 'demo-kkaebizigi-test',
-        databaseURL: 'http://localhost:9000?ns=demo-kkaebizigi-test',
-      });
-    }
+    // Sprint 28 F28-B 단계 2 — 공유 helper 로 통합 (admin app race condition fix)
+    ensureE2eAdmin();
 
     const fsCount = await cleanupFirestore();
     const rtdbCount = await cleanupRtdb();

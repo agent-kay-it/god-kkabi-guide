@@ -11,6 +11,7 @@
  * cleanup 은 scripts/cleanup-test-data.mjs 가 동일 태그 기준으로 일괄 삭제.
  */
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from './admin-helper';
 
 export const TEST_PREFIX = '[TEST-Sprint14]';
 export const SEED_ID = 'sprint-14-seed';
@@ -59,16 +60,13 @@ export const TEST_USERS: readonly TestUserSeed[] = [
   },
 ];
 
+// Sprint 28 F28-B 단계 2 — admin app race condition fix.
+// 이전: 본 파일이 global-setup 에서 가장 먼저 admin.initializeApp 호출하는데
+// storageBucket 누락 → 이후 test-storage-helpers / admin 페이지 등이 admin.app()
+// 재사용 시 admin.storage().bucket() throw "Bucket name not specified" 12회.
+// 공유 helper 로 통합 — 모든 config (databaseURL + storageBucket + 4 emulator host).
 function ensureAdminApp(): admin.app.App {
-  if (admin.apps.length > 0) return admin.app();
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-  process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-  process.env.FIREBASE_DATABASE_EMULATOR_HOST = 'localhost:9000';
-  process.env.STORAGE_EMULATOR_HOST = 'http://localhost:9199';
-  return admin.initializeApp({
-    projectId: 'demo-kkaebizigi-test',
-    databaseURL: 'http://localhost:9000?ns=demo-kkaebizigi-test',
-  });
+  return ensureE2eAdmin();
 }
 
 async function deleteExistingUser(uid: string): Promise<void> {

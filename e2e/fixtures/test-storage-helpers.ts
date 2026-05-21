@@ -4,18 +4,17 @@
  * Firebase Storage emulator (localhost:9199) 의 putString / downloadURL / delete.
  */
 import admin from 'firebase-admin';
+import { ensureE2eAdmin } from '../emulator/admin-helper';
 
 export const TEST_PREFIX = '[TEST-Sprint14]';
 export const STORAGE_SEED_ID = 'sprint-15-f-storage';
 
+// Sprint 28 F28-B 단계 2 — admin app race condition fix.
+// 이전: 본 파일이 storageBucket 만 명시. auth-token-helper 가 먼저 init 하면
+// storageBucket 없는 admin app 재사용 → admin.storage().bucket() 가 throw
+// "Bucket name not specified or invalid" 12회 발생. 공유 helper 로 통합.
 function ensureAdmin(): admin.app.App {
-  if (admin.apps.length > 0) return admin.app();
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-  process.env.STORAGE_EMULATOR_HOST = 'http://localhost:9199';
-  return admin.initializeApp({
-    projectId: 'demo-kkaebizigi-test',
-    storageBucket: 'demo-kkaebizigi-test.appspot.com',
-  });
+  return ensureE2eAdmin();
 }
 
 /**
