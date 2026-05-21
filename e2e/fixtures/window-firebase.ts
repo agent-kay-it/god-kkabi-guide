@@ -109,8 +109,15 @@ export async function waitForE2eFirebase(page: Page, timeoutMs = 10000): Promise
       authEmulator: authInstance?.emulatorConfig ?? null,
       errors,
       env: {
-        nodeEnv: process.env.NODE_ENV,
-        emulatorEnv: process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR ?? null,
+        // Sprint 28 F28-B 단계 19 — browser context 에서 `process` 객체 undefined.
+        //   spec page.evaluate code 는 next.js bundle 안의 inline 대상이 아님 →
+        //   `process.env.X` 직접 access 시 ReferenceError. typeof guard.
+        nodeEnv:
+          typeof process !== 'undefined' && process.env ? process.env.NODE_ENV ?? null : null,
+        emulatorEnv:
+          typeof process !== 'undefined' && process.env
+            ? process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR ?? null
+            : null,
       },
       location: {
         hostname: window.location.hostname,
