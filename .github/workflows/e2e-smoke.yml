@@ -86,6 +86,9 @@ jobs:
           NEXT_PUBLIC_FIREBASE_DATABASE_URL: 'http://localhost:9000?ns=demo-kkaebizigi-test'
           AUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           NEXTAUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
+          # Sprint 28 F28-B 단계 24 — NextAuth v5 production build 시 AUTH_URL 필수.
+          AUTH_URL: 'http://localhost:3000'
+          AUTH_TRUST_HOST: 'true'
           # Sprint 28 F28-B 단계 23 — admin SDK emulator host 정합 (e2e.yml 과 동일).
           FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080'
           FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099'

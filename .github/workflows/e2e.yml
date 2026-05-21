@@ -135,6 +135,11 @@ jobs:
           NEXT_PUBLIC_FIREBASE_DATABASE_URL: 'http://localhost:9000?ns=demo-kkaebizigi-test'
           AUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           NEXTAUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
+          # Sprint 28 F28-B 단계 24 — NextAuth v5 production build 시 AUTH_URL 필수.
+          # localhost http 명시로 secure cookie prefix 회피 (e2e-bridge 의 unprefixed
+          # cookie name 정합 유지).
+          AUTH_URL: 'http://localhost:3000'
+          AUTH_TRUST_HOST: 'true'
           # Sprint 28 F28-B 단계 23 — admin SDK / client SDK 의 emulator host env 정합.
           # production build webServer (next start) 의 server-side rendering 시 admin SDK
           # 가 emulator host 인식해야 server-side data fetch 정상. firebase-admin SDK 가

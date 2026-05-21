@@ -43,8 +43,8 @@ const ALLOWED_CONSOLE_ERRORS: readonly RegExp[] = [
   /Refused to execute script.*_vercel\/speed-insights/,
 ];
 
-function isAllowedConsoleError(text: string): boolean {
-  return ALLOWED_CONSOLE_ERRORS.some((re) => re.test(text));
+function isAllowedConsoleError(text: string, location?: string): boolean {
+  return ALLOWED_CONSOLE_ERRORS.some((re) => re.test(text) || (location ? re.test(location) : false));
 }
 
 export interface NetworkError {
@@ -70,11 +70,13 @@ export function attachErrorTracker(page: Page): ErrorTracker {
   const onConsole = (msg: ConsoleMessage): void => {
     if (msg.type() === 'error') {
       const text = msg.text();
-      if (isAllowedConsoleError(text)) return;
+      const location = msg.location().url;
+      // Sprint 28 F28-B 단계 24 — text + location 양쪽 allowlist 매칭.
+      if (isAllowedConsoleError(text, location)) return;
       consoleErrors.push({
         type: 'error',
         text,
-        location: msg.location().url,
+        location,
       });
     }
   };

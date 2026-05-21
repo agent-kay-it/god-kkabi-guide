@@ -106,8 +106,14 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   console.log(`[loginAs] Logged in as ${role} (uid=${seed.uid})`);
 }
 
-/** 로그아웃 — NextAuth cookie 삭제 + reload */
+/**
+ * 로그아웃 — NextAuth cookie 삭제 + reload.
+ * Sprint 28 F28-B 단계 24 — production build (next start) 환경에서 cookie name
+ * variants (unprefixed + __Secure- + __Host-) 모두 cleared. Playwright clearCookies
+ * 의 name 매칭만으로는 attribute 불일치 시 cleared 안 되는 경우 있어 unconditional
+ * 전체 삭제 사용.
+ */
 export async function logout(page: Page): Promise<void> {
-  await page.context().clearCookies({ name: 'authjs.session-token' });
+  await page.context().clearCookies();
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
