@@ -136,7 +136,11 @@ jobs:
           AUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           NEXTAUTH_SECRET: 'e2e-test-secret-do-not-use-in-production'
           CI: 'true'
-        run: pnpm playwright test --project=${{ matrix.project }}
+        # Sprint 28 F28-B 단계 13 — `--update-snapshots=missing` flag.
+        # config 의 `updateSnapshots: 'missing'` 만으로는 CI 의 fresh runner 에서
+        # baseline missing → fail. flag 명시로 missing baseline 자동 생성 + pass.
+        # baseline artifact 다운로드 후 commit 하면 다음 PR 부터 정상 회귀 검증.
+        run: pnpm playwright test --project=${{ matrix.project }} --update-snapshots=missing
 
       - name: Show emulator log on failure
         if: failure()

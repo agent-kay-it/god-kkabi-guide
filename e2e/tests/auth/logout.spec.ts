@@ -14,7 +14,9 @@ test.describe('Auth — Logout', () => {
     await loginAs(page, 'regular');
     await waitForUserLoaded(page);
     await page.goto('/me');
-    await expect(page.getByText('E2E Regular', { exact: false })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText('E2E Regular', { exact: false }).first()).toBeVisible({
+      timeout: 10_000,
+    });
 
     await logout(page);
     await page.goto('/me');

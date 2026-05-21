@@ -20,7 +20,10 @@ test.describe('Auth — Multi-tab session sync', () => {
     await tab2.reload();
 
     // 탭 2 에서 사용자 정보 노출
-    await expect(tab2.getByText('E2E Regular', { exact: false })).toBeVisible({ timeout: 10_000 });
+    // Sprint 28 F28-B 단계 12 — /me 페이지에 nickname 다중 표시 → first() 로 strict mode 회피
+    await expect(tab2.getByText('E2E Regular', { exact: false }).first()).toBeVisible({
+      timeout: 10_000,
+    });
 
     await tab1.close();
     await tab2.close();
