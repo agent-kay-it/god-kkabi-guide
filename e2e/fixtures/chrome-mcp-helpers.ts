@@ -36,10 +36,15 @@ const ALLOWED_CONSOLE_ERRORS: readonly RegExp[] = [
   /Failed to load resource.*\/decide/i,
   // Chrome extension noise
   /chrome-extension:\/\//,
+  // Sprint 28 F28-B 단계 23 — production build 의 Vercel Speed Insights script.
+  // localhost 환경에서는 Vercel CDN 없어 404 + MIME type mismatch. E2E (next start) 의
+  // intended noise (운영 환경의 staging.kkaebizigi.com 에서는 정상 fetch).
+  /_vercel\/speed-insights\/script\.js/,
+  /Refused to execute script.*_vercel\/speed-insights/,
 ];
 
-function isAllowedConsoleError(text: string): boolean {
-  return ALLOWED_CONSOLE_ERRORS.some((re) => re.test(text));
+function isAllowedConsoleError(text: string, location?: string): boolean {
+  return ALLOWED_CONSOLE_ERRORS.some((re) => re.test(text) || (location ? re.test(location) : false));
 }
 
 export interface NetworkError {
@@ -65,11 +70,13 @@ export function attachErrorTracker(page: Page): ErrorTracker {
   const onConsole = (msg: ConsoleMessage): void => {
     if (msg.type() === 'error') {
       const text = msg.text();
-      if (isAllowedConsoleError(text)) return;
+      const location = msg.location().url;
+      // Sprint 28 F28-B 단계 24 — text + location 양쪽 allowlist 매칭.
+      if (isAllowedConsoleError(text, location)) return;
       consoleErrors.push({
         type: 'error',
         text,
-        location: msg.location().url,
+        location,
       });
     }
   };
@@ -109,6 +116,9 @@ function isAllowedNetworkError(url: string, status: number): boolean {
   if (url.includes('/monitoring') && status === 404) return true;
   // Speed Insights — production 외 환경에서 비활성, 일부 prefetch 404
   if (url.includes('vitals.vercel-insights.com') && status === 404) return true;
+  // Sprint 28 F28-B 단계 23 — production build 의 _vercel/speed-insights/script.js
+  //   localhost 에서는 Vercel CDN 없음 → 404 정상.
+  if (url.includes('/_vercel/speed-insights/') && status === 404) return true;
   return false;
 }
 

@@ -367,25 +367,26 @@ export default async function HomePage(): Promise<React.JSX.Element> {
           style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}
         >
           {TOC_ITEMS.map((item) => (
-            <Reveal key={item.href} delay={item.delay}>
-              <li>
-                <Link
-                  href={item.href}
-                  className="group flex items-start gap-3 rounded-lg border border-ink-line bg-ink-card/40 p-4 transition-card hover:-translate-y-0.5 hover:border-bronze/40 hover:bg-ink-card-strong/70"
-                >
-                  <span className="min-w-[24px] shrink-0 font-mono text-[0.78rem] tracking-wider text-bronze">
-                    {item.num}
+            // Sprint 28 F28-B 단계 8 — ul 의 직접 child 는 li 만 (axe a11y).
+            // 이전: <Reveal><li>...</li></Reveal> → ul > div.reveal > li (rule 위반)
+            // 수정: <Reveal as="li" ...> → ul > li.reveal (semantic 보존 + 애니메이션 유지)
+            <Reveal as="li" key={item.href} delay={item.delay}>
+              <Link
+                href={item.href}
+                className="group flex items-start gap-3 rounded-lg border border-ink-line bg-ink-card/40 p-4 transition-card hover:-translate-y-0.5 hover:border-bronze/40 hover:bg-ink-card-strong/70"
+              >
+                <span className="min-w-[24px] shrink-0 font-mono text-[0.78rem] tracking-wider text-bronze">
+                  {item.num}
+                </span>
+                <span className="flex flex-col gap-1">
+                  <span className="text-[0.92rem] font-medium leading-[1.4] text-text group-hover:text-bronze-soft">
+                    {item.label}
                   </span>
-                  <span className="flex flex-col gap-1">
-                    <span className="text-[0.92rem] font-medium leading-[1.4] text-text group-hover:text-bronze-soft">
-                      {item.label}
-                    </span>
-                    <span className="text-[0.78rem] leading-[1.4] text-text-mute">
-                      {item.description}
-                    </span>
+                  <span className="text-[0.78rem] leading-[1.4] text-text-mute">
+                    {item.description}
                   </span>
-                </Link>
-              </li>
+                </span>
+              </Link>
             </Reveal>
           ))}
         </ul>

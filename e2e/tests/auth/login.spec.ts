@@ -13,7 +13,11 @@ test.describe('Auth — Login (Custom Token)', () => {
     await waitForUserLoaded(page);
     await page.goto('/me');
 
-    await expect(page.getByText('E2E Regular', { exact: false })).toBeVisible({ timeout: 10_000 });
+    // Sprint 28 F28-B 단계 12 — /me 페이지에 nickname 이 5곳 표시 (header avatar +
+    // 내 정보 breadcrumb + h1 + 프로필 카드 + 닉네임 변경). strict mode violation 회피.
+    await expect(page.getByText('E2E Regular', { exact: false }).first()).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test('admin 사용자가 로그인하면 admin 권한이 부여된다', async ({ page }) => {

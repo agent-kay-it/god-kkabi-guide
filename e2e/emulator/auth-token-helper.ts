@@ -65,10 +65,22 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
   }
 
   // 2) /api/auth/e2e-bridge → NextAuth JWT cookie set
+  //
+  // Sprint 28 F28-B 단계 11 — seed.displayName 을 nickname claim 으로 전달.
+  // Sprint 28 F28-B 단계 26 — munpa 한글 (e.g., '무명') 을 NextAuth session 에
+  //   넘기지 않음. Next.js server-side redirect 의 location header 가 ASCII-only.
+  //   redirect 안에 munpa 한글이 들어가면 TypeError: Invalid character in header
+  //   content ["location"] → 5xx → chat / page 전부 fail. munpaId (ASCII slug) 만 사용.
+  const enrichedClaims = {
+    ...seed.claims,
+    nickname: seed.displayName,
+    serverId: 'S785',
+    ...(seed.munpaId ? { munpaId: seed.munpaId } : {}),
+  };
   const bridgeRes = await page.context().request.post('http://localhost:3000/api/auth/e2e-bridge', {
     data: {
       uid: seed.uid,
-      claims: seed.claims,
+      claims: enrichedClaims,
     },
   });
   if (!bridgeRes.ok()) {
@@ -78,65 +90,30 @@ export async function loginAs(page: Page, role: TestRole): Promise<void> {
     );
   }
 
-  // 3) cookie 가 context 에 저장됨 → 다음 navigation 시 인증된 세션
+  // 3) cookie 가 context 에 저장됨 → 다음 navigation 시 인증된 SSR 세션
+  //
+  // 주의: client-side Firebase Auth signInWithCustomToken 은 본 helper 에서
+  // 호출 안 함. 단계 2 확장 (step3) 에서 추가했다가 staging E2E 에서
+  // `auth/network-request-failed` 8 unique × retries × cascade = 496회 발생.
+  //
+  // 원인: `wireEmulatorsIfEnabled` 의 connectAuthEmulator 가 try/catch silent fail
+  // 또는 timing race 로 client SDK 가 production Google API 로 fetch.
+  // 본 helper 의 역할: NextAuth JWT cookie set (SSR 인증). 페이지 UI 가 인증된
+  // 상태로 진입 (정상 spec 의 99%). client currentUser 검증이 필요한 4 auth
+  // spec 은 각 spec 안에서 직접 처리 (e2e-bridge 후 명시적 client sign-in).
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-  // 4) Sprint 28 F28-B 단계 2 — client-side Firebase Auth signInWithCustomToken
-  //    추가 호출 (window.__e2eFirebase 사용).
-  //    이전: spec 의 page.evaluate 가 `await import('firebase/auth')` 호출 →
-  //    브라우저 컨텍스트에서 bare specifier resolve 실패 (Sprint 14~28 1주일째).
-  //    해결: lib/firebase/client.ts emulator 분기에서 window.__e2eFirebase 노출 →
-  //    여기서 그 namespace 통해 client signInWithCustomToken 호출 →
-  //    4 auth spec (currentUser / getIdToken 검증) 의 의의 보존.
-  await page.waitForFunction(
-    () => {
-      const fb = (window as unknown as { __e2eFirebase?: { auth?: unknown } }).__e2eFirebase;
-      return Boolean(fb?.auth);
-    },
-    { timeout: 10_000 },
-  );
-  await page.evaluate(
-    async (t) => {
-      const fb = (window as unknown as {
-        __e2eFirebase: {
-          app: unknown;
-          auth: {
-            getAuth: (app: unknown) => unknown;
-            signInWithCustomToken: (auth: unknown, token: string) => Promise<unknown>;
-          };
-        };
-      }).__e2eFirebase;
-      const auth = fb.auth.getAuth(fb.app);
-      await fb.auth.signInWithCustomToken(auth, t);
-    },
-    customToken,
-  );
-
 
   console.log(`[loginAs] Logged in as ${role} (uid=${seed.uid})`);
 }
 
-/** 로그아웃 — NextAuth cookie 삭제 + Firebase client Auth signOut + reload */
+/**
+ * 로그아웃 — NextAuth cookie 삭제 + reload.
+ * Sprint 28 F28-B 단계 24 — production build (next start) 환경에서 cookie name
+ * variants (unprefixed + __Secure- + __Host-) 모두 cleared. Playwright clearCookies
+ * 의 name 매칭만으로는 attribute 불일치 시 cleared 안 되는 경우 있어 unconditional
+ * 전체 삭제 사용.
+ */
 export async function logout(page: Page): Promise<void> {
-  // 1) Firebase client Auth signOut (window.__e2eFirebase 사용)
-  await page.evaluate(async () => {
-    const fb = (window as unknown as {
-      __e2eFirebase?: {
-        auth?: {
-          getAuth: () => unknown;
-          signOut: (auth: unknown) => Promise<void>;
-        };
-      };
-    }).__e2eFirebase;
-    if (fb?.auth) {
-      try {
-        await fb.auth.signOut(fb.auth.getAuth());
-      } catch {
-        // 이미 signed out 또는 module 누락
-      }
-    }
-  });
-  // 2) NextAuth cookie 삭제
-  await page.context().clearCookies({ name: 'authjs.session-token' });
+  await page.context().clearCookies();
   await page.reload({ waitUntil: 'domcontentloaded' });
 }

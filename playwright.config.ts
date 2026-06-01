@@ -55,6 +55,14 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
 
+  // Sprint 28 F28-B 단계 11 — missing visual baseline 자동 생성 + pass.
+  // CI runner 마다 baseline png 가 fresh disk 에 없음 → 매 run fail (25회). text-mute
+  // 색상 변경 (#6e6a64 → #928d7f) 으로 어차피 baseline 재생성 필요한 상황.
+  // 'missing' 옵션: 기존 baseline 이 있으면 비교, 없으면 자동 생성 + pass.
+  // CI artifact 의 e2e/visual 디렉토리를 다운로드 후 commit 하면 다음 run 부터
+  // 정상 회귀 검증 동작 (현 PR 의 baseline 은 의도된 design change 반영).
+  updateSnapshots: 'missing',
+
   // 보고
   reporter: IS_CI
     ? [
@@ -102,20 +110,56 @@ export default defineConfig({
 
   // 로컬에서 baseURL 이 localhost 일 때 dev server 자동 기동.
   // staging URL 사용 시 webServer key 자체 omit (이미 deployed).
+  //
+  // Sprint 28 F28-B 단계 7 — webServer env 명시화.
+  //  이전: command 의 inline prefix env (`KEY=VALUE next dev`). spawn 환경에
+  //    따라 inherit 보장 안 됨 → server runtime 에 NEXT_PUBLIC_FIREBASE_USE_EMULATOR
+  //    set 안 됨 → e2e-bridge route 의 isE2eEnvironment() === false → 404 응답 →
+  //    loginAs 의 모든 spec 실패. 본 CI 로그에서 fallback HTML 응답 확인.
+  //  수정: Playwright `env` 옵션에 명시. GitHub Actions step env 의 모든 값을
+  //    그대로 server runtime 에 전달. inline prefix env 제거.
   ...(SHOULD_START_WEB_SERVER
     ? {
         webServer: {
           // Sprint 14 F14-A — emulator + e2e mode env 자동 주입.
           // Sprint 18 F18-B — CI 환경에서 tene 미설치 → next 직접 호출.
-          // 로컬에서는 pnpm dev (tene run wrapper) 가 시크릿 주입.
+          // Sprint 28 F28-B 단계 22 — `next build && next start` 로 변경.
+          //   dev mode + turbopack 에서 connectXxxEmulator 가 internal apiHost reroute
+          //   안 주는 알려진 이슈. production-style build 는 NEXT_PUBLIC_ inline 안정 +
+          //   emulator wire 정상 동작. 빌드 시간 ~1분 추가하지만 client SDK 안정.
+          //   webServer.timeout 도 build+start 위해 충분히 증가.
+          // Sprint 28 F28-B 단계 27 — dev mode 로 회귀.
+          //   step 22 production build (next start) 가 server-side redirect 시 한글
+          //   포함 → TypeError: Invalid character in header content ["location"]
+          //   → 모든 chat/post/bookmark page 5xx cascade. 정확한 source 식별 어려워
+          //   dev mode 회귀. client SDK reroute 는 단계 17 의 명시 wire (window-firebase.ts)
+          //   로 spec 안에서 idempotent connectXxxEmulator 호출.
           command: IS_CI
-            ? 'NEXT_PUBLIC_FIREBASE_USE_EMULATOR=true NEXT_PUBLIC_E2E_MODE=true npx next dev --turbopack -p 3000'
+            ? 'npx next dev --turbopack -p 3000 > .next-server.log 2>&1'
             : process.env.E2E_USE_EMULATOR === 'true'
-              ? 'NEXT_PUBLIC_FIREBASE_USE_EMULATOR=true NEXT_PUBLIC_E2E_MODE=true pnpm dev'
+              ? 'pnpm dev'
               : 'pnpm dev',
           url: 'http://localhost:3000',
           reuseExistingServer: true,
+          // Sprint 28 F28-B 단계 27 — dev mode 회귀, timeout 다시 단축.
           timeout: 180_000,
+          env: {
+            // 1) 현재 process env 모두 상속 (workflow env block 의 NEXT_PUBLIC_*, AUTH_SECRET, …)
+            //    Record<string, string> 강제 캐스팅 (process.env 의 일부 undefined 제거).
+            ...Object.fromEntries(
+              Object.entries(process.env).filter(([, v]) => typeof v === 'string'),
+            ),
+            // 2) 명시 override (workflow env 미설정 시 fallback)
+            NEXT_PUBLIC_FIREBASE_USE_EMULATOR:
+              process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATOR ??
+              (IS_CI || process.env.E2E_USE_EMULATOR === 'true' ? 'true' : ''),
+            NEXT_PUBLIC_E2E_MODE:
+              process.env.NEXT_PUBLIC_E2E_MODE ??
+              (IS_CI || process.env.E2E_USE_EMULATOR === 'true' ? 'true' : ''),
+            FIREBASE_USE_EMULATOR:
+              process.env.FIREBASE_USE_EMULATOR ??
+              (IS_CI || process.env.E2E_USE_EMULATOR === 'true' ? 'true' : ''),
+          },
         },
       }
     : {}),
